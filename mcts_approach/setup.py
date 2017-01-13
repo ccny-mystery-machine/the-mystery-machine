@@ -1,15 +1,15 @@
 """
-Setup of the initial actors, places, items, and actions that can be performed
+Setup of the initial actors, places, items
 """
 from random import randint
 
 ACTORS = [
     {
-        "name" : "Alice",
+        "name": "Alice",
         "place": "Alice's house",
         "health": 10,
         "items": [],
-        "anger": {}, # dictionary of other actors to their anger value
+        "anger": {},  # dictionary of other actors to their anger value
     },
     {
         "name": "Bob",
@@ -57,8 +57,32 @@ PLACES = [
     },
 ]
 
-# Defining possible methods
-# methods return a pair, the sentence and its believability
+"""
+Defining the different goals we are checking for
+"""
+
+
+def death_occured(state):
+    """
+    description: checks if death has occured in the story
+    returns a boolean indicating so or not
+    """
+    for actor in state["actors"]:
+        if actor["health"] == 0:
+            return True
+    return False
+
+GOALS = [
+    death_occured,
+]
+
+
+"""
+Defining possible methods below
+methods return a pair, the sentence and its believability
+"""
+
+
 def move(actor, place):
     """
     description: actor moves to place
@@ -72,11 +96,12 @@ def move(actor, place):
     actor["place"] = place
     return (actor["name"] + " went to " + place + ". ", 1)
 
+
 def steal(actor_a, actor_b):
     """
     description: actor_a steals an item from actor_b
-    precondition: actor_a must be alive and in actor_b's home, actor_b must have
-        items that can be stolen
+    precondition: actor_a must be alive and in actor_b's home, actor_b must
+        have items that can be stolen
     postcondition: actor_b loses a random item and actor_a gains it, actor_b
         becomes angrier at actor_a
     """
@@ -96,9 +121,10 @@ def steal(actor_a, actor_b):
         actor_a["anger"][actor_b_name] += 1
     else:
         actor_a["anger"][actor_b_name] = 1
-    sentence = (actor_a["name"] + " stole " + actor_b_item["name"] + " from "
-                + actor_b["name"] + ". ")
+    sentence = (actor_a["name"] + " stole " + actor_b_item["name"] + " from " +
+                actor_b["name"] + ". ")
     return (sentence, actor_b_item["value"])
+
 
 def play(actor_a, actor_b):
     """
@@ -107,7 +133,9 @@ def play(actor_a, actor_b):
     postcondition: actor_a and actor_b becomes less angry with eachother
     """
 
-    if actor_a["place"] != actor_b["place"] or actor_a["health"] <= 0 or actor_b["health"] <= 0:
+    if (actor_a["place"] != actor_b["place"] or
+            actor_a["health"] <= 0 or
+            actor_b["health"] <= 0):
         return False
 
     actor_a_name = actor_a["name"]
@@ -123,6 +151,7 @@ def play(actor_a, actor_b):
     else:
         actor_b["anger"][actor_a_name] = -1
     return (actor_a["name"] + " plays with " + actor_b["name"] + ". ", 1)
+
 
 def kill(actor_a, actor_b):
     """
@@ -140,8 +169,17 @@ def kill(actor_a, actor_b):
             believability = 1.0
         else:
             believability = 0.1
-    return (actor_a["name"] + " killed " + actor_b["name"] + ". ", believability)
+    return (actor_a["name"] + " killed " + actor_b["name"] + ". ",
+            believability)
+
+METHODS = [
+    move,
+    steal,
+    play,
+    kill,
+]
 
 print(ACTORS)
 print(ITEMS)
 print(PLACES)
+print(METHODS)

@@ -65,6 +65,7 @@ ACTORS = [
     },
 ]
 
+
 """
 Defining the different goals we are checking for
 """
@@ -75,8 +76,8 @@ def death_occured(state):
     description: checks if death has occured in the story
     returns a boolean indicating so or not
     """
-    for actor in state["actors"]:
-        if actor["health"] == 0:
+    for actor in state.actors:
+        if actor.health == 0:
             return True
     return False
 
@@ -191,4 +192,3 @@ METHODS = [
 print(ACTORS)
 print(ITEMS)
 print(PLACES)
-print(METHODS)

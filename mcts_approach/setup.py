@@ -2,58 +2,66 @@
 Setup of the initial actors, places, items
 """
 from random import randint
+from functools import partial
+
+ITEMS = {
+    "GUN": {
+        "name": "gun",
+        "value": .6,
+    },
+    "VASE": {
+        "name": "vase",
+        "value": .9,
+    },
+    "BASEBALL_BAT": {
+        "name": "baseball bat",
+        "value": .2,
+    },
+}
+
+PLACES = {
+    "OUTSIDE": {
+        "name": "outside",
+        "items": [],
+    },
+    "ALICES_HOUSE": {
+        "name": "Alice's house",
+        "items": [],
+    },
+    "BOBS_HOUSE": {
+        "name": "Bob's house",
+        "items": [],
+    },
+    "CHARLIES_HOUSE": {
+        "name": "Charlie's house",
+        "items": [],
+    },
+}
 
 ACTORS = [
     {
         "name": "Alice",
-        "place": "Alice's house",
+        "home": PLACES["ALICES_HOUSE"],
+        "place": PLACES["ALICES_HOUSE"],
         "health": 10,
-        "items": [],
+        "items": [ITEMS["GUN"]],
         "anger": {},  # dictionary of other actors to their anger value
     },
     {
         "name": "Bob",
-        "place": "Bob's house",
+        "home": PLACES["BOBS_HOUSE"],
+        "place": PLACES["BOBS_HOUSE"],
         "health": 10,
-        "items": [],
+        "items": [ITEMS["VASE"]],
         "anger": {},
     },
     {
         "name": "Charlie",
-        "place": "Charlie's house",
+        "home": PLACES["CHARLIES_HOUSE"],
+        "place": PLACES["CHARLIES_HOUSE"],
         "health": 10,
-        "items": [],
+        "items": [ITEMS["BASEBALL_BAT"]],
         "anger": {},
-    },
-]
-
-ITEMS = [
-    {
-        "name": "gun",
-        "value": .6
-    },
-    {
-        "name": "vase",
-        "value": .9,
-    },
-    {
-        "name": "baseball bat",
-        "value": .2,
-    },
-]
-
-PLACES = [
-    {
-        "name": "outside",
-    },
-    {
-        "name": "Alice's house",
-    },
-    {
-        "name": "Bob's house",
-    },
-    {
-        "name": "Charlie's house",
     },
 ]
 
@@ -91,30 +99,30 @@ def move(actor, place):
     """
 
     if actor["place"] == place["name"]:
-        return False
+        return ("Nonsense sentence.", 0)
 
     actor["place"] = place
-    return (actor["name"] + " went to " + place + ". ", 1)
+    return (actor["name"] + " went to " + place["name"] + ". ", 1)
 
 
 def steal(actor_a, actor_b):
     """
     description: actor_a steals an item from actor_b
-    precondition: actor_a must be alive and in actor_b's home, actor_b must
+    precondition: actor_a must be alive, actor_b must
         have items that can be stolen
     postcondition: actor_b loses a random item and actor_a gains it, actor_b
         becomes angrier at actor_a
     """
 
     if actor_a["health"] <= 0:
-        return False
+        return ("Nonsense sentence.", 0)
 
-    b_house = actor_b + "'s house"
-    if actor_a["place"] != b_house or len(actor_b["items"]) == 0:
-        return False
+    if actor_a["place"] != actor_b["place"] or len(actor_b["items"]) == 0:
+        return ("Nonsense sentence.", 0)
 
-    actor_b_item = actor_b["items"].pop(randint(0, len(actor_b["items"])))
-    actor_a["items"].append(actor_b["item"])
+    rand_idx = randint(0, len(actor_b["items"]) - 1)
+    actor_b_item = actor_b["items"].pop(rand_idx)
+    actor_a["items"].append(actor_b_item)
 
     actor_b_name = actor_b["name"]
     if actor_b_name in actor_a["anger"]:
@@ -136,7 +144,7 @@ def play(actor_a, actor_b):
     if (actor_a["place"] != actor_b["place"] or
             actor_a["health"] <= 0 or
             actor_b["health"] <= 0):
-        return False
+        return ("Nonsense sentence.", 0)
 
     actor_a_name = actor_a["name"]
     actor_b_name = actor_b["name"]
@@ -150,7 +158,8 @@ def play(actor_a, actor_b):
         actor_b["anger"][actor_a_name] -= 1
     else:
         actor_b["anger"][actor_a_name] = -1
-    return (actor_a["name"] + " plays with " + actor_b["name"] + ". ", 1)
+
+    return (actor_a_name + " plays with " + actor_b_name + ". ", 1)
 
 
 def kill(actor_a, actor_b):
@@ -160,15 +169,14 @@ def kill(actor_a, actor_b):
     postcondition: actor_b's health goes to 0
     """
     if actor_a["place"] != actor_b["place"]:
-        return False
+        return ("Nonsense sentence.", 0)
 
     actor_b["health"] = 0
     actor_b_name = actor_b["name"]
+    believability = 0.1
     if actor_b_name in actor_a["anger"]:
         if actor_a["anger"][actor_b_name] > 0:
             believability = 1.0
-        else:
-            believability = 0.1
     return (actor_a["name"] + " killed " + actor_b["name"] + ". ",
             believability)
 
@@ -178,6 +186,7 @@ METHODS = [
     play,
     kill,
 ]
+
 
 print(ACTORS)
 print(ITEMS)

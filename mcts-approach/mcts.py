@@ -19,11 +19,21 @@ def initStory():
     print("Charlie is in Charlie's house")
 
 
-def getAction():
+def getAction(actorIndex, actionIndex, objIndex):
     """
-
-
+    Given three numbers, perform an action
     """
+    global ACTORS2
+    global PLACES2
+    global ITEMS2
+    if (actionIndex == 0):
+        return ACTORS2[actorIndex].move(PLACES2[objIndex])
+    elif (actionIndex == 1):
+        return ACTORS2[actorIndex].steal(ACTORS2[objIndex])
+    elif (actionIndex == 2):
+        return ACTORS2[actorIndex].play(ACTORS2[objIndex])
+    else:
+        return ACTORS2[actorIndex].kill(ACTORS2[objIndex])
 
 
 def randomAction():

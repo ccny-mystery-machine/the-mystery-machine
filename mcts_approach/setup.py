@@ -2,7 +2,6 @@
 Setup of the initial actors, places, items
 """
 from random import randint
-from functools import partial
 
 ITEMS = {
     "GUN": {
@@ -38,8 +37,8 @@ PLACES = {
     },
 }
 
-ACTORS = [
-    {
+ACTORS = {
+    "ALICE": {
         "name": "Alice",
         "home": PLACES["ALICES_HOUSE"],
         "place": PLACES["ALICES_HOUSE"],
@@ -47,7 +46,7 @@ ACTORS = [
         "items": [ITEMS["GUN"]],
         "anger": {},  # dictionary of other actors to their anger value
     },
-    {
+    "BOB": {
         "name": "Bob",
         "home": PLACES["BOBS_HOUSE"],
         "place": PLACES["BOBS_HOUSE"],
@@ -55,7 +54,7 @@ ACTORS = [
         "items": [ITEMS["VASE"]],
         "anger": {},
     },
-    {
+    "CHARLIE": {
         "name": "Charlie",
         "home": PLACES["CHARLIES_HOUSE"],
         "place": PLACES["CHARLIES_HOUSE"],
@@ -63,7 +62,7 @@ ACTORS = [
         "items": [ITEMS["BASEBALL_BAT"]],
         "anger": {},
     },
-]
+}
 
 
 """
@@ -181,12 +180,12 @@ def kill(actor_a, actor_b):
     return (actor_a["name"] + " killed " + actor_b["name"] + ". ",
             believability)
 
-METHODS = [
-    move,
-    steal,
-    play,
-    kill,
-]
+METHODS = {
+    "MOVE": move,
+    "STEAL": steal,
+    "PLAY": play,
+    "KILL": kill,
+}
 
 
 print(ACTORS)

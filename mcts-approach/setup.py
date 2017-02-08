@@ -161,6 +161,6 @@ GOALS = [
     death_occured,
 ]
 
-print(ACTORS)
-print(ITEMS)
-print(PLACES)
+#print(ACTORS)
+#print(ITEMS)
+#print(PLACES)

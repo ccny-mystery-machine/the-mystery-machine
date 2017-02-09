@@ -2,6 +2,7 @@
 Setup of the initial actors, places, items
 """
 from random import randint
+from copy import deepcopy
 
 ITEMS = {
     "GUN": {
@@ -85,19 +86,59 @@ GOALS = [
 ]
 
 
+class StoryNode:
+    """
+    Node in our story tree
+    """
+    def __init__(actors, items, places, sentence, believability):
+        this.actors = actors
+        this.items = items
+        this.places = places
+        this.believability = believability
+        this.sentence = sentence
+        this.children = []
+        this.possible_actions = []
+
+        # MOVE - actor, place
+        for _, actor in actors.items():
+            for _, place in places.items():
+                this.possible_actions.append(partial(METHODS["MOVE"], actor, place))
+
+        # STEAL - actor, actor
+        for _, actor_a in actors.items():
+            for _, actor_b in actors.items():
+                this.possible_actions.append(partial(METHODS["STEAL"], actor_a, actor_b))
+
+        # PLAY - actor, actor
+        for _, actor_a in actors.items():
+            for _, actor_b in actors.items():
+                this.possible_actions.append(partial(METHODS["PLAY"], actor_a, actor_b))
+
+        # KILL - actor, actor
+        for _, actor_a in actors.items():
+            for _, actor_b in actors.items():
+                this.possible_actions.append(partial(METHODS["KILL"], actor_a, actor_b))
+
+    def expand_next(self):
+        child = new StoryNode()
+
+
 """
 Defining possible methods below
-methods return a pair, the sentence and its believability
+methods return the new state
 """
 
 
-def move(actor, place):
+def move(actor_key, place_key, state):
     """
     description: actor moves to place
+    actor_key, place_key: string keywords
     precondition: place is not actor's current location
     postcondition: actor's current place is set to place
     """
-
+    new_state = deepcopy(state)
+    actor = new_state.actors[actor_key]
+    place = new_state.places[place_key]
     if actor["place"] == place["name"]:
         return ("Nonsense sentence.", 0)
 

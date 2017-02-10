@@ -1,4 +1,5 @@
 from functools import partial
+from copy import deepcopy
 
 from methods import METHODS
 
@@ -7,9 +8,9 @@ class StoryNode:
     Node in our story tree
     """
     def __init__(self, actors, places, items, story, believability):
-        self.actors = actors
-        self.places = places
-        self.items = items
+        self.actors = deepcopy(actors)
+        self.places = deepcopy(places)
+        self.items = deepcopy(items)
         self.believability = believability
         self.story = story
         self.children = []

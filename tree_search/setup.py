@@ -1,8 +1,6 @@
 """
 Setup of the initial actors, places, items
 """
-from random import randint
-from copy import deepcopy
 
 ITEMS = {
     "GUN": {
@@ -60,23 +58,3 @@ ACTORS = {
         "anger": {},
     },
 }
-
-
-"""
-Defining the different goals we are checking for
-"""
-
-
-def death_occured(state):
-    """
-    description: checks if death has occured in the story
-    returns a boolean indicating so or not
-    """
-    for actor in state.actors:
-        if actor.health == 0:
-            return True
-    return False
-
-GOALS = [
-    death_occured,
-]

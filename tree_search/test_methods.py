@@ -1,9 +1,8 @@
 """
 Test file for the different methods that represent events that occur
 """
-from setup import *
-from search import *
-from methods import *
+from setup import ACTORS, PLACES, ITEMS
+from methods import METHODS
 from story import StoryNode
 
 class TestMove:
@@ -26,7 +25,7 @@ class TestMove:
         }
 
         current_state = StoryNode(ACTORS,PLACES,ITEMS,"",1)
-        new_state = move(current_state, "ALICE", "BOBS_HOUSE")
+        new_state = METHODS["MOVE"](current_state, "ALICE", "BOBS_HOUSE")
 
         assert new_state.actors["ALICE"]["place"]["name"] == PLACES["BOBS_HOUSE"]["name"]
 
@@ -46,7 +45,7 @@ class TestMove:
         }
 
         current_state = StoryNode(ACTORS,PLACES,ITEMS,"",1)
-        new_state = move(current_state, "ALICE", "ALICES_HOUSE")
+        new_state = METHODS["MOVE"](current_state, "ALICE", "ALICES_HOUSE")
 
         assert new_state.believability == 0
 
@@ -66,7 +65,7 @@ class TestMove:
         }
 
         current_state = StoryNode(ACTORS,PLACES,ITEMS,"",1)
-        new_state = move(current_state, "ALICE", "BOBS_HOUSE")
+        new_state = METHODS["MOVE"](current_state, "ALICE", "BOBS_HOUSE")
 
         assert new_state.believability == 0
 
@@ -98,12 +97,38 @@ class TestSteal:
             },
         }
         current_state = StoryNode(ACTORS,PLACES,ITEMS,"",1)
-        new_state = steal(current_state, "ALICE", "BOB")
+        new_state = METHODS["STEAL"](current_state, "ALICE", "BOB")
         a_items = new_state.actors["ALICE"]["items"]
         b_items = new_state.actors["BOB"]["items"]
         assert (len(b_items) == 0 and
                 len(a_items) == 2 and
                 a_items[1] == ITEMS["VASE"])
+
+    def test_steal_adds_properly(self):
+        """
+        Tests if steal successfully transfers items from actor_b to actor_a
+        """
+        ACTORS = {
+            "ALICE": {
+                "name": "Alice",
+                "home": PLACES["ALICES_HOUSE"],
+                "place": PLACES["BOBS_HOUSE"],
+                "health": 10,
+                "items": [ITEMS["GUN"]],
+                "anger": {},  # dictionary of other actors to their anger value
+            },
+            "BOB": {
+                "name": "Bob",
+                "home": PLACES["BOBS_HOUSE"],
+                "place": PLACES["BOBS_HOUSE"],
+                "health": 10,
+                "items": [ITEMS["VASE"]],
+                "anger": {},
+            },
+        }
+        current_state = StoryNode(ACTORS,PLACES,ITEMS,"",1)
+        new_state = METHODS["STEAL"](current_state, "ALICE", "BOB")
+        assert new_state.actors["BOB"]["anger"]["ALICE"] == 3
 
     def test_steal_believability_works(self):
         """
@@ -128,7 +153,7 @@ class TestSteal:
             },
         }
         current_state = StoryNode(ACTORS,PLACES,ITEMS,"",1)
-        new_state = steal(current_state, "ALICE", "BOB")
+        new_state = METHODS["STEAL"](current_state, "ALICE", "BOB")
         a_items = new_state.actors["ALICE"]["items"]
         b_items = new_state.actors["BOB"]["items"]
         assert new_state.believability == ITEMS["VASE"]["value"]
@@ -156,7 +181,7 @@ class TestSteal:
             },
         }
         current_state = StoryNode(ACTORS,PLACES,ITEMS,"",1)
-        new_state = steal(current_state, "ALICE", "BOB")
+        new_state = METHODS["STEAL"](current_state, "ALICE", "BOB")
         assert new_state.believability == 0
 
     def test_steal_when_dead(self):
@@ -182,7 +207,7 @@ class TestSteal:
             },
         }
         current_state = StoryNode(ACTORS,PLACES,ITEMS,"",1)
-        new_state = steal(current_state, "ALICE", "BOB")
+        new_state = METHODS["STEAL"](current_state, "ALICE", "BOB")
         assert new_state.believability == 0
 
     def test_steal_from_dead(self):
@@ -208,7 +233,7 @@ class TestSteal:
             },
         }
         current_state = StoryNode(ACTORS,PLACES,ITEMS,"",1)
-        new_state = steal(current_state, "ALICE", "BOB")
+        new_state = METHODS["STEAL"](current_state, "ALICE", "BOB")
         a_items = new_state.actors["ALICE"]["items"]
         b_items = new_state.actors["BOB"]["items"]
         assert (len(b_items) == 0 and
@@ -238,7 +263,7 @@ class TestSteal:
             },
         }
         current_state = StoryNode(ACTORS,PLACES,ITEMS,"",1)
-        new_state = steal(current_state, "ALICE", "BOB")
+        new_state = METHODS["STEAL"](current_state, "ALICE", "BOB")
 
         assert new_state.believability == 0
 
@@ -271,7 +296,7 @@ class TestPlay:
             },
         }
         current_state = StoryNode(ACTORS,PLACES,ITEMS,"",1)
-        new_state = play(current_state, "ALICE", "BOB")
+        new_state = METHODS["PLAY"](current_state, "ALICE", "BOB")
 
         assert (new_state.actors["ALICE"]["anger"]["BOB"] == -1 and
                 new_state.actors["BOB"]["anger"]["ALICE"] == -1)
@@ -299,7 +324,7 @@ class TestPlay:
             },
         }
         current_state = StoryNode(ACTORS,PLACES,ITEMS,"",1)
-        new_state = play(current_state, "ALICE", "BOB")
+        new_state = METHODS["PLAY"](current_state, "ALICE", "BOB")
 
         assert (new_state.actors["ALICE"]["anger"]["BOB"] == 2 and
                 new_state.actors["BOB"]["anger"]["ALICE"] == -2)
@@ -327,7 +352,7 @@ class TestPlay:
             },
         }
         current_state = StoryNode(ACTORS,PLACES,ITEMS,"",1)
-        new_state = play(current_state, "ALICE", "BOB")
+        new_state = METHODS["PLAY"](current_state, "ALICE", "BOB")
 
         assert new_state.believability == 0
 
@@ -360,8 +385,90 @@ class TestKill:
         }
 
         current_state = StoryNode(ACTORS,PLACES,ITEMS,"",1)
-        new_state = kill(current_state, "ALICE", "BOB")
+        new_state = METHODS["KILL"](current_state, "ALICE", "BOB")
         assert new_state.actors["BOB"]["health"] == 0
+
+    def test_kill_believability_one(self):
+        """
+        Tests kill believability
+        """
+        ACTORS = {
+            "ALICE": {
+                "name": "Alice",
+                "home": PLACES["ALICES_HOUSE"],
+                "place": PLACES["BOBS_HOUSE"],
+                "health": 10,
+                "items": [ITEMS["GUN"]],
+                "anger": {},  # dictionary of other actors to their anger value
+            },
+            "BOB": {
+                "name": "Bob",
+                "home": PLACES["BOBS_HOUSE"],
+                "place": PLACES["BOBS_HOUSE"],
+                "health": 10,
+                "items": [ITEMS["VASE"]],
+                "anger": {},
+            },
+        }
+
+        current_state = StoryNode(ACTORS,PLACES,ITEMS,"",1)
+        new_state = METHODS["KILL"](current_state, "ALICE", "BOB")
+        assert new_state.believability == 0
+
+    def test_kill_believability_two(self):
+        """
+        Tests kill believability
+        """
+        ACTORS = {
+            "ALICE": {
+                "name": "Alice",
+                "home": PLACES["ALICES_HOUSE"],
+                "place": PLACES["BOBS_HOUSE"],
+                "health": 10,
+                "items": [ITEMS["GUN"]],
+                "anger": {"BOB": 1},  # dictionary of other actors to their anger value
+            },
+            "BOB": {
+                "name": "Bob",
+                "home": PLACES["BOBS_HOUSE"],
+                "place": PLACES["BOBS_HOUSE"],
+                "health": 10,
+                "items": [ITEMS["VASE"]],
+                "anger": {},
+            },
+        }
+
+        current_state = StoryNode(ACTORS,PLACES,ITEMS,"",1)
+        new_state = METHODS["KILL"](current_state, "ALICE", "BOB")
+        assert new_state.believability == 1
+
+    def test_kill_believability_three(self):
+        """
+        Tests kill believability
+        """
+        ACTORS = {
+            "ALICE": {
+                "name": "Alice",
+                "home": PLACES["ALICES_HOUSE"],
+                "place": PLACES["BOBS_HOUSE"],
+                "health": 10,
+                "items": [ITEMS["GUN"]],
+                "anger": {"BOB": -1},  # dictionary of other actors to their anger value
+            },
+            "BOB": {
+                "name": "Bob",
+                "home": PLACES["BOBS_HOUSE"],
+                "place": PLACES["BOBS_HOUSE"],
+                "health": 10,
+                "items": [ITEMS["VASE"]],
+                "anger": {},
+            },
+        }
+
+        current_state = StoryNode(ACTORS,PLACES,ITEMS,"",1)
+        new_state = METHODS["KILL"](current_state, "ALICE", "BOB")
+        assert new_state.believability == 0
+
 
     def test_kill_when_different_locations(self):
         """
@@ -386,6 +493,25 @@ class TestKill:
             },
         }
         current_state = StoryNode(ACTORS,PLACES,ITEMS,"",1)
-        new_state = kill(current_state, "ALICE", "BOB")
+        new_state = METHODS["KILL"](current_state, "ALICE", "BOB")
+
+        assert new_state.believability == 0
+
+    def test_kill_self(self):
+        """
+        Tests if believability is 0 when actors kill themselves
+        """
+        ACTORS = {
+            "ALICE": {
+                "name": "Alice",
+                "home": PLACES["ALICES_HOUSE"],
+                "place": PLACES["ALICES_HOUSE"],
+                "health": 10,
+                "items": [ITEMS["GUN"]],
+                "anger": {"BOB": 3},
+            },
+        }
+        current_state = StoryNode(ACTORS,PLACES,ITEMS,"",1)
+        new_state = METHODS["KILL"](current_state, "ALICE", "ALICE")
 
         assert new_state.believability == 0

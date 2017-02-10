@@ -47,12 +47,10 @@ def steal(state, actor_a_key, actor_b_key):
     actor_a = new_state.actors[actor_a_key]
     actor_b = new_state.actors[actor_b_key]
 
-    if actor_a["health"] <= 0:
-        new_state.story += "Nonsense sentence. "
-        new_state.believability = 0
-        return new_state
-
-    if actor_a["place"] != actor_b["place"] or len(actor_b["items"]) == 0:
+    if (actor_a["health"] <= 0 or
+            actor_a["name"] == actor_b["name"] or
+            actor_a["place"] != actor_b["place"] or
+            len(actor_b["items"]) == 0):
         new_state.story += "Nonsense sentence. "
         new_state.believability = 0
         return new_state
@@ -61,11 +59,11 @@ def steal(state, actor_a_key, actor_b_key):
     actor_b_item = actor_b["items"].pop(rand_idx)
     actor_a["items"].append(actor_b_item)
 
-    actor_b_name = actor_b["name"]
-    if actor_b_name in actor_a["anger"]:
-        actor_a["anger"][actor_b_name] += 1
+    actor_a_name = actor_a["name"]
+    if actor_b["name"] in actor_a["anger"]:
+        actor_b["anger"][actor_a_key] += 3
     else:
-        actor_a["anger"][actor_b_name] = 1
+        actor_b["anger"][actor_a_key] = 3
 
     sentence = (actor_a["name"] + " stole " + actor_b_item["name"] + " from " +
                 actor_b["name"] + ". ")
@@ -87,7 +85,8 @@ def play(state, actor_a_key, actor_b_key):
 
     if (actor_a["place"] != actor_b["place"] or
             actor_a["health"] <= 0 or
-            actor_b["health"] <= 0):
+            actor_b["health"] <= 0 or
+            actor_a["name"] == actor_b["name"]):
         new_state.story += "Nonsense sentence. "
         new_state.believability = 0
         return new_state
@@ -118,21 +117,21 @@ def kill(state, actor_a_key, actor_b_key):
     actor_a = new_state.actors[actor_a_key]
     actor_b = new_state.actors[actor_b_key]
 
-    if actor_a["health"] <= 0 or actor_b["health"] <= 0:
-        new_state.story += "Nonsense sentence. "
-        new_state.believability = 0
-        return new_state
-
-    if actor_a["place"] != actor_b["place"]:
+    if (actor_a["health"] <= 0 or
+            actor_b["health"] <= 0 or
+            actor_a["place"] != actor_b["place"] or
+            actor_a["name"] == actor_b["name"]):
         new_state.story += "Nonsense sentence. "
         new_state.believability = 0
         return new_state
 
     actor_b["health"] = 0
-    if actor_b_key in actor_a["anger"]:
-        if actor_a["anger"][actor_b_key] <= 0:
-            new_state.believability *= 0.1
+    if actor_b_key in actor_a["anger"] and actor_a["anger"][actor_b_key] > 0:
+        sentence = actor_a["name"] + " killed " + actor_b["name"] + ". "
+        new_state.story += sentence
+        return new_state
 
+    new_state.believability = 0
     sentence = actor_a["name"] + " killed " + actor_b["name"] + ". "
     new_state.story += sentence
     return new_state

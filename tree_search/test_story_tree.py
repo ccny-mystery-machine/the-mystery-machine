@@ -1,9 +1,9 @@
 """
 Test file for the different methods related to the story tree
 """
-from setup import *
-from search import *
-from methods import *
+from copy import deepcopy
+
+from setup import ACTORS, PLACES, ITEMS
 from story import StoryNode
 
 class TestStoryNode:
@@ -33,3 +33,12 @@ class TestStoryNode:
         num_total_actions = len(node.possible_actions)
         node.expand_all_children()
         assert len(node.children) == num_total_actions
+
+    def test_immutability(self):
+        """
+        Tests that the nodes are immutable
+        """
+        node = StoryNode(ACTORS, PLACES, ITEMS, "", 1)
+        original_actors = deepcopy(ACTORS)
+        node.expand_all_children()
+        assert node.actors == original_actors

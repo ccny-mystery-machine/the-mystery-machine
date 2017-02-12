@@ -10,4 +10,4 @@ from search import bfs, idfs
 
 if __name__ == "__main__":
     root = StoryNode(ACTORS, PLACES, ITEMS, "", 1)
-    print(bfs(root,goals_satisfied))
+    print(idfs(root, goals_satisfied))

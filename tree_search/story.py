@@ -1,68 +1,35 @@
 from functools import partial
 from copy import deepcopy
 
-from methods import METHODS
+from methods import Method, METHODS, POSSIBLE_METHODS
 
-class StoryNode:
+
+def multiply_ba(newaction_b, story_b):
+    story_b = story_b * newaction_b
+
+class Story:
     """
-    Node in our story tree
+    Story - A path along the tree
     """
-    def __init__(self, actors, places, items, story, believability):
-        self.actors = deepcopy(actors)
-        self.places = deepcopy(places)
-        self.items = deepcopy(items)
-        self.believability = believability
-        self.story = story
-        self.children = []
-        self.possible_actions = []
-
-        # MOVE - actor, place
-        for key_a in actors:
-            for key_p in places:
-                self.possible_actions.append(
-                    partial(METHODS["MOVE"], self, key_a, key_p)
-                )
-
-        # STEAL - actor, actor
-        for key_a in actors:
-            for key_b in actors:
-                self.possible_actions.append(
-                    partial(METHODS["STEAL"], self, key_a, key_b)
-                )
-
-        # PLAY - actor, actor
-        for key_a in actors:
-            for key_b in actors:
-                self.possible_actions.append(
-                    partial(METHODS["PLAY"], self, key_a, key_b)
-                )
-
-        # KILL - actor, actor
-        for key_a in actors:
-            for key_b in actors:
-                self.possible_actions.append(
-                    partial(METHODS["KILL"], self, key_a, key_b)
-                )
-
-    def expand_child(self):
+    def __init__(self, state):
         """
-        Expands another child of the node - in reverse order
-        Returns True if successful, False if not
+        Shallow Copy Here
         """
-        if self.possible_actions:
-            new_action = self.possible_actions.pop()
-            self.children.append(new_action())
-            return True
+        self.current_state = state
+        self.state_list = []
+        self.methods_list = []
+        self.state_list.append(self.current_state)
+        self.story_believability = 1
 
-        return False
+    def set_believability_accumulator(self, ba):
+        self.ba = ba
 
-    def expand_all_children(self):
+    def addMethodandState(self, method_class):
         """
-        Expands all possible actions
+        Add (Already Initialized)Method and associated next state to lists
         """
-        if self.possible_actions:
-            for _ in range(0, len(self.possible_actions)):
-                self.expand_child()
-            return True
-
-        return False
+        self.methods_list.append(method_class)
+        method_class.call(self.current_state)
+        self.current_state = method_class.after_state
+        self.state_list.append(self.current_state)
+        self.ba(method_class.believability, self.story_believability)

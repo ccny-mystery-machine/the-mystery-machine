@@ -2,8 +2,10 @@
 Defining the different goals we are checking for
 """
 
+
 def possible(state):
     return state.believability > 0
+
 
 def death_occured(state):
     """
@@ -15,10 +17,12 @@ def death_occured(state):
             return True
     return False
 
+
 GOALS = [
     possible,
     death_occured,
 ]
+
 
 def goals_satisfied(state):
     for goal in GOALS:

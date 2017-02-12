@@ -58,3 +58,13 @@ ACTORS = {
         "anger": {},
     },
 }
+
+class State:
+    """
+    State of the Story - Nodes in the tree
+    """
+
+    def __init__(self, actors, places, items):
+        self.actors = deepcopy(actors)
+        self.places = deepcopy(places)
+        self.items = deepcopy(items)

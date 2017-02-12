@@ -4,7 +4,7 @@ Implementation of various search methods for story generation
 
 from queue import Queue
 
-# too memory exhaustive
+# memory exhaustive
 def bfs(state, goal):
     q = Queue()
     q.put(state)
@@ -12,13 +12,13 @@ def bfs(state, goal):
         s = q.get()
         if s.believability == 0:
             continue
-        if goal(s) or len(s.story) > 150:
+        if goal(s) or len(s.story) > 200:
             return s.story
         s.expand_all_children()
         for child in s.children:
             q.put(child)
 
-# iterative depth first search to relax memory
+# iterative deepening depth first search to relax memory
 def idfs(state, goal):
     def dfs(current, depth):
         if current.believability == 0:

@@ -2,6 +2,17 @@
 Setup of the initial actors, places, items
 """
 
+class State:
+    """
+    State of the Story - Nodes in the tree
+    """
+
+    def __init__(self, actors, places, items):
+        self.actors = deepcopy(actors)
+        self.places = deepcopy(places)
+        self.items = deepcopy(items)
+
+
 ITEMS = {
     "GUN": {
         "name": "gun",
@@ -58,13 +69,3 @@ ACTORS = {
         "anger": {},
     },
 }
-
-class State:
-    """
-    State of the Story - Nodes in the tree
-    """
-
-    def __init__(self, actors, places, items):
-        self.actors = deepcopy(actors)
-        self.places = deepcopy(places)
-        self.items = deepcopy(items)

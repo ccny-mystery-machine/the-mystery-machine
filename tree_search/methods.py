@@ -18,9 +18,9 @@ class Method:
         self.args = method.args
 
     def __call__(self, state):
-        self.before_state = state
-        self.after_state = deepcopy(state)
-        self.sentence, self.believability = self.method(self.afterstate)
+        self.prev_state = state
+        self.next_state = deepcopy(state)
+        self.sentence, self.believability = self.method(self.next_state)
 
 
 def move(actor_key, place_key, state):

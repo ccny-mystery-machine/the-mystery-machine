@@ -9,16 +9,15 @@ class TreeNode:
     """
     Node in our story tree
     """
-    def __init__(self, state, parent = None):
+    def __init__(self, state, parent_edge = None):
         self.state = state
-        self.parent = parent
+        self.parent_edge = parent_edge
         self.edges = []
+        self.height = 0
         self.believability = 1
-        if parent:
-            self.believability = parent.believability
 
         # stores indices of all possible actions
-        self.possible_methods = range(0, len(POSSIBLE_METHODS))
+        self.possible_methods = list(range(0, len(POSSIBLE_METHODS)))
 
 class TreeEdge:
     """
@@ -26,23 +25,26 @@ class TreeEdge:
     """
     def __init__(self, method):
         self.method = Method(method)
-        self.sentence = method.sentence
-        self.believability = method.believability
+        self.sentence = self.method.sentence
+        self.believability = self.method.believability
 
     def __call__(self, node):
         self.prev_node = node
-        self.next_node = TreeNode(node.state, node)
+        self.next_node = TreeNode(node.state, self)
         self.method(self.next_node.state)
+        self.next_node.believability = (self.prev_node.believability *
+                                        self.method.believability)
+        self.next_node.height = self.prev_node.height + 1
 
 
-def expand_child(node):
+def expand_edge(node):
     """
-    Expands another child of the node - in reverse order
+    Expands another edge of the node - in reverse order
     Returns True if successful, False if not
     """
     if node.possible_methods:
         new_method_idx = node.possible_methods.pop()
-        new_method = POSSIBLE_METHODS[new_action_idx]
+        new_method = POSSIBLE_METHODS[new_method_idx]
         new_edge = TreeEdge(new_method)
         new_edge(node)
         node.edges.append(new_edge)
@@ -51,18 +53,13 @@ def expand_child(node):
     return False
 
 
-def expand_all_children(node):
+def expand_all_edges(node):
     """
     Expands all possible actions
     """
     if node.possible_methods:
         for _ in range(0, len(node.possible_methods)):
-            node.expand_child()
+            expand_edge(node)
         return True
 
     return False
-
-def create_story(node):
-    """
-    Creates a story object from a given node by traversing up the tree
-    """

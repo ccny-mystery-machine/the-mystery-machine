@@ -5,7 +5,8 @@ Implementation of various search methods for story generation
 from queue import Queue
 
 from goals import GOALS
-from tree import expand_all_children
+from tree import expand_all_edges
+from story import Story
 
 # memory exhaustive
 def bfs(node, goal):
@@ -15,11 +16,11 @@ def bfs(node, goal):
         s = q.get()
         if s.believability == 0:
             continue
-        if goal(s, GOALS) or len(s.story) > 200:
-            return s.story
-        s.expand_all_children()
-        for child in s.children:
-            q.put(child)
+        if goal(s, GOALS) or s.height > 3:
+            return Story(s)
+        expand_all_edges(s)
+        for edge in s.edges:
+            q.put(edge.next_node)
 
 # iterative deepening depth first search to relax memory
 def idfs(node, goal):
@@ -27,12 +28,12 @@ def idfs(node, goal):
         if current.believability == 0:
             return
         if depth == 0:
-            if goal(current):
-                return current.story
+            if goal(current, GOALS):
+                return Story(current)
             return
-        current.expand_all_children()
-        for child in current.children:
-            story = dfs(child, depth - 1)
+        current.expand_all_edges()
+        for edge in current.edges:
+            story = dfs(edge.next_node, depth - 1)
             if story:
                 return story
 

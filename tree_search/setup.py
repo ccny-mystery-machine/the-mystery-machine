@@ -2,6 +2,8 @@
 Setup of the initial actors, places, items
 """
 
+from copy import deepcopy
+
 class State:
     """
     State of the Story - Nodes in the tree

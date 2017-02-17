@@ -9,7 +9,6 @@ from functools import partial
 
 from setup import ACTORS, PLACES, ITEMS
 
-
 class Method:
     """
     Actions in the story - Edges in the tree
@@ -20,8 +19,8 @@ class Method:
         self.args = method.args
         self.before_state = None
         self.after_state = None
-        self.sentence = None
-        self.believability = None
+        self.sentence = ""
+        self.believability = 1
 
     def __call__(self, state):
         self.prev_state = state
@@ -37,8 +36,8 @@ def move(actor_key, place_key, state):
     postcondition: actor's current place is set to place
     """
 
-    actor = state.ACTORS[actor_key]
-    place = state.PLACES[place_key]
+    actor = state.actors[actor_key]
+    place = state.places[place_key]
 
     if (actor["health"] <= 0 or
             actor["place"]["name"] == place["name"]):
@@ -62,8 +61,8 @@ def steal(actor_a_key, actor_b_key, state):
         becomes angrier at actor_a
     """
 
-    actor_a = state.ACTORS[actor_a_key]
-    actor_b = state.ACTORS[actor_b_key]
+    actor_a = state.actors[actor_a_key]
+    actor_b = state.actors[actor_b_key]
 
     if (actor_a["health"] <= 0 or
             actor_a["name"] == actor_b["name"] or
@@ -95,8 +94,8 @@ def play(actor_a_key, actor_b_key, state):
     postcondition: actor_a and actor_b becomes less angry with eachother
     """
 
-    actor_a = state.ACTORS[actor_a_key]
-    actor_b = state.ACTORS[actor_b_key]
+    actor_a = state.actors[actor_a_key]
+    actor_b = state.actors[actor_b_key]
 
     if (actor_a["place"] != actor_b["place"] or
             actor_a["health"] <= 0 or
@@ -128,8 +127,8 @@ def kill(actor_a_key, actor_b_key, state):
     postcondition: actor_b's health goes to 0
     """
 
-    actor_a = state.ACTORS[actor_a_key]
-    actor_b = state.ACTORS[actor_b_key]
+    actor_a = state.actors[actor_a_key]
+    actor_b = state.actors[actor_b_key]
 
     if (actor_a["health"] <= 0 or
             actor_b["health"] <= 0 or

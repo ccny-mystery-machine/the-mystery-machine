@@ -25,13 +25,14 @@ class TreeEdge:
     """
     def __init__(self, method):
         self.method = Method(method)
-        self.sentence = self.method.sentence
-        self.believability = self.method.believability
+        self.prev_node = None
+        self.next_node = None
 
     def __call__(self, node):
+        self.method(node.state)
         self.prev_node = node
-        self.next_node = TreeNode(node.state, self)
-        self.method(self.next_node.state)
+        self.next_node = TreeNode(self.method.next_state, self)
+
         self.next_node.believability = (self.prev_node.believability *
                                         self.method.believability)
         self.next_node.height = self.prev_node.height + 1

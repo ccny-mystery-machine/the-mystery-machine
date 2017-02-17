@@ -31,7 +31,7 @@ def idfs(node, goal):
             if goal(current, GOALS):
                 return Story(current)
             return
-        current.expand_all_edges()
+        expand_all_edges(current)
         for edge in current.edges:
             story = dfs(edge.next_node, depth - 1)
             if story:

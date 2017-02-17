@@ -4,9 +4,11 @@ methods return the new state
 """
 
 from random import randint
+from copy import deepcopy
 from functools import partial
 
 from setup import ACTORS, PLACES, ITEMS
+
 
 class Method:
     """
@@ -16,11 +18,15 @@ class Method:
         self.method = method
         self.function = method.func
         self.args = method.args
+        self.before_state = None
+        self.after_state = None
+        self.sentence = None
+        self.believability = None
 
     def __call__(self, state):
         self.before_state = state
         self.after_state = deepcopy(state)
-        self.sentence, self.believability = self.method(self.afterstate)
+        self.sentence, self.believability = self.method(self.after_state)
 
 
 def move(actor_key, place_key, state):
@@ -34,7 +40,7 @@ def move(actor_key, place_key, state):
     actor = state.ACTORS[actor_key]
     place = state.PLACES[place_key]
 
-    if (actor["health"] <= 0  or
+    if (actor["health"] <= 0 or
             actor["place"]["name"] == place["name"]):
         sentence = "Nonsense sentence. "
         believability = 0
@@ -71,7 +77,6 @@ def steal(actor_a_key, actor_b_key, state):
     actor_b_item = actor_b["items"].pop(rand_idx)
     actor_a["items"].append(actor_b_item)
 
-    actor_a_name = actor_a["name"]
     if actor_b["name"] in actor_a["anger"]:
         actor_b["anger"][actor_a_key] += 3
     else:
@@ -165,20 +170,23 @@ for key_a in ACTORS:
 # STEAL - actor, actor
 for key_a in ACTORS:
     for key_b in ACTORS:
-        POSSIBLE_METHODS.append(
-            partial(steal, key_a, key_b)
-        )
+        if key_a != key_b:
+            POSSIBLE_METHODS.append(
+                partial(steal, key_a, key_b)
+            )
 
 # PLAY - actor, actor
 for key_a in ACTORS:
     for key_b in ACTORS:
-        POSSIBLE_METHODS.append(
-            partial(play, key_a, key_b)
-        )
+        if key_a != key_b:
+            POSSIBLE_METHODS.append(
+                partial(play, key_a, key_b)
+            )
 
 # KILL - actor, actor
 for key_a in ACTORS:
     for key_b in ACTORS:
-        POSSIBLE_METHODS.append(
-            partial(kill, key_a, key_b)
-        )
+        if key_a != key_b:
+            POSSIBLE_METHODS.append(
+                partial(kill, key_a, key_b)
+            )

@@ -24,9 +24,9 @@ class Method:
         self.believability = None
 
     def __call__(self, state):
-        self.before_state = state
-        self.after_state = deepcopy(state)
-        self.sentence, self.believability = self.method(self.after_state)
+        self.prev_state = state
+        self.next_state = deepcopy(state)
+        self.sentence, self.believability = self.method(self.next_state)
 
 
 def move(actor_key, place_key, state):

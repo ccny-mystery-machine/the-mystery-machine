@@ -4,7 +4,7 @@ Test file for the different methods related to the story tree
 from copy import deepcopy
 
 from setup import ACTORS, PLACES, ITEMS
-from story import StoryNode
+from tree import TreeNode, TreeEdge, Tree
 
 class TestStoryNode:
     """

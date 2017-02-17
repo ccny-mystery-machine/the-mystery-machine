@@ -3,10 +3,10 @@ Test file for the different methods related to the story tree
 """
 from copy import deepcopy
 
-from setup import ACTORS, PLACES, ITEMS
-from tree import TreeNode, TreeEdge, Tree
+from setup import State, ACTORS, PLACES, ITEMS
+from tree import TreeNode, TreeEdge, expand_edge, expand_all_edges
 
-class TestStoryNode:
+class TestState:
     """
     Test class for the story node class
     """
@@ -14,31 +14,25 @@ class TestStoryNode:
         """
         Tests if the children are empty when story node is initialized
         """
-        node = StoryNode(ACTORS, PLACES, ITEMS, "", 1)
-        assert len(node.children) == 0
+        root = State(ACTORS, PLACES, ITEMS)
+        node = TreeNode(root)
+        assert len(node.edges) == 0
 
     def test_expand_child(self):
         """
         Tests if expand child adds a story node to children
         """
-        node = StoryNode(ACTORS, PLACES, ITEMS, "", 1)
-        node.expand_child()
-        assert len(node.children) == 1
+        root = State(ACTORS, PLACES, ITEMS)
+        node = TreeNode(root)
+        expand_edge(node)
+        assert len(node.edges) == 1
 
     def test_expand_all_children(self):
         """
         Tests if expand all children adds all story nodes
         """
-        node = StoryNode(ACTORS, PLACES, ITEMS, "", 1)
-        num_total_actions = len(node.possible_actions)
-        node.expand_all_children()
-        assert len(node.children) == num_total_actions
-
-    def test_immutability(self):
-        """
-        Tests that the nodes are immutable
-        """
-        node = StoryNode(ACTORS, PLACES, ITEMS, "", 1)
-        original_actors = deepcopy(ACTORS)
-        node.expand_all_children()
-        assert node.actors == original_actors
+        root = State(ACTORS, PLACES, ITEMS)
+        node = TreeNode(root)
+        num_total_actions = len(node.possible_methods)
+        expand_all_edges(node)
+        assert len(node.edges) == num_total_actions

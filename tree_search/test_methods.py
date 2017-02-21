@@ -268,6 +268,33 @@ class TestSteal:
 
         assert believability == 0
 
+    def test_steal_anger_values(self):
+        """
+        Tests if believability is 0 when actors are in different locations
+        """
+        ACTORS = {
+            "ALICE": {
+                "name": "Alice",
+                "home": PLACES["ALICES_HOUSE"],
+                "place": PLACES["BOBS_HOUSE"],
+                "health": 10,
+                "items": [ITEMS["GUN"]],
+                "anger": {"BOB": 3},
+            },
+            "BOB": {
+                "name": "Bob",
+                "home": PLACES["BOBS_HOUSE"],
+                "place": PLACES["BOBS_HOUSE"],
+                "health": 10,
+                "items": [ITEMS["VASE"]],
+                "anger": {"ALICE": -1},
+            },
+        }
+        test_state = State(ACTORS,PLACES,ITEMS)
+        sentence, believability = METHODS["STEAL"]("ALICE", "BOB", test_state)
+
+        assert test_state.actors["BOB"]["anger"]["ALICE"] == 2
+
 
 class TestPlay:
     """
@@ -299,8 +326,8 @@ class TestPlay:
         test_state = State(ACTORS,PLACES,ITEMS)
         METHODS["PLAY"]("ALICE", "BOB", test_state)
 
-        assert (test_state.actors["ALICE"]["anger"]["BOB"] == -1 and
-                test_state.actors["BOB"]["anger"]["ALICE"] == -1)
+        assert (test_state.actors["ALICE"]["anger"]["BOB"] == -5 and
+                test_state.actors["BOB"]["anger"]["ALICE"] == -5)
 
     def test_play_works_with_values(self):
         """
@@ -327,8 +354,8 @@ class TestPlay:
         test_state = State(ACTORS,PLACES,ITEMS)
         METHODS["PLAY"]("ALICE", "BOB", test_state)
 
-        assert (test_state.actors["ALICE"]["anger"]["BOB"] == 2 and
-                test_state.actors["BOB"]["anger"]["ALICE"] == -2)
+        assert (test_state.actors["ALICE"]["anger"]["BOB"] == -2 and
+                test_state.actors["BOB"]["anger"]["ALICE"] == -6)
 
     def test_play_when_different_locations(self):
         """

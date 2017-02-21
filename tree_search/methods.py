@@ -75,8 +75,7 @@ def steal(actor_a_key, actor_b_key, state):
     rand_idx = randint(0, len(actor_b["items"]) - 1)
     actor_b_item = actor_b["items"].pop(rand_idx)
     actor_a["items"].append(actor_b_item)
-
-    if actor_b["name"] in actor_a["anger"]:
+    if actor_a_key in actor_b["anger"]:
         actor_b["anger"][actor_a_key] += 3
     else:
         actor_b["anger"][actor_a_key] = 3
@@ -106,14 +105,14 @@ def play(actor_a_key, actor_b_key, state):
         return (sentence, believability)
 
     if actor_b_key in actor_a["anger"]:
-        actor_a["anger"][actor_b_key] -= 1
+        actor_a["anger"][actor_b_key] -= 5
     else:
-        actor_a["anger"][actor_b_key] = -1
+        actor_a["anger"][actor_b_key] = -5
 
     if actor_a_key in actor_b["anger"]:
-        actor_b["anger"][actor_a_key] -= 1
+        actor_b["anger"][actor_a_key] -= 5
     else:
-        actor_b["anger"][actor_a_key] = -1
+        actor_b["anger"][actor_a_key] = -5
 
     sentence = actor_a["name"] + " played with " + actor_b["name"] + ". "
     believability = 1
@@ -124,6 +123,7 @@ def kill(actor_a_key, actor_b_key, state):
     """
     description: actor_a kills actor_b
     precondition: actor_a and actor_b must be alive and in the same location
+                  actor_a must have anger > 0 towards actor_b
     postcondition: actor_b's health goes to 0
     """
 

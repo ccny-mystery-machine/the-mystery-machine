@@ -37,7 +37,7 @@ def idfs(node, goal):
             if story:
                 return story
 
-    for depth in range(0,5):
+    for depth in range(0,10):
         story = dfs(node, depth)
         if story:
             return story

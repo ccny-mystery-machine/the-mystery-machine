@@ -2,6 +2,7 @@
 Defining the different goals we are checking for
 """
 
+from functools import partial
 
 def possible(node):
     return node.believability > 0
@@ -17,10 +18,13 @@ def death_occured(node):
             return True
     return False
 
+def story_length_greater_than(length, node):
+    return node.height > length
 
 GOALS = [
     possible,
     death_occured,
+    partial(story_length_greater_than, 4)
 ]
 
 

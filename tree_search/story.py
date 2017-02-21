@@ -34,4 +34,5 @@ class Story:
         story_text = ""
         for method in self.methods_list:
             story_text += method.sentence
+            story_text += '\n'
         return story_text

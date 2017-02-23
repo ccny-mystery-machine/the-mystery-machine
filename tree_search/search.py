@@ -41,3 +41,32 @@ def idfs(node, goal):
         story = dfs(node, depth)
         if story:
             return story
+
+def uct_selection(node):
+    # Fill in later
+    return None
+
+
+def rollout_story(node):
+    # Fill In later
+    return None
+
+def backpropogate(node, value):
+    # Fill In later
+    return None
+
+def most_visited_child(node):
+    # Fill In later
+    return None
+
+
+def mcts(node, max_iter, max_numsim):
+    for _ in range(max_iter):
+        for numsim in range(max_numsim):
+            chosen_node = uct_selection(node)
+            sim_value = rollout_story(chosen_node)
+            backpropogate(chosen_node, sim_value)
+        exp_node = most_visited_child(node) 
+        delete_children(node, exp_node)
+        node = exp_node
+    return Story(node)

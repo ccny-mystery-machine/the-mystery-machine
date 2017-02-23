@@ -33,3 +33,11 @@ def goals_satisfied(node, goals):
         if not goal(node):
             return False
     return True
+
+def percent_goals_satisfied(node, goals):
+    count = 0
+    for goal in goals:
+        if goal(node):
+            count += 1
+    return count / len(goals)
+

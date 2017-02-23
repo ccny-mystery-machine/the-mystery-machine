@@ -15,6 +15,8 @@ class TreeNode:
         self.edges = []
         self.height = 0
         self.believability = 1
+        self.value = 0 
+        self.visits = 0
 
         # stores indices of all possible actions
         self.possible_methods = list(range(0, len(POSSIBLE_METHODS)))
@@ -49,7 +51,7 @@ def expand_edge(node):
         new_edge = TreeEdge(new_method)
         new_edge(node)
         node.edges.append(new_edge)
-        return True
+        return new_edge
 
     return False
 

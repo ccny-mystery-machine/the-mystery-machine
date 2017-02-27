@@ -5,7 +5,7 @@ from math import exp
 
 from setup import State, ACTORS, PLACES, ITEMS
 from tree import TreeNode, TreeEdge, expand_edge 
-from search import select_func, best_child, uct_selection, update_node_value, backpropogate
+from search import select_func, best_child, uct_selection, update_node_value, backpropogate, most_visited_child
 
 class TestSearch:
     """
@@ -103,4 +103,22 @@ class TestSearch:
         assert edge1.next_node.value == 6
         assert root_node.value == 6
         assert edge4.next_node.value == 8
+
+    def test_most_visited_child(self):
+        """
+        Test the Most Visited Child function
+        """
+        root_state = State(ACTORS, PLACES, ITEMS)
+        root_node = TreeNode(root_state)
+        edge1 = expand_edge(root_node)
+        edge2 = expand_edge(root_node)
+        edge3 = expand_edge(root_node)
+        edge4 = expand_edge(root_node)
+        edge1.next_node.visits = 3
+        edge2.next_node.visits = 4
+        edge3.next_node.visits = 5
+        edge4.next_node.visits = 4
+
+        assert most_visited_child(root_node) == edge3.next_node
+
 

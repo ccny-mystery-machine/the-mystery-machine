@@ -68,13 +68,13 @@ def best_child(node, C):
             best_score = curr_score
     return best_node
      
-def uct_selection(node):
+def uct_selection(node, C):
     while node.believability > 0:
         new_edge = expand_edge(node)
         if new_edge:
             return new_edge.next_node
         else:
-           node = best_child(node, 1)
+           node = best_child(node, C)
     return node
 
 def rollout_story(node, max_simlength):

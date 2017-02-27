@@ -11,5 +11,6 @@ from methods import POSSIBLE_METHODS
 if __name__ == "__main__":
     root_state = State(ACTORS, PLACES, ITEMS)
     root_node = TreeNode(root_state)
-    found_story = mcts(root_node, 5, 100, 10)
+    found_story = idfs(root_node, goals_satisfied)
+    #found_story = mcts(root_node, 5, 100, 10)
     print(found_story)

@@ -5,7 +5,7 @@ from math import exp
 
 from setup import State, ACTORS, PLACES, ITEMS
 from tree import TreeNode, TreeEdge, expand_edge 
-from search import select_func, best_child
+from search import select_func, best_child, uct_selection
 
 class TestSearch:
     """
@@ -51,5 +51,18 @@ class TestSearch:
 
         assert best_child(root_node, 1) == edge2.next_node
 
+    def test_uct_selection(self):
+        """
+        Test UCT selection
+        """
+        root_state = State(ACTORS, PLACES, ITEMS)
+        root_node = TreeNode(root_state)
+        l = len(root_node.possible_methods)
+        test_node = uct_selection(root_node, 1)
+        for r in range(l-1):
+            uct_selection(root_node, 1)
+        
+        assert uct_selection(root_node, 1) == test_node
+            
 
        

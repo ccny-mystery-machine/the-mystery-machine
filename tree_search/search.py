@@ -46,6 +46,15 @@ def idfs(node, goal):
 
 def select_func(node, C):
     parent = node.parent_edge.prev_node
+    if (node.visits == 0 and parent.visits == 0):
+        return 0
+    if (node.visits == 0):
+        if (C < 0):
+            return float("-inf")
+        elif (C > 0): 
+            return float("inf")
+        else:
+            return 0
     return node.value + C*sqrt(2*log(parent.visits)/node.visits)
 
 def best_child(node, C):

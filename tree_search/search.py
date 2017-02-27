@@ -106,7 +106,9 @@ def backpropogate(node, value):
     while node.parent_edge:
         node.visits += 1
         update_node_value(node, value)
-        node = node.parent_edge.prev_node  
+        node = node.parent_edge.prev_node 
+    node.visits += 1
+    update_node_value(node, value)
 
 def most_visited_child(node): 
     best_node = node.edges[0].next_node        

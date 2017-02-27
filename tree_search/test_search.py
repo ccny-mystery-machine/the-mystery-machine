@@ -5,7 +5,7 @@ from math import exp
 
 from setup import State, ACTORS, PLACES, ITEMS
 from tree import TreeNode, TreeEdge, expand_edge 
-from search import select_func, best_child, uct_selection, update_node_value
+from search import select_func, best_child, uct_selection, update_node_value, backpropogate
 
 class TestSearch:
     """
@@ -80,4 +80,27 @@ class TestSearch:
             root_node.visits += 1
             update_node_value(root_node, r) 
             assert root_node.value == temp2/temp1
+
+    def test_backpropogate(self):
+        """
+        Test Backpropogation
+        """
+        root_state = State(ACTORS, PLACES, ITEMS)
+        root_node = TreeNode(root_state)
+        edge1 = expand_edge(root_node)
+        edge2 = expand_edge(edge1.next_node)
+        edge3 = expand_edge(edge2.next_node)
+        edge4 = expand_edge(edge2.next_node)
+        backpropogate(edge3.next_node, 4)
+        assert edge3.next_node.value == 4
+        assert edge2.next_node.value == 4
+        assert edge1.next_node.value == 4
+        assert root_node.value == 4
+        assert edge4.next_node.value == 0
+        backpropogate(edge4.next_node, 8)
+        assert edge3.next_node.value == 4
+        assert edge2.next_node.value == 6
+        assert edge1.next_node.value == 6
+        assert root_node.value == 6
+        assert edge4.next_node.value == 8
 

@@ -77,18 +77,25 @@ def uct_selection(node, C):
            node = best_child(node, C)
     return node
 
+def rollout_policy_1(node):
+    expand_all_edges(node)
+    node.edges = [edge for edge in node.edges if edge.method.believability > 0]
+    ridx = randint(0, len(node.edges) - 1)
+    node.edges = [node.edges[ridx]]
+    return node.edges[0].next_node
+
 def rollout_story(node, max_simlength):
     root = TreeNode(node.state)
     curr_node = root
     numsims = 0
     while (numsims < max_simlength or goals_satisfied(curr_node, GOALS)):
-        expand_all_edges(curr_node)
-        curr_node.edges = [edge for edge in curr_node.edges if edge.method.believability > 0] 
-        ridx = randint(0, len(curr_node.edges) - 1)
-        curr_node.edges = [curr_node.edges[ridx]]
-        curr_node = curr_node.edges[0].next_node    
+        curr_node = rollout_policy_1(curr_node)    
+        #print( curr_node.believability )
         numsims += 1
     value = curr_node.believability * percent_goals_satisfied(curr_node, GOALS)
+    #print(  percent_goals_satisfied(curr_node, GOALS) )
+    #print( value )
+    #return Story(curr_node)
     return value
 
 def update_node_value(node, value):

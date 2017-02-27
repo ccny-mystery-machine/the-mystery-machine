@@ -5,7 +5,7 @@ from math import exp
 
 from setup import State, ACTORS, PLACES, ITEMS
 from tree import TreeNode, TreeEdge, expand_edge 
-from search import select_func, best_child, uct_selection
+from search import select_func, best_child, uct_selection, update_node_value
 
 class TestSearch:
     """
@@ -63,6 +63,21 @@ class TestSearch:
             uct_selection(root_node, 1)
         
         assert uct_selection(root_node, 1) == test_node
-            
 
-       
+    def test_update_node_value(self):
+        """
+        Test Updating of Node Value
+        """
+        root_state = State(ACTORS, PLACES, ITEMS)
+        root_node = TreeNode(root_state)
+        root_node.value = 0
+        root_node.visits = 0
+        temp1 = 0
+        temp2 = 0
+        for r in range(10):
+            temp1 += 1
+            temp2 += r
+            root_node.visits += 1
+            update_node_value(root_node, r) 
+            assert root_node.value == temp2/temp1
+

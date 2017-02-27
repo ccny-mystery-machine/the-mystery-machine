@@ -3,7 +3,7 @@ Implementation of various search methods for story generation
 """
 
 from queue import Queue
-from math import log
+from math import log, sqrt
 from random import randint
 
 from goals import GOALS, goals_satisfied, percent_goals_satisfied 

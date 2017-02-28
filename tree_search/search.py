@@ -6,6 +6,7 @@ from queue import Queue
 from math import log, sqrt
 from random import randint
 
+from methods import POSSIBLE_METHODS
 from goals import GOALS, goals_satisfied, percent_goals_satisfied 
 from tree import TreeNode, expand_edge, expand_all_edges
 from story import Story
@@ -140,4 +141,4 @@ def mcts(node, max_iter, max_numsim, max_simlength, C, thres):
         delete_children(node, exp_node)
         node = exp_node
     print("\n")
-    return Story(node)
+    return (node.believability, Story(node))

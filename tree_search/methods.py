@@ -70,12 +70,12 @@ def move(actor_key, place_key, state):
         believability = METHOD_CONSTANTS[ "MOVE_IF_DEAD" ]
         return (sentence, believability)
 
-    actor["place"] = place
    
     if (actor["place"]["name"] == place["name"]):
         believability = METHOD_CONSTANTS[ "MOVE_IF_SAME_PLACE" ]
         return (sentence, believability)
 
+    actor["place"] = place
 
     believability = METHOD_CONSTANTS[ "MOVE_IF_DIFFERENT_PLACE" ]
     return (sentence, believability)
@@ -176,7 +176,6 @@ def kill(actor_a_key, actor_b_key, state):
     sentence = actor_a["name"] + " killed " + actor_b["name"] + ". "
     
     if (actor_a["health"] <= 0 or actor_b["health"] <= 0):
-        print("yo")
         believability = METHOD_CONSTANTS[ "KILL_IF_DEAD" ]
         return (sentence, believability)
 

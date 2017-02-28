@@ -1,0 +1,56 @@
+Master Iteration Number - 0
+Simulation Number - 0
+Charlie killed Bob. 
+0
+Charlie killed Alice. 
+0
+Bob killed Charlie. 
+0
+Bob killed Alice. 
+0
+Alice killed Charlie. 
+0
+Alice killed Bob. 
+0
+Charlie played with Bob. 
+0
+Charlie played with Alice. 
+0
+Bob played with Charlie. 
+0
+Bob played with Alice. 
+0
+Alice played with Charlie. 
+0
+Alice played with Bob. 
+0
+Charlie stole vase from Bob. 
+0
+Charlie stole gun from Alice. 
+0
+Bob stole baseball bat from Charlie. 
+0
+Bob stole gun from Alice. 
+0
+Alice stole baseball bat from Charlie. 
+0
+Alice stole vase from Bob. 
+0
+Charlie went to Charlie's house. 
+0
+Charlie went to Bob's house. 
+0
+Charlie went to Alice's house. 
+0
+Bob went to Charlie's house. 
+0
+Bob went to Bob's house. 
+0
+Bob went to Alice's house. 
+0
+Alice went to Charlie's house. 
+0
+Alice went to Bob's house. 
+0
+Alice went to Alice's house. 
+0

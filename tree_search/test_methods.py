@@ -27,7 +27,28 @@ class TestMove:
         METHODS["MOVE"]("ALICE", "BOBS_HOUSE",test_state)
 
         assert test_state.actors["ALICE"]["place"]["name"] == PLACES["BOBS_HOUSE"]["name"]
+      
+    def test_move_work_believability(self):
+        """
+        Tests if actor's move believability is 1 if the move is good
+        """
+        ACTORS = {
+            "ALICE": {
+                "name": "Alice",
+                "home": PLACES["ALICES_HOUSE"],
+                "place": PLACES["ALICES_HOUSE"],
+                "health": 10,
+                "items": [ITEMS["GUN"]],
+                "anger": {},
+            },
+        }
 
+        test_state = State(ACTORS,PLACES,ITEMS)
+        sent, bel = METHODS["MOVE"]("ALICE", "BOBS_HOUSE",test_state)
+
+        assert bel == 1
+      
+        
     def test_move_to_same_place(self):
         """
         Tests if believability is 0 when moving to same location

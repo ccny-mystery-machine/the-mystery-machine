@@ -21,4 +21,4 @@ if __name__ == "__main__":
     #print_rollout()
     root_state = State(ACTORS, PLACES, ITEMS)
     root_node = TreeNode(root_state)
-    print( mcts(root_node, 5, 1, 100, 10) )
+    print( mcts(root_node, 50, 1, 100, 10) )

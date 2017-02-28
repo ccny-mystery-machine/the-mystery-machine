@@ -68,13 +68,13 @@ def best_child(node, C):
             best_score = curr_score
     return best_node
      
-def uct_selection(node, C):
-    while node.believability > 0:
+def uct_selection(node, C, thres):
+    while node.believability > 0 and node.visits > thres:
         new_edge = expand_edge(node)
         if new_edge:
             return new_edge.next_node
         else:
-           node = best_child(node, C)
+            node = best_child(node, C)
     return node
 
 def rollout_policy_1(node):
@@ -120,15 +120,14 @@ def most_visited_child(node):
     return best_node
 
 def delete_children(node, chosen):
-
     node.edges = [chosen.parent_edge]
 
-def mcts(node, max_iter, C, max_numsim, max_simlength):
+def mcts(node, max_iter, max_numsim, max_simlength, C, thres):
     for count in range(max_iter):
         print( "Master Iteration Number - " + str(count))
         for numsim in range(max_numsim):
             print( "Simulation Number - " + str(numsim))
-            chosen_node = uct_selection(node, C)
+            chosen_node = uct_selection(node, C, thres)
             if chosen_node.believability == 0:
                 chosen_node.visits += 1
                 chosen_node.value = 0

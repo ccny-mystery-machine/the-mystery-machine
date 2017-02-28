@@ -418,7 +418,7 @@ class TestKill:
 
     def test_kill_believability_one(self):
         """
-        Tests kill believability
+        Tests kill believability when no anger
         """
         ACTORS = {
             "ALICE": {
@@ -441,11 +441,11 @@ class TestKill:
 
         test_state = State(ACTORS,PLACES,ITEMS)
         sentence, believability = METHODS["KILL"]("ALICE", "BOB", test_state)
-        assert believability == 0
+        assert believability == 0.1
 
     def test_kill_believability_two(self):
         """
-        Tests kill believability
+        Tests kill believability when angry
         """
         ACTORS = {
             "ALICE": {
@@ -468,7 +468,7 @@ class TestKill:
 
         test_state = State(ACTORS,PLACES,ITEMS)
         sentence, believability = METHODS["KILL"]("ALICE", "BOB", test_state)
-        assert believability == 1
+        assert believability == 0.9
 
     def test_kill_believability_three(self):
         """
@@ -495,7 +495,7 @@ class TestKill:
 
         test_state = State(ACTORS,PLACES,ITEMS)
         sentence, believability = METHODS["KILL"]("ALICE", "BOB", test_state)
-        assert believability == 0
+        assert believability == 0.1
 
 
     def test_kill_when_different_locations(self):

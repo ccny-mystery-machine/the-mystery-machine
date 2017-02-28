@@ -58,11 +58,11 @@ class TestSearch:
         root_state = State(ACTORS, PLACES, ITEMS)
         root_node = TreeNode(root_state)
         l = len(root_node.possible_methods)
-        test_node = uct_selection(root_node, 1)
+        test_node = uct_selection(root_node, 1, 0)
         for r in range(l-1):
-            uct_selection(root_node, 1)
+            uct_selection(root_node, 1, 0)
         
-        assert uct_selection(root_node, 1) == test_node
+        assert uct_selection(root_node, 1, 0) == test_node
 
     def test_update_node_value(self):
         """

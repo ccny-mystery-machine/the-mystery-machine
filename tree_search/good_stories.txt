@@ -1,0 +1,21 @@
+List of Good Stories
+
+1 - mcts(5, 100, 10, 1, 1) 
+
+Bob went to Charlie's house.
+Charlie stole vase from Bob.
+Bob killed Charlie.
+Bob stole baseball bat from Charlie.
+Bob stole vase from Charlie.
+
+2 - mcts(7, 1000, 10, 1, 50)
+
+Charlie went to Bob's house. 
+Charlie killed Bob. 
+Charlie stole vase from Bob.
+Charlie went to Alice's house.
+Charlie killed Alice.
+Charlie stole gun from Alice.
+Charlie went to Charlie's house.
+
+Believability - 0.0054

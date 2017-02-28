@@ -9,6 +9,31 @@ from functools import partial
 
 from setup import ACTORS, PLACES, ITEMS
 
+
+METHOD_CONSTANTS = {
+    "MOVE_IF_SAME_PLACE": 0,
+    "MOVE_IF_DEAD": 0,
+    "MOVE_IF_DIFFERENT_PLACE": 1,
+    
+    "STEAL_IF_DEAD": 0,
+    "STEAL_IF_YOURSELF": 0,
+    "STEAL_IF_DIFFERENT_PLACE": 0,
+    "STEAL_ANGER_INC": 3, 
+        
+    "PLAY_IF_DEAD": 0,
+    "PLAY_IF_DIFFERENT_PLACE": 0,
+    "PLAY_IF_NORMAL": 1,
+    "PLAY_ANGER_DEC": 5,
+    
+    "KILL_NOT_ANGRY": 0.1,
+    "KILL_ANGER_THRES": 0,
+    "KILL_ANGRY": 0.9,
+    "KILL_IF_DEAD": 0,
+    "KILL_IF_DIFFERENT_PLACE": 0,
+    
+}
+
+
 class Method:
     """
     Actions in the story - Edges in the tree
@@ -38,17 +63,21 @@ def move(actor_key, place_key, state):
 
     actor = state.actors[actor_key]
     place = state.places[place_key]
+   
+    sentence = actor["name"] + " went to " + place["name"] + ". "
 
-    if (actor["health"] <= 0 or
-            actor["place"]["name"] == place["name"]):
-        sentence = "Nonsense sentence. "
-        believability = 0
+    if (actor["health"] <= 0):
+        believability = METHOD_CONSTANTS[ "MOVE_IF_DEAD" ]
+        return (sentence, believability)
+
+   
+    if (actor["place"]["name"] == place["name"]):
+        believability = METHOD_CONSTANTS[ "MOVE_IF_SAME_PLACE" ]
         return (sentence, believability)
 
     actor["place"] = place
 
-    sentence = actor["name"] + " went to " + place["name"] + ". "
-    believability = 1
+    believability = METHOD_CONSTANTS[ "MOVE_IF_DIFFERENT_PLACE" ]
     return (sentence, believability)
 
 
@@ -63,12 +92,9 @@ def steal(actor_a_key, actor_b_key, state):
 
     actor_a = state.actors[actor_a_key]
     actor_b = state.actors[actor_b_key]
-
-    if (actor_a["health"] <= 0 or
-            actor_a["name"] == actor_b["name"] or
-            actor_a["place"] != actor_b["place"] or
-            len(actor_b["items"]) == 0):
-        sentence = "Nonsense sentence. "
+ 
+    if (len(actor_b["items"]) == 0): 
+        sentence = "Nonsense Sentence. "
         believability = 0
         return (sentence, believability)
 
@@ -76,12 +102,24 @@ def steal(actor_a_key, actor_b_key, state):
     actor_b_item = actor_b["items"].pop(rand_idx)
     actor_a["items"].append(actor_b_item)
     if actor_a_key in actor_b["anger"]:
-        actor_b["anger"][actor_a_key] += 3
+        actor_b["anger"][actor_a_key] += METHOD_CONSTANTS[ "STEAL_ANGER_INC" ]
     else:
-        actor_b["anger"][actor_a_key] = 3
+        actor_b["anger"][actor_a_key] = METHOD_CONSTANTS[ "STEAL_ANGER_INC" ]
 
     sentence = (actor_a["name"] + " stole " + actor_b_item["name"] + " from " +
                 actor_b["name"] + ". ")
+    
+    if (actor_a["health"] <= 0): 
+        believability = METHOD_CONSTANTS[ "STEAL_IF_DEAD" ]
+        return (sentence, believability)
+    if (actor_a["name"] == actor_b["name"]): 
+        believability = METHOD_CONSTANTS[ "STEAL_IF_YOURSELF" ]
+        return (sentence, believability)
+    if (actor_a["place"] != actor_b["place"]):
+        believability = METHOD_CONSTANTS[ "STEAL_IF_DIFFERENT_PLACE" ]
+        return (sentence, believability)
+   
+    
     believability = actor_b_item["value"]
     return (sentence, believability)
 
@@ -96,26 +134,31 @@ def play(actor_a_key, actor_b_key, state):
     actor_a = state.actors[actor_a_key]
     actor_b = state.actors[actor_b_key]
 
-    if (actor_a["place"] != actor_b["place"] or
-            actor_a["health"] <= 0 or
-            actor_b["health"] <= 0 or
-            actor_a["name"] == actor_b["name"]):
+    sentence = actor_a["name"] + " played with " + actor_b["name"] + ". "
+    
+    if (actor_a["health"] <= 0 or actor_b["health"] <= 0):
+        believability = METHOD_CONSTANTS[ "PLAY_IF_DEAD" ]
+        return (sentence, believability)           
+
+    if actor_b_key in actor_a["anger"]:
+        actor_a["anger"][actor_b_key] -= METHOD_CONSTANTS[ "PLAY_ANGER_DEC" ]
+    else:
+        actor_a["anger"][actor_b_key] = -METHOD_CONSTANTS[ "PLAY_ANGER_DEC" ]
+
+    if actor_a_key in actor_b["anger"]:
+        actor_b["anger"][actor_a_key] -= METHOD_CONSTANTS[ "PLAY_ANGER_DEC" ]
+    else:
+        actor_b["anger"][actor_a_key] = -METHOD_CONSTANTS[ "PLAY_ANGER_DEC" ]
+    
+    if (actor_a["place"] != actor_b["place"]):
+        believability = METHOD_CONSTANTS[ "PLAY_IF_DIFFERENT_PLACE" ]
+        return (sentence, believability)           
+    if (actor_a["name"] == actor_b["name"]):
         sentence = "Nonsense sentence. "
         believability = 0
         return (sentence, believability)
 
-    if actor_b_key in actor_a["anger"]:
-        actor_a["anger"][actor_b_key] -= 5
-    else:
-        actor_a["anger"][actor_b_key] = -5
-
-    if actor_a_key in actor_b["anger"]:
-        actor_b["anger"][actor_a_key] -= 5
-    else:
-        actor_b["anger"][actor_a_key] = -5
-
-    sentence = actor_a["name"] + " played with " + actor_b["name"] + ". "
-    believability = 1
+    believability = METHOD_CONSTANTS[ "PLAY_IF_NORMAL" ]
     return (sentence, believability)
 
 
@@ -130,24 +173,29 @@ def kill(actor_a_key, actor_b_key, state):
     actor_a = state.actors[actor_a_key]
     actor_b = state.actors[actor_b_key]
 
-    if (actor_a["health"] <= 0 or
-            actor_b["health"] <= 0 or
-            actor_a["place"] != actor_b["place"] or
-            actor_a["name"] == actor_b["name"]):
+    sentence = actor_a["name"] + " killed " + actor_b["name"] + ". "
+    
+    if (actor_a["health"] <= 0 or actor_b["health"] <= 0):
+        believability = METHOD_CONSTANTS[ "KILL_IF_DEAD" ]
+        return (sentence, believability)
+
+    actor_b["health"] = 0
+    
+    if (actor_a["place"] != actor_b["place"]):
+        believability = METHOD_CONSTANTS[ "KILL_IF_DIFFERENT_PLACE" ] 
+        return (sentence, believability)
+    if (actor_a["name"] == actor_b["name"]):
         sentence = "Nonsense sentence. "
         believability = 0
         return (sentence, believability)
 
-    actor_b["health"] = 0
     # if anger exists, then we have higher believability
-    if actor_b_key in actor_a["anger"] and actor_a["anger"][actor_b_key] > 0:
-        sentence = actor_a["name"] + " killed " + actor_b["name"] + ". "
-        believability = 1
+    if (actor_b_key in actor_a["anger"] and actor_a["anger"][actor_b_key] > METHOD_CONSTANTS[ "KILL_ANGER_THRES" ]):
+        believability = METHOD_CONSTANTS[ "KILL_ANGRY"  ]
         return (sentence, believability)
 
     # potential of random murder
-    sentence = actor_a["name"] + " killed " + actor_b["name"] + ". "
-    believability = 0
+    believability = METHOD_CONSTANTS[ "KILL_NOT_ANGRY" ]
     return (sentence, believability)
 
 METHODS = {

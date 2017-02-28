@@ -27,7 +27,28 @@ class TestMove:
         METHODS["MOVE"]("ALICE", "BOBS_HOUSE",test_state)
 
         assert test_state.actors["ALICE"]["place"]["name"] == PLACES["BOBS_HOUSE"]["name"]
+      
+    def test_move_work_believability(self):
+        """
+        Tests if actor's move believability is 1 if the move is good
+        """
+        ACTORS = {
+            "ALICE": {
+                "name": "Alice",
+                "home": PLACES["ALICES_HOUSE"],
+                "place": PLACES["ALICES_HOUSE"],
+                "health": 10,
+                "items": [ITEMS["GUN"]],
+                "anger": {},
+            },
+        }
 
+        test_state = State(ACTORS,PLACES,ITEMS)
+        sent, bel = METHODS["MOVE"]("ALICE", "BOBS_HOUSE",test_state)
+
+        assert bel == 1
+      
+        
     def test_move_to_same_place(self):
         """
         Tests if believability is 0 when moving to same location
@@ -418,7 +439,7 @@ class TestKill:
 
     def test_kill_believability_one(self):
         """
-        Tests kill believability
+        Tests kill believability when no anger
         """
         ACTORS = {
             "ALICE": {
@@ -441,11 +462,11 @@ class TestKill:
 
         test_state = State(ACTORS,PLACES,ITEMS)
         sentence, believability = METHODS["KILL"]("ALICE", "BOB", test_state)
-        assert believability == 0
+        assert believability == 0.1
 
     def test_kill_believability_two(self):
         """
-        Tests kill believability
+        Tests kill believability when angry
         """
         ACTORS = {
             "ALICE": {
@@ -468,7 +489,7 @@ class TestKill:
 
         test_state = State(ACTORS,PLACES,ITEMS)
         sentence, believability = METHODS["KILL"]("ALICE", "BOB", test_state)
-        assert believability == 1
+        assert believability == 0.9
 
     def test_kill_believability_three(self):
         """
@@ -495,7 +516,7 @@ class TestKill:
 
         test_state = State(ACTORS,PLACES,ITEMS)
         sentence, believability = METHODS["KILL"]("ALICE", "BOB", test_state)
-        assert believability == 0
+        assert believability == 0.1
 
 
     def test_kill_when_different_locations(self):

@@ -15,10 +15,10 @@ METHOD_CONSTANTS = {
     "MOVE_IF_DEAD": 0,
     "MOVE_IF_DIFFERENT_PLACE": 1,
     
-    "STEAL_IF_DEAD": 0,
-    "STEAL_IF_YOURSELF": 0,
-    "STEAL_IF_DIFFERENT_PLACE": 0,
-    "STEAL_ANGER_INC": 3, 
+    "MUG_IF_DEAD": 0,
+    "MUG_IF_YOURSELF": 0,
+    "MUG_IF_DIFFERENT_PLACE": 0,
+    "MUG_ANGER_INC": 3, 
         
     "PLAY_IF_DEAD": 0,
     "PLAY_IF_DIFFERENT_PLACE": 0,
@@ -81,9 +81,9 @@ def move(actor_key, place_key, state):
     return (sentence, believability)
 
 
-def steal(actor_a_key, actor_b_key, state):
+def mug(actor_a_key, actor_b_key, state):
     """
-    description: actor_a steals an item from actor_b
+    description: actor_a mugs an item from actor_b
     precondition: actor_a must be alive, actor_b must
         have items that can be stolen
     postcondition: actor_b loses a random item and actor_a gains it, actor_b
@@ -102,21 +102,21 @@ def steal(actor_a_key, actor_b_key, state):
     actor_b_item = actor_b["items"].pop(rand_idx)
     actor_a["items"].append(actor_b_item)
     if actor_a_key in actor_b["anger"]:
-        actor_b["anger"][actor_a_key] += METHOD_CONSTANTS[ "STEAL_ANGER_INC" ]
+        actor_b["anger"][actor_a_key] += METHOD_CONSTANTS[ "MUG_ANGER_INC" ]
     else:
-        actor_b["anger"][actor_a_key] = METHOD_CONSTANTS[ "STEAL_ANGER_INC" ]
+        actor_b["anger"][actor_a_key] = METHOD_CONSTANTS[ "MUG_ANGER_INC" ]
 
     sentence = (actor_a["name"] + " stole " + actor_b_item["name"] + " from " +
                 actor_b["name"] + ". ")
     
     if (actor_a["health"] <= 0): 
-        believability = METHOD_CONSTANTS[ "STEAL_IF_DEAD" ]
+        believability = METHOD_CONSTANTS[ "MUG_IF_DEAD" ]
         return (sentence, believability)
     if (actor_a["name"] == actor_b["name"]): 
-        believability = METHOD_CONSTANTS[ "STEAL_IF_YOURSELF" ]
+        believability = METHOD_CONSTANTS[ "MUG_IF_YOURSELF" ]
         return (sentence, believability)
     if (actor_a["place"] != actor_b["place"]):
-        believability = METHOD_CONSTANTS[ "STEAL_IF_DIFFERENT_PLACE" ]
+        believability = METHOD_CONSTANTS[ "MUG_IF_DIFFERENT_PLACE" ]
         return (sentence, believability)
    
     
@@ -200,7 +200,7 @@ def kill(actor_a_key, actor_b_key, state):
 
 METHODS = {
     "MOVE": move,
-    "STEAL": steal,
+    "MUG": mug,
     "PLAY": play,
     "KILL": kill,
 }
@@ -214,12 +214,12 @@ for key_a in ACTORS:
             partial(move, key_a, key_p)
         )
 
-# STEAL - actor, actor
+# MUG - actor, actor
 for key_a in ACTORS:
     for key_b in ACTORS:
         if key_a != key_b:
             POSSIBLE_METHODS.append(
-                partial(steal, key_a, key_b)
+                partial(mug, key_a, key_b)
             )
 
 # PLAY - actor, actor

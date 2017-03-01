@@ -19,3 +19,15 @@ Charlie stole gun from Alice.
 Charlie went to Charlie's house.
 
 Believability - 0.0054
+
+3 - mcts(7, 1000, 10, 1, 50)
+
+Bob went to Charlie's house. 
+Charlie killed Bob. 
+Charlie stole vase from Bob. 
+Alice went to Charlie's house. 
+Charlie killed Alice. 
+Charlie stole gun from Alice. 
+Charlie went to Bob's house. 
+
+0.0054

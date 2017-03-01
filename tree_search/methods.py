@@ -20,10 +20,10 @@ METHOD_CONSTANTS = {
     "MUG_IF_DIFFERENT_PLACE": 0,
     "MUG_ANGER_INC": 3, 
         
-    "PLAY_IF_DEAD": 0,
-    "PLAY_IF_DIFFERENT_PLACE": 0,
-    "PLAY_IF_NORMAL": 1,
-    "PLAY_ANGER_DEC": 5,
+    "TALK_IF_DEAD": 0,
+    "TALK_IF_DIFFERENT_PLACE": 0,
+    "TALK_IF_NORMAL": 1,
+    "TALK_ANGER_DEC": 5,
     
     "KILL_NOT_ANGRY": 0.1,
     "KILL_ANGER_THRES": 0,
@@ -124,9 +124,9 @@ def mug(actor_a_key, actor_b_key, state):
     return (sentence, believability)
 
 
-def play(actor_a_key, actor_b_key, state):
+def talk(actor_a_key, actor_b_key, state):
     """
-    description: actor_a plays with actor_b
+    description: actor_a talks with actor_b
     precondition: actor_a and actor_b must be alive and in the same location
     postcondition: actor_a and actor_b becomes less angry with eachother
     """
@@ -134,31 +134,31 @@ def play(actor_a_key, actor_b_key, state):
     actor_a = state.actors[actor_a_key]
     actor_b = state.actors[actor_b_key]
 
-    sentence = actor_a["name"] + " played with " + actor_b["name"] + ". "
+    sentence = actor_a["name"] + " talked with " + actor_b["name"] + ". "
     
     if (actor_a["health"] <= 0 or actor_b["health"] <= 0):
-        believability = METHOD_CONSTANTS[ "PLAY_IF_DEAD" ]
+        believability = METHOD_CONSTANTS[ "TALK_IF_DEAD" ]
         return (sentence, believability)           
 
     if actor_b_key in actor_a["anger"]:
-        actor_a["anger"][actor_b_key] -= METHOD_CONSTANTS[ "PLAY_ANGER_DEC" ]
+        actor_a["anger"][actor_b_key] -= METHOD_CONSTANTS[ "TALK_ANGER_DEC" ]
     else:
-        actor_a["anger"][actor_b_key] = -METHOD_CONSTANTS[ "PLAY_ANGER_DEC" ]
+        actor_a["anger"][actor_b_key] = -METHOD_CONSTANTS[ "TALK_ANGER_DEC" ]
 
     if actor_a_key in actor_b["anger"]:
-        actor_b["anger"][actor_a_key] -= METHOD_CONSTANTS[ "PLAY_ANGER_DEC" ]
+        actor_b["anger"][actor_a_key] -= METHOD_CONSTANTS[ "TALK_ANGER_DEC" ]
     else:
-        actor_b["anger"][actor_a_key] = -METHOD_CONSTANTS[ "PLAY_ANGER_DEC" ]
+        actor_b["anger"][actor_a_key] = -METHOD_CONSTANTS[ "TALK_ANGER_DEC" ]
     
     if (actor_a["place"] != actor_b["place"]):
-        believability = METHOD_CONSTANTS[ "PLAY_IF_DIFFERENT_PLACE" ]
+        believability = METHOD_CONSTANTS[ "TALK_IF_DIFFERENT_PLACE" ]
         return (sentence, believability)           
     if (actor_a["name"] == actor_b["name"]):
         sentence = "Nonsense sentence. "
         believability = 0
         return (sentence, believability)
 
-    believability = METHOD_CONSTANTS[ "PLAY_IF_NORMAL" ]
+    believability = METHOD_CONSTANTS[ "TALK_IF_NORMAL" ]
     return (sentence, believability)
 
 
@@ -201,7 +201,7 @@ def kill(actor_a_key, actor_b_key, state):
 METHODS = {
     "MOVE": move,
     "MUG": mug,
-    "PLAY": play,
+    "TALK": talk,
     "KILL": kill,
 }
 
@@ -222,12 +222,12 @@ for key_a in ACTORS:
                 partial(mug, key_a, key_b)
             )
 
-# PLAY - actor, actor
+# TALK - actor, actor
 for key_a in ACTORS:
     for key_b in ACTORS:
         if key_a != key_b:
             POSSIBLE_METHODS.append(
-                partial(play, key_a, key_b)
+                partial(talk, key_a, key_b)
             )
 
 # KILL - actor, actor

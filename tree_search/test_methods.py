@@ -92,7 +92,7 @@ class TestMove:
         assert believability == 0
 
 
-class TestSteal:
+class TestMug:
     """
     Test class for the mug method
     """
@@ -317,13 +317,13 @@ class TestSteal:
         assert test_state.actors["BOB"]["anger"]["ALICE"] == 2
 
 
-class TestPlay:
+class TestTalk:
     """
-    Test class for the play method
+    Test class for the talk method
     """
-    def test_play_works_when_empty(self):
+    def test_talk_works_when_empty(self):
         """
-        Tests if play creates new entries in the anger dictionary and assigns
+        Tests if talk creates new entries in the anger dictionary and assigns
         appropriate values
         """
         ACTORS = {
@@ -345,14 +345,14 @@ class TestPlay:
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
-        METHODS["PLAY"]("ALICE", "BOB", test_state)
+        METHODS["TALK"]("ALICE", "BOB", test_state)
 
         assert (test_state.actors["ALICE"]["anger"]["BOB"] == -5 and
                 test_state.actors["BOB"]["anger"]["ALICE"] == -5)
 
-    def test_play_works_with_values(self):
+    def test_talk_works_with_values(self):
         """
-        Tests if play assigns appropriate values when already in place
+        Tests if talk assigns appropriate values when already in place
         """
         ACTORS = {
             "ALICE": {
@@ -373,12 +373,12 @@ class TestPlay:
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
-        METHODS["PLAY"]("ALICE", "BOB", test_state)
+        METHODS["TALK"]("ALICE", "BOB", test_state)
 
         assert (test_state.actors["ALICE"]["anger"]["BOB"] == -2 and
                 test_state.actors["BOB"]["anger"]["ALICE"] == -6)
 
-    def test_play_when_different_locations(self):
+    def test_talk_when_different_locations(self):
         """
         Tests if believability is 0 when actors are in different locations
         """
@@ -401,7 +401,7 @@ class TestPlay:
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
-        sentence, believability = METHODS["PLAY"]("ALICE", "BOB", test_state)
+        sentence, believability = METHODS["TALK"]("ALICE", "BOB", test_state)
 
         assert believability == 0
 

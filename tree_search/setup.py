@@ -17,7 +17,7 @@ class State:
 
 def random_state(NAME_BANK):
     num_characters = randint(3, 5)
-    places = deepcopy(PLACES)
+    places = deepcopy(OUT_PLACES)
     actors = {}
     for _ in range(num_characters):
         ridx = randint(0,len(NAME_BANK)-1)
@@ -46,14 +46,12 @@ NAME_BANK = [
 ("Fred", "male"),
 ]
 
-#NAME_BANK = [
-    # NAME, name, HOUSE_NAME, house name, health, attractiveness, grief, gender
-    #("ALICE", "Alice", "ALICES_HOUSE", "Alice's house", 1, .5, 0, "her" ),
-    #("BOB", "Bob", "BOBS_HOUSE", "Bob's house", 1, .3, 0, "him"),
-    #("CASSANDRA", "Cassandra", "CASSANDRA_HOUSE", "Cassandra's house", 1, .4, 0, "her"),
-    #("DAVID", "David", "DAVIDS_HOUSE", "David's house", 1, .7, 0, "him"),
-    #("ED", "Ed", "EDS_HOUSE", "Ed's house", 1, .1, 0, "him"),
-#]
+RELATIONSHIPS = {
+    "ENEMY": "enemy",
+    "STRANGER": "stranger",
+    "FRIENDS": "friends",
+    "SIGNIFICANT_OTHER": "significant other",
+}
 
 ITEMS = {
     "GUN": {
@@ -88,51 +86,50 @@ ITEMS = {
     },
     "CANDLE": {
         "name": "candle",
-        "value": .6
-        "lethality": .3
+        "value": .6,
+        "lethality": .3,
     },
     "SEASHELL": {
-        "name": "seashell"
-        "value": .2
-        "lethality": .4
+        "name": "seashell",
+        "value": .2,
+        "lethality": .4,
     }
 }
 
-PLACES = {
+OUT_PLACES = {
     "LIBRARY": {
-        "name": "Library",
+        "name": "library",
         "items": [ITEMS["PEN"], ]
     },
     "STREET": {
-        "name": "Street",
+        "name": "street",
         "items": [],
     },
     "PARK": {
-        "name": "Park",
+        "name": "park",
         "items": [ITEMS["TREE_BRANCH"]],
     },
     "STORE": {
-        "name": "Store",
+        "name": "store",
         "items": [ITEMS["GUN"], ITEMS["KNIFE"]],
     },
     "CHURCH": {
-        "name": "Church",
+        "name": "church",
         "items": [],
     },
     "BEACH": {
-        "name": "Beach",
+        "name": "beach",
         "items": [],
     },
     "ALLEYWAY": {
-        "name": "Alleyway",
+        "name": "alleyway",
         "items": [ITEMS["BASEBALL_BAT"]], 
     },
     "WAREHOUSE": {
-        "name": "Warehouse",
+        "name": "warehouse",
         "items": [ITEMS["VASE"],]
     }
 }
-
 
 ACTOR_TEMPLATE = {
     "name": None,
@@ -147,6 +144,20 @@ ACTOR_TEMPLATE = {
     "gender": None,
 }
 
+PLACES = {
+    "ALICES_HOUSE": {
+            "name": "Alice's house",
+            "items": [],
+        },
+    "BOBS_HOUSE": {
+            "name": "Bob's house",
+            "items": [],
+        },
+    "CHARLIES_HOUSE": { 
+            "name": "Charlie's house",
+            "items": [],
+        },
+}
 
 ACTORS = {
     "ALICE": {
@@ -155,9 +166,9 @@ ACTORS = {
         "place": PLACES["ALICES_HOUSE"],
         "health": 10,
         "items": [ITEMS["GUN"]],
-        "anger": {},  # dictionary of other actors to their anger value
-        "affection": {}, # dictionary of other actors to affection value, and relationship value
-        "attractiveness": 3, # 
+        "kill_desire": {},  
+        "affection": {}, 
+        "attractiveness": .5, 
         "grief": 0,
     },
     "BOB": {
@@ -166,7 +177,10 @@ ACTORS = {
         "place": PLACES["BOBS_HOUSE"],
         "health": 10,
         "items": [ITEMS["VASE"]],
-        "anger": {},
+        "kill_desire": {},
+        "affection": {},
+        "attractiveness": .9,
+        "grief": 0,
     },
     "CHARLIE": {
         "name": "Charlie",
@@ -174,6 +188,9 @@ ACTORS = {
         "place": PLACES["CHARLIES_HOUSE"],
         "health": 10,
         "items": [ITEMS["BASEBALL_BAT"]],
-        "anger": {},
+        "kill_desire": {},
+        "affection": {},
+        "attractiveness": .3,
+
     },
 }

@@ -7,8 +7,16 @@ from random import randint
 from copy import deepcopy
 from functools import partial
 
-from setup import ACTORS, PLACES, ITEMS
+from setup import ACTORS, PLACES, ITEMS, RELATIONSHIPS
 
+def rectadd(a, b):
+    ans = a+b
+    if ans > 1:
+        return 1
+    elif ans < -1:
+        return -1
+    else:
+        return ans
 
 METHOD_CONSTANTS = {
     "MOVE_IF_SAME_PLACE": 0,
@@ -18,22 +26,22 @@ METHOD_CONSTANTS = {
     "MUG_IF_DEAD": 0,
     "MUG_IF_YOURSELF": 0,
     "MUG_IF_DIFFERENT_PLACE": 0,
-    "MUG_ANGER_INC": 3, 
+    "MUG_KILL_DESIRE_INC": 0.15, 
     "MUG_AFFECTION": -1,   
 
     "TALK_IF_DEAD": 0,
     "TALK_IF_DIFFERENT_PLACE": 0,
     "TALK_IF_NORMAL": 1,
-    "TALK_ANGER_DEC": 5,
-    
+    "TALK_KILL_DESIRE_DEC": 5,
+    "TALK_AFFECTION_INC": 0.05,   
+
     "KILL_NOT_ANGRY": 0.1,
-    "KILL_ANGER_THRES": 0,
+    "KILL_DESIRE_THRES": 0,
     "KILL_ANGRY": 0.9,
     "KILL_IF_DEAD": 0,
     "KILL_IF_DIFFERENT_PLACE": 0,
     
 }
-
 
 class Method:
     """
@@ -103,14 +111,19 @@ def mug(actor_a_key, actor_b_key, state):
     actor_b_item = actor_b["items"].pop(rand_idx)
     actor_a["items"].append(actor_b_item)
     if actor_a_key in actor_b["kill_desire"]:
-        actor_b["kill_desire"][actor_a_key] += METHOD_CONSTANTS[ "MUG_ANGER_INC" ]
+        actor_b["kill_desire"][actor_a_key] = rectadd( actor_b["kill_desire"][actor_a_key],  METHOD_CONSTANTS[ "MUG_KILL_DESIRE_INC" ] )
     else:
-        actor_b["kill_desire"][actor_a_key] = METHOD_CONSTANTS[ "MUG_ANGER_INC" ]
-    
-    actor_b["affection"][actor_a_key] = METHOD_CONSTANTS[ "MUG_AFFECTION" ]
+        actor_b["kill_desire"][actor_a_key] = METHOD_CONSTANTS[ "MUG_KILL_DESIRE_INC" ]
+   
+    if actor_a_key in actor_b["affection"]:
+        actor_b["affection"][actor_a_key][0] = METHOD_CONSTANTS[ "MUG_AFFECTION" ]
+    else:
+        actor_b["affection"][actor_a_key] = ( METHOD_CONSTANTS[ "MUG_AFFECTION" ], RELATIONSHIPS[ "STRANGER" ] )
+
+    actor_b["grief"] = rectadd( actor_b["grief"], actor_b_item["value"] / 2 )
 
     sentence = (actor_a["name"] + " mugs " + actor_b["name"] + " and stole " +
-                actor_b_item["name"] + " from " + actor_b["gender"] + )
+                actor_b_item["name"] + ". ")
     
     if (actor_a["health"] <= 0): 
         believability = METHOD_CONSTANTS[ "MUG_IF_DEAD" ]
@@ -141,18 +154,29 @@ def talk(actor_a_key, actor_b_key, state):
     
     if (actor_a["health"] <= 0 or actor_b["health"] <= 0):
         believability = METHOD_CONSTANTS[ "TALK_IF_DEAD" ]
-        return (sentence, believability)           
+        return (sentence, believability) 
 
-    if actor_b_key in actor_a["anger"]:
-        actor_a["anger"][actor_b_key] -= METHOD_CONSTANTS[ "TALK_ANGER_DEC" ]
+    if actor_b_key in actor_a["kill_desire"]:
+        actor_a["kill_desire"][actor_b_key] = rectadd( actor_a["kill_desire"][actor_b_key], -METHOD_CONSTANTS[ "TALK_KILL_DESIRE_DEC" ] )
     else:
-        actor_a["anger"][actor_b_key] = -METHOD_CONSTANTS[ "TALK_ANGER_DEC" ]
+        actor_a["kill_desire"][actor_b_key] = -METHOD_CONSTANTS[ "TALK_KILL_DESIRE_DEC" ]
 
-    if actor_a_key in actor_b["anger"]:
-        actor_b["anger"][actor_a_key] -= METHOD_CONSTANTS[ "TALK_ANGER_DEC" ]
+    if actor_a_key in actor_b["kill_desire"]:
+        actor_b["kill_desire"][actor_a_key] = rectadd( actor_b["kill_desire"][actor_a_key], -METHOD_CONSTANTS[ "TALK_KILL_DESIRE_DEC" ] )
     else:
-        actor_b["anger"][actor_a_key] = -METHOD_CONSTANTS[ "TALK_ANGER_DEC" ]
+        actor_b["kill_desire"][actor_a_key] = -METHOD_CONSTANTS[ "TALK_KILL_DESIRE_DEC" ]
     
+    if actor_b_key in actor_a["affection"]:
+        actor_a["affection"][actor_b_key] = rectadd( actor_a["affection"][actor_b_key], -METHOD_CONSTANTS[ "TALK_AFFECTION_INC" ] )
+    else:
+        actor_a["affection"][actor_b_key] = METHOD_CONSTANTS[ "TALK_AFFECTION_INC" ]
+
+    if actor_a_key in actor_b["affection"]:
+        actor_b["affection"][actor_a_key] = rectadd( actor_b["affection"][actor_a_key], -METHOD_CONSTANTS[ "TALK_AFFECTION_INC" ] )
+    else:
+        actor_b["affection"][actor_a_key] = METHOD_CONSTANTS[ "TALK_AFFECTION_INC" ]
+    
+
     if (actor_a["place"] != actor_b["place"]):
         believability = METHOD_CONSTANTS[ "TALK_IF_DIFFERENT_PLACE" ]
         return (sentence, believability)           
@@ -169,7 +193,7 @@ def kill(actor_a_key, actor_b_key, state):
     """
     description: actor_a kills actor_b
     precondition: actor_a and actor_b must be alive and in the same location
-                  actor_a must have anger > 0 towards actor_b
+                  actor_a must have kill_desire > 0 towards actor_b
     postcondition: actor_b's health goes to 0
     """
 
@@ -192,8 +216,8 @@ def kill(actor_a_key, actor_b_key, state):
         believability = 0
         return (sentence, believability)
 
-    # if anger exists, then we have higher believability
-    if (actor_b_key in actor_a["anger"] and actor_a["anger"][actor_b_key] > METHOD_CONSTANTS[ "KILL_ANGER_THRES" ]):
+    # if kill_desire exists, then we have higher believability
+    if (actor_b_key in actor_a["kill_desire"] and actor_a["kill_desire"][actor_b_key] > METHOD_CONSTANTS[ "KILL_DESIRE_THRES" ]):
         believability = METHOD_CONSTANTS[ "KILL_ANGRY"  ]
         return (sentence, believability)
 

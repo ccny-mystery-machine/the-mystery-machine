@@ -1,34 +1,13 @@
 """
 Setup of the initial actors, places, items
 """
-from random import randint
+from random import random, randint
 from copy import deepcopy
 
 class State:
     """
     State of the Story - Nodes in the tree
-    """
-    def __init__(self):
-        num_characters = randint(3, 5)
-        self.places = deepcopy(OUT_PLACES)
-        for _ in range(num_characters):
-            ridx = randint(0,4)
-            names = NAME_BANK[ridx]
-            self.actors[names[0]] = deepcopy(ACTOR_TEMPLATE)
-            self.actors[names[0]]["name"] = names[1]
-            self.places[names[2]] = { "name": names[3], "items": [], }
-            self.actors[names[0]]["home"] = self.places[names[2]]
-            self.actors[names[0]]["place"] = self.places[names[2]]
-            self.actors[names[0]]["health"] = names[4]
-            self.actors[names[0]]["attractiveness"] = names[5]
-            self.actors[names[0]]["grief"] = names[6]
-        self.items = deepcopy(ITEMS)
-        self.places["LIBRARY"]["items"].append(self.items["PEN"]) 
-        self.places["STORE"]["items"].append(self.items["GUN"]) 
-        self.places["STORE"]["items"].append(self.items["KNIFE"]) 
-        self.places["PARK"]["items"].append(self.items["TREE_BRANCH"]) 
-        self.places["PARK"]["items"].append(self.items["BASEBALL_BAT"]) 
-        self.places["WAREHOUSE"]["items"].append(self.items["VASE"]) 
+    """   
     
     def __init__(self, actors, places, items):
         self.actors = deepcopy(actors)
@@ -36,13 +15,35 @@ class State:
         self.items = deepcopy(items)
 
 
+def random_state(NAME_BANK):
+    num_characters = randint(3, 5)
+    places = deepcopy(PLACES)
+    actors = {}
+    for _ in range(num_characters):
+        ridx = randint(0,len(NAME_BANK)-1)
+        name, gender = NAME_BANK[ridx]
+        up_name = name.upper()
+        up_place = up_name + "S_HOUSE"
+        place = name + "'s house"
+        actors[up_name] = deepcopy(ACTOR_TEMPLATE)
+        actor = actor[up_name]
+        actor["name"] = name
+        places[up_place] = { "name": place, "items": [], }
+        actor["home"] = places[up_place]
+        actor["place"] = places[up_place]
+        actor["health"] = 1
+        actor["attractiveness"] = random() 
+        actor["grief"] = 0
+    items = ITEMS
+    return State(actors, places, items)
+
 NAME_BANK = [
-("ALICE", "female"),
-("BOB", "male"),
-("CHARLIE", "male"),
-("DAPHNE", "female"),
-("EVE", "female"),
-("FRED", "male"),
+("Alice", "female"),
+("Bob", "male"),
+("Charlie", "male"),
+("Daphne", "female"),
+("Eve", "female"),
+("Fred", "male"),
 ]
 
 #NAME_BANK = [
@@ -63,7 +64,7 @@ ITEMS = {
     "VASE": {
         "name": "vase",
         "value": .9,
-        "lethality": .1,
+        "lethality": .6,
     },
     "BASEBALL_BAT": {
         "name": "baseball bat",
@@ -83,14 +84,24 @@ ITEMS = {
     "PEN": {
         "name": "pen",
         "value": .1,
-        "lethality": .4
+        "lethality": .6
     },
+    "CANDLE": {
+        "name": "candle",
+        "value": .6
+        "lethality": .3
+    },
+    "SEASHELL": {
+        "name": "seashell"
+        "value": .2
+        "lethality": .4
+    }
 }
 
-OUT_PLACES = {
+PLACES = {
     "LIBRARY": {
         "name": "Library",
-        "items": [],
+        "items": [ITEMS["PEN"], ]
     },
     "STREET": {
         "name": "Street",
@@ -98,11 +109,11 @@ OUT_PLACES = {
     },
     "PARK": {
         "name": "Park",
-        "items": [],
+        "items": [ITEMS["TREE_BRANCH"]],
     },
     "STORE": {
         "name": "Store",
-        "items": [],
+        "items": [ITEMS["GUN"], ITEMS["KNIFE"]],
     },
     "CHURCH": {
         "name": "Church",
@@ -114,16 +125,16 @@ OUT_PLACES = {
     },
     "ALLEYWAY": {
         "name": "Alleyway",
-        "items": [], 
+        "items": [ITEMS["BASEBALL_BAT"]], 
     },
     "WAREHOUSE": {
         "name": "Warehouse",
-        "items": [],
+        "items": [ITEMS["VASE"],]
     }
 }
 
 
-ACTOR_TEMPLATE: {
+ACTOR_TEMPLATE = {
     "name": None,
     "home": None,
     "place": None,
@@ -136,7 +147,7 @@ ACTOR_TEMPLATE: {
     "gender": None,
 }
 
-"""
+
 ACTORS = {
     "ALICE": {
         "name": "Alice",
@@ -166,4 +177,3 @@ ACTORS = {
         "anger": {},
     },
 }
-"""

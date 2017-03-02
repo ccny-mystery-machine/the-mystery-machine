@@ -19,7 +19,8 @@ METHOD_CONSTANTS = {
     "MUG_IF_YOURSELF": 0,
     "MUG_IF_DIFFERENT_PLACE": 0,
     "MUG_ANGER_INC": 3, 
-        
+    "MUG_AFFECTION": -1,   
+
     "TALK_IF_DEAD": 0,
     "TALK_IF_DIFFERENT_PLACE": 0,
     "TALK_IF_NORMAL": 1,
@@ -101,13 +102,15 @@ def mug(actor_a_key, actor_b_key, state):
     rand_idx = randint(0, len(actor_b["items"]) - 1)
     actor_b_item = actor_b["items"].pop(rand_idx)
     actor_a["items"].append(actor_b_item)
-    if actor_a_key in actor_b["anger"]:
-        actor_b["anger"][actor_a_key] += METHOD_CONSTANTS[ "MUG_ANGER_INC" ]
+    if actor_a_key in actor_b["kill_desire"]:
+        actor_b["kill_desire"][actor_a_key] += METHOD_CONSTANTS[ "MUG_ANGER_INC" ]
     else:
-        actor_b["anger"][actor_a_key] = METHOD_CONSTANTS[ "MUG_ANGER_INC" ]
+        actor_b["kill_desire"][actor_a_key] = METHOD_CONSTANTS[ "MUG_ANGER_INC" ]
+    
+    actor_b["affection"][actor_a_key] = METHOD_CONSTANTS[ "MUG_AFFECTION" ]
 
-    sentence = (actor_a["name"] + " stole " + actor_b_item["name"] + " from " +
-                actor_b["name"] + ". ")
+    sentence = (actor_a["name"] + " mugs " + actor_b["name"] + " and stole " +
+                actor_b_item["name"] + " from " + actor_b["gender"] + )
     
     if (actor_a["health"] <= 0): 
         believability = METHOD_CONSTANTS[ "MUG_IF_DEAD" ]

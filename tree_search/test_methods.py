@@ -92,13 +92,13 @@ class TestMove:
         assert believability == 0
 
 
-class TestSteal:
+class TestMug:
     """
-    Test class for the steal method
+    Test class for the mug method
     """
-    def test_steal_works(self):
+    def test_mug_works(self):
         """
-        Tests if steal successfully transfers items from actor_b to actor_a
+        Tests if mug successfully transfers items from actor_b to actor_a
         """
         ACTORS = {
             "ALICE": {
@@ -119,16 +119,16 @@ class TestSteal:
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
-        METHODS["STEAL"]("ALICE", "BOB", test_state)
+        METHODS["MUG"]("ALICE", "BOB", test_state)
         a_items = test_state.actors["ALICE"]["items"]
         b_items = test_state.actors["BOB"]["items"]
         assert (len(b_items) == 0 and
                 len(a_items) == 2 and
                 a_items[1] == ITEMS["VASE"])
 
-    def test_steal_adds_properly(self):
+    def test_mug_adds_properly(self):
         """
-        Tests if steal successfully transfers items from actor_b to actor_a
+        Tests if mug successfully transfers items from actor_b to actor_a
         """
         ACTORS = {
             "ALICE": {
@@ -149,12 +149,12 @@ class TestSteal:
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
-        METHODS["STEAL"]("ALICE", "BOB", test_state)
+        METHODS["MUG"]("ALICE", "BOB", test_state)
         assert test_state.actors["BOB"]["anger"]["ALICE"] == 3
 
-    def test_steal_believability_works(self):
+    def test_mug_believability_works(self):
         """
-        Tests if steal outputs proper believability
+        Tests if mug outputs proper believability
         """
         ACTORS = {
             "ALICE": {
@@ -175,12 +175,12 @@ class TestSteal:
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
-        sentence, believability = METHODS["STEAL"]("ALICE", "BOB", test_state)
+        sentence, believability = METHODS["MUG"]("ALICE", "BOB", test_state)
         a_items = test_state.actors["ALICE"]["items"]
         b_items = test_state.actors["BOB"]["items"]
         assert believability == ITEMS["VASE"]["value"]
 
-    def test_steal_on_no_items(self):
+    def test_mug_on_no_items(self):
         """
         Tests if believability is 0 when victim has no items
         """
@@ -203,12 +203,12 @@ class TestSteal:
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
-        sentence, believability = METHODS["STEAL"]("ALICE", "BOB", test_state)
+        sentence, believability = METHODS["MUG"]("ALICE", "BOB", test_state)
         assert believability == 0
 
-    def test_steal_when_dead(self):
+    def test_mug_when_dead(self):
         """
-        Tests if believability is 0 when stealer is dead
+        Tests if believability is 0 when mugger is dead
         """
         ACTORS = {
             "ALICE": {
@@ -229,10 +229,10 @@ class TestSteal:
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
-        sentence, believability = METHODS["STEAL"]("ALICE", "BOB", test_state)
+        sentence, believability = METHODS["MUG"]("ALICE", "BOB", test_state)
         assert believability == 0
 
-    def test_steal_from_dead(self):
+    def test_mug_from_dead(self):
         """
         Tests if items can be stolen from dead actor
         """
@@ -255,14 +255,14 @@ class TestSteal:
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
-        METHODS["STEAL"]("ALICE", "BOB", test_state)
+        METHODS["MUG"]("ALICE", "BOB", test_state)
         a_items = test_state.actors["ALICE"]["items"]
         b_items = test_state.actors["BOB"]["items"]
         assert (len(b_items) == 0 and
                 len(a_items) == 2 and
                 a_items[1] == ITEMS["VASE"])
 
-    def test_steal_when_different_locations(self):
+    def test_mug_when_different_locations(self):
         """
         Tests if believability is 0 when actors are in different locations
         """
@@ -285,11 +285,11 @@ class TestSteal:
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
-        sentence, believability = METHODS["STEAL"]("ALICE", "BOB", test_state)
+        sentence, believability = METHODS["MUG"]("ALICE", "BOB", test_state)
 
         assert believability == 0
 
-    def test_steal_anger_values(self):
+    def test_mug_anger_values(self):
         """
         Tests if believability is 0 when actors are in different locations
         """
@@ -312,18 +312,18 @@ class TestSteal:
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
-        sentence, believability = METHODS["STEAL"]("ALICE", "BOB", test_state)
+        sentence, believability = METHODS["MUG"]("ALICE", "BOB", test_state)
 
         assert test_state.actors["BOB"]["anger"]["ALICE"] == 2
 
 
-class TestPlay:
+class TestTalk:
     """
-    Test class for the play method
+    Test class for the talk method
     """
-    def test_play_works_when_empty(self):
+    def test_talk_works_when_empty(self):
         """
-        Tests if play creates new entries in the anger dictionary and assigns
+        Tests if talk creates new entries in the anger dictionary and assigns
         appropriate values
         """
         ACTORS = {
@@ -345,14 +345,14 @@ class TestPlay:
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
-        METHODS["PLAY"]("ALICE", "BOB", test_state)
+        METHODS["TALK"]("ALICE", "BOB", test_state)
 
         assert (test_state.actors["ALICE"]["anger"]["BOB"] == -5 and
                 test_state.actors["BOB"]["anger"]["ALICE"] == -5)
 
-    def test_play_works_with_values(self):
+    def test_talk_works_with_values(self):
         """
-        Tests if play assigns appropriate values when already in place
+        Tests if talk assigns appropriate values when already in place
         """
         ACTORS = {
             "ALICE": {
@@ -373,12 +373,12 @@ class TestPlay:
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
-        METHODS["PLAY"]("ALICE", "BOB", test_state)
+        METHODS["TALK"]("ALICE", "BOB", test_state)
 
         assert (test_state.actors["ALICE"]["anger"]["BOB"] == -2 and
                 test_state.actors["BOB"]["anger"]["ALICE"] == -6)
 
-    def test_play_when_different_locations(self):
+    def test_talk_when_different_locations(self):
         """
         Tests if believability is 0 when actors are in different locations
         """
@@ -401,7 +401,7 @@ class TestPlay:
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
-        sentence, believability = METHODS["PLAY"]("ALICE", "BOB", test_state)
+        sentence, believability = METHODS["TALK"]("ALICE", "BOB", test_state)
 
         assert believability == 0
 

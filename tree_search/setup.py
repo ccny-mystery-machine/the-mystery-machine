@@ -58,49 +58,49 @@ ITEMS = {
         "name": "gun",
         "value": 0.5,
         "lethality": 0.9,
-        "drop_belivability": 0.2,
+        "drop_believability": 0.2,
     },
     "VASE": {
         "name": "vase",
         "value": 0.9,
         "lethality": 0.6,
-        "drop_belivability": 0.5,
+        "drop_believability": 0.5,
     },
     "BASEBALL_BAT": {
         "name": "baseball bat",
         "value": 0.2,
         "lethality": 0.5,
-        "drop_belivability": 0.4
+        "drop_believability": 0.4
     },
     "TREE_BRANCH": {
         "name": "tree branch",
         "value": 0.1,
         "lethality": 0.5,
-        "drop_belivability": 0.4
+        "drop_believability": 0.4
     },
     "KNIFE": {
         "name": "knife",
         "value": 0.4,
         "lethality": 0.8,
-        "drop_belivability": 0.7
+        "drop_believability": 0.7
     },
     "PEN": {
         "name": "pen",
         "value": 0.1,
         "lethality": 0.5,
-        "drop_belivability": 0.9,
+        "drop_believability": 0.9,
     },
     "CANDLE": {
         "name": "candle",
         "value": 0.6,
         "lethality": 0.3,
-        "drop_belivability": 0.8
+        "drop_believability": 0.8
     },
     "SEASHELL": {
         "name": "seashell",
         "value": 0.2,
         "lethality": 0.4,
-        "drop_belivability": 0.9
+        "drop_believability": 0.9
     }
 }
 

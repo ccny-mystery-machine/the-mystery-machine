@@ -170,6 +170,7 @@ ACTORS = {
         "affection": {}, 
         "attractiveness": .5, 
         "grief": 0,
+        "gender": "female",
     },
     "BOB": {
         "name": "Bob",
@@ -181,6 +182,7 @@ ACTORS = {
         "affection": {},
         "attractiveness": .9,
         "grief": 0,
+        "gender": "male",
     },
     "CHARLIE": {
         "name": "Charlie",
@@ -191,6 +193,8 @@ ACTORS = {
         "kill_desire": {},
         "affection": {},
         "attractiveness": .3,
+        "grief": 0,
+        "gender": "male",
 
     },
 }

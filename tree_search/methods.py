@@ -32,12 +32,12 @@ METHOD_CONSTANTS = {
     "TALK_IF_DEAD": 0,
     "TALK_IF_DIFFERENT_PLACE": 0,
     "TALK_IF_NORMAL": 1,
-    "TALK_KILL_DESIRE_DEC": 5,
+    "TALK_KILL_DESIRE_DEC": .05,
     "TALK_AFFECTION_INC": 0.05,   
 
-    "KILL_NOT_ANGRY": 0.1,
+    "KILL_NOT_ANGRY_BELIEVABILITY": 0.1,
     "KILL_DESIRE_THRES": 0,
-    "KILL_ANGRY": 0.9,
+    "KILL_ANGRY_BELIEVABILITY": 0.9,
     "KILL_IF_DEAD": 0,
     "KILL_IF_DIFFERENT_PLACE": 0,
     
@@ -218,11 +218,11 @@ def kill(actor_a_key, actor_b_key, state):
 
     # if kill_desire exists, then we have higher believability
     if (actor_b_key in actor_a["kill_desire"] and actor_a["kill_desire"][actor_b_key] > METHOD_CONSTANTS[ "KILL_DESIRE_THRES" ]):
-        believability = METHOD_CONSTANTS[ "KILL_ANGRY"  ]
+        believability = METHOD_CONSTANTS[ "KILL_ANGRY_BELIEVABILITY"  ]
         return (sentence, believability)
 
     # potential of random murder
-    believability = METHOD_CONSTANTS[ "KILL_NOT_ANGRY" ]
+    believability = METHOD_CONSTANTS[ "KILL_NOT_ANGRY_BELIEVABILITY" ]
     return (sentence, believability)
 
 METHODS = {

@@ -225,6 +225,30 @@ def kill(actor_a_key, actor_b_key, state):
     believability = METHOD_CONSTANTS[ "KILL_NOT_ANGRY_BELIEVABILITY" ]
     return (sentence, believability)
 
+
+def drop_item(actor_a_key, state):
+
+    actor_a = state.actors[actor_a_key]
+
+    if (len(actor_a["items"]) <= 0):
+        sentence = "Nonsense sentence. "
+        believability = 0
+        return (sentence, believability)
+
+    rand_idx = randint(0, len(actor_a["items"]) - 1)
+    actor_a_item = actor_a["items"].pop(rand_idx)
+    actor_a["place"]["items"].append(actor_a_item)
+
+    sentence = actor_a["name"] + " dropped " + actor_a_item["name"] + " at " + actor_a["place"]["name"] + ". "
+    
+    if (actor_a["health"] <= 0):
+        believability = 0
+        return (sentence, believability)
+    
+    believability = actor_a_item["drop_believability"]
+    return (sentence, believability)
+    
+
 METHODS = {
     "MOVE": move,
     "MUG": mug,

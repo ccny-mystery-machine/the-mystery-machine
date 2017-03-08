@@ -56,43 +56,51 @@ RELATIONSHIPS = {
 ITEMS = {
     "GUN": {
         "name": "gun",
-        "value": .5,
-        "lethality": .9,
+        "value": 0.5,
+        "lethality": 0.9,
+        "drop_belivability": 0.2,
     },
     "VASE": {
         "name": "vase",
-        "value": .9,
-        "lethality": .6,
+        "value": 0.9,
+        "lethality": 0.6,
+        "drop_belivability": 0.5,
     },
     "BASEBALL_BAT": {
         "name": "baseball bat",
-        "value": .2,
-        "lethality": .5,
+        "value": 0.2,
+        "lethality": 0.5,
+        "drop_belivability": 0.4
     },
     "TREE_BRANCH": {
         "name": "tree branch",
-        "value": .1,
-        "lethality": .5,
+        "value": 0.1,
+        "lethality": 0.5,
+        "drop_belivability": 0.4
     },
     "KNIFE": {
         "name": "knife",
-        "value": .4,
-        "lethality": .8,
+        "value": 0.4,
+        "lethality": 0.8,
+        "drop_belivability": 0.7
     },
     "PEN": {
         "name": "pen",
-        "value": .1,
-        "lethality": .6
+        "value": 0.1,
+        "lethality": 0.5,
+        "drop_belivability": 0.9,
     },
     "CANDLE": {
         "name": "candle",
-        "value": .6,
-        "lethality": .3,
+        "value": 0.6,
+        "lethality": 0.3,
+        "drop_belivability": 0.8
     },
     "SEASHELL": {
         "name": "seashell",
-        "value": .2,
-        "lethality": .4,
+        "value": 0.2,
+        "lethality": 0.4,
+        "drop_belivability": 0.9
     }
 }
 
@@ -168,7 +176,7 @@ ACTORS = {
         "items": [ITEMS["GUN"]],
         "kill_desire": {},  
         "affection": {}, 
-        "attractiveness": .5, 
+        "attractiveness": 0.5, 
         "grief": 0,
         "gender": "female",
     },
@@ -180,7 +188,7 @@ ACTORS = {
         "items": [ITEMS["VASE"]],
         "kill_desire": {},
         "affection": {},
-        "attractiveness": .9,
+        "attractiveness": 0.9,
         "grief": 0,
         "gender": "male",
     },
@@ -192,7 +200,7 @@ ACTORS = {
         "items": [ITEMS["BASEBALL_BAT"]],
         "kill_desire": {},
         "affection": {},
-        "attractiveness": .3,
+        "attractiveness": 0.3,
         "grief": 0,
         "gender": "male",
 

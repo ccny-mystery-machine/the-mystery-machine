@@ -7,8 +7,16 @@ from random import randint
 from copy import deepcopy
 from functools import partial
 
-from setup import ACTORS, PLACES, ITEMS
+from setup import ACTORS, PLACES, ITEMS, RELATIONSHIPS
 
+def rectadd(a, b):
+    ans = a+b
+    if ans > 1:
+        return 1
+    elif ans < -1:
+        return -1
+    else:
+        return ans
 
 METHOD_CONSTANTS = {
     "MOVE_IF_SAME_PLACE": 0,
@@ -18,21 +26,25 @@ METHOD_CONSTANTS = {
     "MUG_IF_DEAD": 0,
     "MUG_IF_YOURSELF": 0,
     "MUG_IF_DIFFERENT_PLACE": 0,
-    "MUG_ANGER_INC": 3, 
-        
+    "MUG_KILL_DESIRE_INC": 0.15, 
+    "MUG_AFFECTION": -1,   
+
     "TALK_IF_DEAD": 0,
     "TALK_IF_DIFFERENT_PLACE": 0,
     "TALK_IF_NORMAL": 1,
-    "TALK_ANGER_DEC": 5,
-    
-    "KILL_NOT_ANGRY": 0.1,
-    "KILL_ANGER_THRES": 0,
-    "KILL_ANGRY": 0.9,
+    "TALK_KILL_DESIRE_DEC": .05,
+    "TALK_AFFECTION_INC": 0.05,   
+
+    "KILL_NOT_ANGRY_BELIEVABILITY": 0.1,
+    "KILL_DESIRE_THRES": 0,
+    "KILL_ANGRY_BELIEVABILITY": 0.9,
     "KILL_IF_DEAD": 0,
     "KILL_IF_DIFFERENT_PLACE": 0,
     
+    "BEFRIEND_MIN_THRES": 0,
+    "BEFRIEND_MAX_THRES": 0.5,
+        
 }
-
 
 class Method:
     """
@@ -101,13 +113,22 @@ def mug(actor_a_key, actor_b_key, state):
     rand_idx = randint(0, len(actor_b["items"]) - 1)
     actor_b_item = actor_b["items"].pop(rand_idx)
     actor_a["items"].append(actor_b_item)
-    if actor_a_key in actor_b["anger"]:
-        actor_b["anger"][actor_a_key] += METHOD_CONSTANTS[ "MUG_ANGER_INC" ]
+    if actor_a_key in actor_b["kill_desire"]:
+        actor_b["kill_desire"][actor_a_key] = rectadd( actor_b["kill_desire"][actor_a_key],  METHOD_CONSTANTS[ "MUG_KILL_DESIRE_INC" ] )
     else:
-        actor_b["anger"][actor_a_key] = METHOD_CONSTANTS[ "MUG_ANGER_INC" ]
+        actor_b["kill_desire"][actor_a_key] = METHOD_CONSTANTS[ "MUG_KILL_DESIRE_INC" ]
+   
+    if actor_a_key in actor_b["affection"]:
+        actor_b["affection"][actor_a_key][0] = METHOD_CONSTANTS[ "MUG_AFFECTION" ]
+    else:
+        actor_b["affection"][actor_a_key] = ( METHOD_CONSTANTS[ "MUG_AFFECTION" ], RELATIONSHIPS[ "STRANGER" ] )
 
-    sentence = (actor_a["name"] + " stole " + actor_b_item["name"] + " from " +
-                actor_b["name"] + ". ")
+    actor_b["grief"] = rectadd( actor_b["grief"], actor_b_item["value"] / 2 )
+
+    actor_b["grief"] = rectadd( actor_b["grief"], actor_b_item["value"] / 2 )
+
+    sentence = (actor_a["name"] + " mugs " + actor_b["name"] + " and stole " +
+                actor_b_item["name"] + ". ")
     
     if (actor_a["health"] <= 0): 
         believability = METHOD_CONSTANTS[ "MUG_IF_DEAD" ]
@@ -138,18 +159,29 @@ def talk(actor_a_key, actor_b_key, state):
     
     if (actor_a["health"] <= 0 or actor_b["health"] <= 0):
         believability = METHOD_CONSTANTS[ "TALK_IF_DEAD" ]
-        return (sentence, believability)           
+        return (sentence, believability) 
 
-    if actor_b_key in actor_a["anger"]:
-        actor_a["anger"][actor_b_key] -= METHOD_CONSTANTS[ "TALK_ANGER_DEC" ]
+    if actor_b_key in actor_a["kill_desire"]:
+        actor_a["kill_desire"][actor_b_key] = rectadd( actor_a["kill_desire"][actor_b_key], -METHOD_CONSTANTS[ "TALK_KILL_DESIRE_DEC" ] )
     else:
-        actor_a["anger"][actor_b_key] = -METHOD_CONSTANTS[ "TALK_ANGER_DEC" ]
+        actor_a["kill_desire"][actor_b_key] = -METHOD_CONSTANTS[ "TALK_KILL_DESIRE_DEC" ]
 
-    if actor_a_key in actor_b["anger"]:
-        actor_b["anger"][actor_a_key] -= METHOD_CONSTANTS[ "TALK_ANGER_DEC" ]
+    if actor_a_key in actor_b["kill_desire"]:
+        actor_b["kill_desire"][actor_a_key] = rectadd( actor_b["kill_desire"][actor_a_key], -METHOD_CONSTANTS[ "TALK_KILL_DESIRE_DEC" ] )
     else:
-        actor_b["anger"][actor_a_key] = -METHOD_CONSTANTS[ "TALK_ANGER_DEC" ]
+        actor_b["kill_desire"][actor_a_key] = -METHOD_CONSTANTS[ "TALK_KILL_DESIRE_DEC" ]
     
+    if actor_b_key in actor_a["affection"]:
+        actor_a["affection"][actor_b_key][0] = rectadd( actor_a["affection"][actor_b_key], -METHOD_CONSTANTS[ "TALK_AFFECTION_INC" ] )
+    else:
+        actor_a["affection"][actor_b_key] = (METHOD_CONSTANTS[ "TALK_AFFECTION_INC" ], RELATIONSHIPS[ "STRANGER" ])  
+
+    if actor_a_key in actor_b["affection"]:
+        actor_b["affection"][actor_a_key][0] = rectadd( actor_b["affection"][actor_a_key], -METHOD_CONSTANTS[ "TALK_AFFECTION_INC" ] )
+    else:
+        actor_b["affection"][actor_a_key] = METHOD_CONSTANTS[ "TALK_AFFECTION_INC" ], RELATIONSHIPS[ "STRANGER" ]) 
+    
+
     if (actor_a["place"] != actor_b["place"]):
         believability = METHOD_CONSTANTS[ "TALK_IF_DIFFERENT_PLACE" ]
         return (sentence, believability)           
@@ -166,7 +198,7 @@ def kill(actor_a_key, actor_b_key, state):
     """
     description: actor_a kills actor_b
     precondition: actor_a and actor_b must be alive and in the same location
-                  actor_a must have anger > 0 towards actor_b
+                  actor_a must have kill_desire > 0 towards actor_b
     postcondition: actor_b's health goes to 0
     """
 
@@ -185,55 +217,164 @@ def kill(actor_a_key, actor_b_key, state):
         believability = METHOD_CONSTANTS[ "KILL_IF_DIFFERENT_PLACE" ] 
         return (sentence, believability)
     if (actor_a["name"] == actor_b["name"]):
+        return (sentence, believability)
+
+    # if kill_desire exists, then we have higher believability
+    if (actor_b_key in actor_a["kill_desire"] and actor_a["kill_desire"][actor_b_key] > METHOD_CONSTANTS[ "KILL_DESIRE_THRES" ]):
+        believability = METHOD_CONSTANTS[ "KILL_ANGRY_BELIEVABILITY"  ]
+        return (sentence, believability)
+
+    # potential of random murder
+    believability = METHOD_CONSTANTS[ "KILL_NOT_ANGRY_BELIEVABILITY" ]
+    return (sentence, believability)
+
+
+def drop_item(actor_a_key, state):
+
+    actor_a = state.actors[actor_a_key]
+
+    if (len(actor_a["items"]) <= 0):
         sentence = "Nonsense sentence. "
         believability = 0
         return (sentence, believability)
 
-    # if anger exists, then we have higher believability
-    if (actor_b_key in actor_a["anger"] and actor_a["anger"][actor_b_key] > METHOD_CONSTANTS[ "KILL_ANGER_THRES" ]):
-        believability = METHOD_CONSTANTS[ "KILL_ANGRY"  ]
-        return (sentence, believability)
+    rand_idx = randint(0, len(actor_a["items"]) - 1)
+    actor_a_item = actor_a["items"].pop(rand_idx)
+    actor_a["place"]["items"].append(actor_a_item)
 
-    # potential of random murder
-    believability = METHOD_CONSTANTS[ "KILL_NOT_ANGRY" ]
+    sentence = actor_a["name"] + " dropped " + actor_a_item["name"] + " at " + actor_a["place"]["name"] + ". "
+    
+    if (actor_a["health"] <= 0):
+        believability = 0
+        return (sentence, believability)
+    
+    believability = actor_a_item["drop_believability"]
     return (sentence, believability)
+    
+def pickup_item(actor_a_key, state):
+
+    actor_a = state.actors[actor_a_key]
+    
+    if (len(actor_a["place"]["items"]) <= 0):
+        sentence = "Nonsense sentence. "
+        believability = 0
+        return (sentence, believability)
+ 
+    rand_idx = randint(0, len(actor_a["place"]["items"]) - 1)
+    place_item = actor_a["place"]["items"].pop(rand_idx)
+    actor_a["items"].append(place_item)
+
+    sentence = actor_a["name"] + " picked up " + place_item["name"] + " from " + actor_a["place"]["name"] + ". "
+    
+    if (actor_a["health"] <= 0):
+        believability = 0
+        return (sentence, believability)
+    
+    believability = rectadd(place_item["value"], place_item["lethality"]) 
+    return (sentence, believability)
+
+
+def befriend(actor_a_key, actor_b_key, state):
+
+    actor_a = state.actors[actor_a_key]
+    actor_b = state.actors[actor_b_key]
+
+    sentence = actor_a["name"] + " and " + actor_b["name"] +  " became friends. "  
+    
+    if (actor_a["health"] <= 0 or actor_b["health"] <= 0):
+        believability = 0
+        return (sentence, believability)
+    
+
+    a_b_stranger_or_enemy = actor_a["affection"][actor_b_key][1] == RELATIONSHIP[ "STRANGER" ] or actor_a["affection"][actor_b_key][1] == RELATIONSHIP[ "ENEMY" ]
+    b_a_stranger_or_enemy = actor_b["affection"][actor_a_key][1] == RELATIONSHIP[ "STRANGER" ] or actor_b["affection"][actor_a_key][1] == RELATIONSHIP[ "ENEMY" ]
+
+    affection_above_max_thres = (actor_a["affection"][actor_b_key][0] > METHOD_CONSTANTS[ "BEFRIEND_MAX_THRES"] and 
+                                 actor_b["affection"][actor_a_key][0] > METHOD_CONSTANTS[ "BEFRIEND_MAX_THRES"]) 
+
+    affection_above_min_thres = (actor_a["affection"][actor_b_key][0] > METHOD_CONSTANTS[ "BEFRIEND_MIN_THRES"] and 
+                                 actor_b["affection"][actor_a_key][0] > METHOD_CONSTANTS[ "BEFRIEND_MIN_THRES"]) 
+
+    rng =  METHOD_CONSTANTS[ "BEFRIEND_MAX_THRES"] - METHOD_CONSTANTS[ "BEFRIEND_MIN_THRES"]  
+    scaled_affection = (actor_a["affection"][actor_b_key][0] + actor_b["affection"][actor_a_key][0]) / (2 * rng)  
+
+
+    if (a_b_stranger_or_enemy and b_a_stranger_or_enemy):
+        
+        if (affection_above_max_thres):
+            believability = 1
+            return (sentence, believability)
+    
+        if (affection_above_min_thres):
+            believability = scaled_affection
+            return (sentence, believability)
+
+    return (sentence, 0)
+
 
 METHODS = {
     "MOVE": move,
     "MUG": mug,
     "TALK": talk,
     "KILL": kill,
+    "DROP_ITEM": drop_item,
+    "PICKUP_ITEM": pickup_item,
+    "BEFRIEND": befriend
 }
 
 POSSIBLE_METHODS = []
 
-# MOVE - actor, place
-for key_a in ACTORS:
-    for key_p in PLACES:
+    
+def create_possible_methods(state)
+
+    # MOVE - actor, place
+    for key_a in state.actors:
+        for key_p in state.places:
+            POSSIBLE_METHODS.append(
+                partial(move, key_a, key_p)
+            )
+
+    # MUG - actor, actor
+    for key_a in state.actors:
+        for key_b in state.actors:
+            if key_a != key_b:
+                POSSIBLE_METHODS.append(
+                    partial(mug, key_a, key_b)
+                )
+
+    # TALK - actor, actor
+    for key_a in state.actors:
+        for key_b in state.actors:
+            if key_a != key_b:
+                POSSIBLE_METHODS.append(
+                    partial(talk, key_a, key_b)
+                )
+
+    # KILL - actor, actor
+    for key_a in state.actors:
+        for key_b in state.actors:
+            if key_a != key_b:
+                POSSIBLE_METHODS.append(
+                    partial(kill, key_a, key_b)
+            )
+
+    # DROP_ITEM - actor
+    for key_a in state.actors:
         POSSIBLE_METHODS.append(
-            partial(move, key_a, key_p)
+            partial(drop_item, key_a)
         )
 
-# MUG - actor, actor
-for key_a in ACTORS:
-    for key_b in ACTORS:
-        if key_a != key_b:
-            POSSIBLE_METHODS.append(
-                partial(mug, key_a, key_b)
+    # PICKUP_ITEM - actor
+    for key_a in state.actors:
+        POSSIBLE_METHODS.append(
+            partial(pickup_item, key_a)
+        )
+
+    # BEFRIEND - actor, actor
+    for key_a in state.actors:
+        for key_b in state.actors:
+            if key_a != key_b:
+                POSSIBLE_METHODS.append(
+                    partial(befriend, key_a, key_b)
             )
 
-# TALK - actor, actor
-for key_a in ACTORS:
-    for key_b in ACTORS:
-        if key_a != key_b:
-            POSSIBLE_METHODS.append(
-                partial(talk, key_a, key_b)
-            )
-
-# KILL - actor, actor
-for key_a in ACTORS:
-    for key_b in ACTORS:
-        if key_a != key_b:
-            POSSIBLE_METHODS.append(
-                partial(kill, key_a, key_b)
-            )

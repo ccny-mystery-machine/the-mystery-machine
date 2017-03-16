@@ -1,6 +1,8 @@
 """
 Test file for the different methods that represent events that occur
 """
+from math import isclose
+
 from setup import State, ACTORS, PLACES, ITEMS
 from methods import METHODS
 
@@ -19,7 +21,11 @@ class TestMove:
                 "place": PLACES["ALICES_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["GUN"]],
-                "anger": {},
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "female", 
             },
         }
 
@@ -39,7 +45,11 @@ class TestMove:
                 "place": PLACES["ALICES_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["GUN"]],
-                "anger": {},
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "female", 
             },
         }
 
@@ -60,7 +70,11 @@ class TestMove:
                 "place": PLACES["ALICES_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["GUN"]],
-                "anger": {},  # dictionary of other actors to their anger value
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "female", 
             },
         }
 
@@ -81,7 +95,11 @@ class TestMove:
                 "place": PLACES["ALICES_HOUSE"],
                 "health": 0,
                 "items": [ITEMS["GUN"]],
-                "anger": {},  # dictionary of other actors to their anger value
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "female", 
             },
         }
 
@@ -104,10 +122,14 @@ class TestMug:
             "ALICE": {
                 "name": "Alice",
                 "home": PLACES["ALICES_HOUSE"],
-                "place": PLACES["BOBS_HOUSE"],
+                "place": PLACES["ALICES_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["GUN"]],
-                "anger": {},  # dictionary of other actors to their anger value
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "female", 
             },
             "BOB": {
                 "name": "Bob",
@@ -115,7 +137,11 @@ class TestMug:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["VASE"]],
-                "anger": {},
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "male", 
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
@@ -137,7 +163,12 @@ class TestMug:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["GUN"]],
-                "anger": {},  # dictionary of other actors to their anger value
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "female", 
+           
             },
             "BOB": {
                 "name": "Bob",
@@ -145,12 +176,17 @@ class TestMug:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["VASE"]],
-                "anger": {},
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "male", 
+           
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
         METHODS["MUG"]("ALICE", "BOB", test_state)
-        assert test_state.actors["BOB"]["anger"]["ALICE"] == 3
+        assert test_state.actors["BOB"]["kill_desire"]["ALICE"] == 0.15
 
     def test_mug_believability_works(self):
         """
@@ -162,8 +198,12 @@ class TestMug:
                 "home": PLACES["ALICES_HOUSE"],
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
-                "items": [ITEMS["GUN"]],
-                "anger": {},  # dictionary of other actors to their anger value
+                "items": [ITEMS["GUN"]],     
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "female", 
             },
             "BOB": {
                 "name": "Bob",
@@ -171,7 +211,12 @@ class TestMug:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["VASE"]],
-                "anger": {},
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "male", 
+           
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
@@ -191,7 +236,11 @@ class TestMug:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["GUN"]],
-                "anger": {},  # dictionary of other actors to their anger value
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "female", 
             },
             "BOB": {
                 "name": "Bob",
@@ -199,7 +248,12 @@ class TestMug:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [],
-                "anger": {},
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "male", 
+           
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
@@ -217,7 +271,12 @@ class TestMug:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 0,
                 "items": [ITEMS["GUN"]],
-                "anger": {},  # dictionary of other actors to their anger value
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "female", 
+           
             },
             "BOB": {
                 "name": "Bob",
@@ -225,7 +284,12 @@ class TestMug:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [],
-                "anger": {},
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "male", 
+           
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
@@ -243,7 +307,12 @@ class TestMug:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["GUN"]],
-                "anger": {},  # dictionary of other actors to their anger value
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "female", 
+           
             },
             "BOB": {
                 "name": "Bob",
@@ -251,7 +320,12 @@ class TestMug:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 0,
                 "items": [ITEMS["VASE"]],
-                "anger": {},
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "male", 
+           
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
@@ -273,7 +347,12 @@ class TestMug:
                 "place": PLACES["ALICES_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["GUN"]],
-                "anger": {"BOB": 3},
+                "kill_desire": {"BOB": .3},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "female", 
+           
             },
             "BOB": {
                 "name": "Bob",
@@ -281,7 +360,12 @@ class TestMug:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["VASE"]],
-                "anger": {"ALICE": -1},
+                "kill_desire": {"ALICE": -.1},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "male", 
+           
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
@@ -289,9 +373,9 @@ class TestMug:
 
         assert believability == 0
 
-    def test_mug_anger_values(self):
+    def test_mug_kill_desire_values(self):
         """
-        Tests if believability is 0 when actors are in different locations
+        Tests if mug updates kill_desire values
         """
         ACTORS = {
             "ALICE": {
@@ -300,21 +384,29 @@ class TestMug:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["GUN"]],
-                "anger": {"BOB": 3},
-            },
+                "kill_desire": {"BOB": .3},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "female", 
+                      },
             "BOB": {
                 "name": "Bob",
                 "home": PLACES["BOBS_HOUSE"],
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["VASE"]],
-                "anger": {"ALICE": -1},
+                "kill_desire": {"ALICE": -.1},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "male", 
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
         sentence, believability = METHODS["MUG"]("ALICE", "BOB", test_state)
 
-        assert test_state.actors["BOB"]["anger"]["ALICE"] == 2
+        assert isclose(test_state.actors["BOB"]["kill_desire"]["ALICE"],  0.05)
 
 
 class TestTalk:
@@ -323,7 +415,7 @@ class TestTalk:
     """
     def test_talk_works_when_empty(self):
         """
-        Tests if talk creates new entries in the anger dictionary and assigns
+        Tests if talk creates new entries in the kill_desire dictionary and assigns
         appropriate values
         """
         ACTORS = {
@@ -333,7 +425,12 @@ class TestTalk:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["GUN"]],
-                "anger": {},  # dictionary of other actors to their anger value
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "female", 
+           
             },
             "BOB": {
                 "name": "Bob",
@@ -341,14 +438,19 @@ class TestTalk:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["VASE"]],
-                "anger": {},
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "male", 
+           
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
         METHODS["TALK"]("ALICE", "BOB", test_state)
 
-        assert (test_state.actors["ALICE"]["anger"]["BOB"] == -5 and
-                test_state.actors["BOB"]["anger"]["ALICE"] == -5)
+        assert (test_state.actors["ALICE"]["kill_desire"]["BOB"] == -0.05 and
+                test_state.actors["BOB"]["kill_desire"]["ALICE"] == -0.05)
 
     def test_talk_works_with_values(self):
         """
@@ -361,7 +463,12 @@ class TestTalk:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["GUN"]],
-                "anger": {"BOB": 3},
+                "kill_desire": {"BOB": .3},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "female", 
+           
             },
             "BOB": {
                 "name": "Bob",
@@ -369,14 +476,19 @@ class TestTalk:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["VASE"]],
-                "anger": {"ALICE": -1},
+                "kill_desire": {"ALICE": -.1},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "male", 
+           
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
         METHODS["TALK"]("ALICE", "BOB", test_state)
 
-        assert (test_state.actors["ALICE"]["anger"]["BOB"] == -2 and
-                test_state.actors["BOB"]["anger"]["ALICE"] == -6)
+        assert (test_state.actors["ALICE"]["kill_desire"]["BOB"] == .25  and
+                isclose(test_state.actors["BOB"]["kill_desire"]["ALICE"], -.15) )
 
     def test_talk_when_different_locations(self):
         """
@@ -389,7 +501,12 @@ class TestTalk:
                 "place": PLACES["ALICES_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["GUN"]],
-                "anger": {"BOB": 3},
+                "kill_desire": {"BOB": .3},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "female", 
+           
             },
             "BOB": {
                 "name": "Bob",
@@ -397,7 +514,12 @@ class TestTalk:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["VASE"]],
-                "anger": {"ALICE": -1},
+                "kill_desire": {"ALICE": -1},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "male", 
+           
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
@@ -421,7 +543,12 @@ class TestKill:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["GUN"]],
-                "anger": {},  # dictionary of other actors to their anger value
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "female", 
+           
             },
             "BOB": {
                 "name": "Bob",
@@ -429,7 +556,12 @@ class TestKill:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["VASE"]],
-                "anger": {},
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "male", 
+           
             },
         }
 
@@ -439,7 +571,7 @@ class TestKill:
 
     def test_kill_believability_one(self):
         """
-        Tests kill believability when no anger
+        Tests kill believability when no kill_desire
         """
         ACTORS = {
             "ALICE": {
@@ -448,7 +580,12 @@ class TestKill:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["GUN"]],
-                "anger": {},  # dictionary of other actors to their anger value
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "female", 
+           
             },
             "BOB": {
                 "name": "Bob",
@@ -456,7 +593,12 @@ class TestKill:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["VASE"]],
-                "anger": {},
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "male", 
+           
             },
         }
 
@@ -475,7 +617,12 @@ class TestKill:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["GUN"]],
-                "anger": {"BOB": 1},  # dictionary of other actors to their anger value
+                "kill_desire": {"BOB": .1},  # dictionary of other actors to their kill_desire value
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "female", 
+           
             },
             "BOB": {
                 "name": "Bob",
@@ -483,7 +630,12 @@ class TestKill:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["VASE"]],
-                "anger": {},
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "male", 
+           
             },
         }
 
@@ -502,7 +654,12 @@ class TestKill:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["GUN"]],
-                "anger": {"BOB": -1},  # dictionary of other actors to their anger value
+                "kill_desire": {"BOB": -.1},  # dictionary of other actors to their kill_desire value
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "female", 
+           
             },
             "BOB": {
                 "name": "Bob",
@@ -510,7 +667,12 @@ class TestKill:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["VASE"]],
-                "anger": {},
+                "kill_desire": {},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "male", 
+           
             },
         }
 
@@ -530,7 +692,12 @@ class TestKill:
                 "place": PLACES["ALICES_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["GUN"]],
-                "anger": {"BOB": 3},
+                "kill_desire": {"BOB": .3},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "female", 
+           
             },
             "BOB": {
                 "name": "Bob",
@@ -538,7 +705,12 @@ class TestKill:
                 "place": PLACES["BOBS_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["VASE"]],
-                "anger": {"ALICE": -1},
+                "kill_desire": {"ALICE": -.1},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "male", 
+           
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)
@@ -557,7 +729,12 @@ class TestKill:
                 "place": PLACES["ALICES_HOUSE"],
                 "health": 10,
                 "items": [ITEMS["GUN"]],
-                "anger": {"BOB": 3},
+                "kill_desire": {"BOB": .3},
+                "affection": {},
+                "grief": 0,
+                "attractive": 0.5,
+                "gender": "female", 
+           
             },
         }
         test_state = State(ACTORS,PLACES,ITEMS)

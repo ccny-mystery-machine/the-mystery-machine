@@ -6,7 +6,6 @@ from queue import Queue
 from math import log, sqrt
 from random import randint
 
-from methods import POSSIBLE_METHODS
 from goals import GOALS, goals_satisfied, percent_goals_satisfied 
 from tree import TreeNode, expand_edge, expand_all_edges
 from story import Story

@@ -3,7 +3,8 @@ Test file for the different functions in search.py
 """
 from math import exp
 
-from setup import State, ACTORS, PLACES, ITEMS
+from setup import ACTORS, PLACES, ITEMS
+from state import State
 from tree import TreeNode, TreeEdge, expand_edge
 from search import select_func, best_child, uct_selection, update_node_value, backpropogate, most_visited_child
 

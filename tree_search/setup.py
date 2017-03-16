@@ -1,49 +1,14 @@
 """
-Setup of the initial actors, places, items
+Setup of all global variables
 """
-from random import random, randint
-from copy import deepcopy
-
-class State:
-    """
-    State of the Story - Nodes in the tree
-    """   
-    
-    def __init__(self, actors, places, items):
-        self.actors = deepcopy(actors)
-        self.places = deepcopy(places)
-        self.items = deepcopy(items)
-
-
-def random_state(NAME_BANK):
-    num_characters = randint(3, 5)
-    places = deepcopy(OUT_PLACES)
-    actors = {}
-    for _ in range(num_characters):
-        ridx = randint(0,len(NAME_BANK)-1)
-        name, gender = NAME_BANK[ridx]
-        up_name = name.upper()
-        up_place = up_name + "S_HOUSE"
-        place = name + "'s house"
-        actors[up_name] = deepcopy(ACTOR_TEMPLATE)
-        actor = actor[up_name]
-        actor["name"] = name
-        places[up_place] = { "name": place, "items": [], }
-        actor["home"] = places[up_place]
-        actor["place"] = places[up_place]
-        actor["health"] = 1
-        actor["attractiveness"] = random() 
-        actor["grief"] = 0
-    items = ITEMS
-    return State(actors, places, items)
 
 NAME_BANK = [
-("Alice", "female"),
-("Bob", "male"),
-("Charlie", "male"),
-("Daphne", "female"),
-("Eve", "female"),
-("Fred", "male"),
+    ("Alice", "female"),
+    ("Bob", "male"),
+    ("Charlie", "male"),
+    ("Daphne", "female"),
+    ("Eve", "female"),
+    ("Fred", "male"),
 ]
 
 RELATIONSHIPS = {
@@ -139,6 +104,11 @@ OUT_PLACES = {
     }
 }
 
+PLACE_TEMPLATE = {
+    "name": None,
+    "items": [],
+}
+
 ACTOR_TEMPLATE = {
     "name": None,
     "home": None,
@@ -151,6 +121,7 @@ ACTOR_TEMPLATE = {
     "grief": None,
     "gender": None,
 }
+
 
 PLACES = {
     "ALICES_HOUSE": {
@@ -173,9 +144,15 @@ ACTORS = {
         "home": PLACES["ALICES_HOUSE"],
         "place": PLACES["ALICES_HOUSE"],
         "health": 10,
-        "items": [ITEMS["GUN"]],
-        "kill_desire": {},  
-        "affection": {}, 
+        "items": [],
+        "kill_desire": {
+            "BOB": 0,
+            "CHARLIE": 0,
+        },  
+        "affection": {
+            "BOB": [0, RELATIONSHIPS["STRANGER"]],
+            "CHARLIE": [0, RELATIONSHIPS["STRANGER"]],
+        }, 
         "attractiveness": 0.5, 
         "grief": 0,
         "gender": "female",
@@ -185,9 +162,15 @@ ACTORS = {
         "home": PLACES["BOBS_HOUSE"],
         "place": PLACES["BOBS_HOUSE"],
         "health": 10,
-        "items": [ITEMS["VASE"]],
-        "kill_desire": {},
-        "affection": {},
+        "items": [],
+        "kill_desire": {
+            "ALICE": 0,
+            "CHARLIE": 0,
+        },  
+        "affection": {
+            "ALICE": [0, RELATIONSHIPS["STRANGER"]],
+            "CHARLIE": [0, RELATIONSHIPS["STRANGER"]],
+        }, 
         "attractiveness": 0.9,
         "grief": 0,
         "gender": "male",
@@ -197,9 +180,15 @@ ACTORS = {
         "home": PLACES["CHARLIES_HOUSE"],
         "place": PLACES["CHARLIES_HOUSE"],
         "health": 10,
-        "items": [ITEMS["BASEBALL_BAT"]],
-        "kill_desire": {},
-        "affection": {},
+        "items": [],
+        "kill_desire": {
+            "ALICE": 0,
+            "BOB": 0,
+        },  
+        "affection": {
+            "ALICE": [0, RELATIONSHIPS["STRANGER"]],
+            "BOB": [0, RELATIONSHIPS["STRANGER"]],
+        }, 
         "attractiveness": 0.3,
         "grief": 0,
         "gender": "male",

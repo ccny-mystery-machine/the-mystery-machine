@@ -3,14 +3,19 @@ Classes related to the Tree representation of the story
 """
 from copy import deepcopy
 
-from methods import Method, METHODS, POSSIBLE_METHODS
+from methods import Method, METHODS, create_possible_methods
+
+POSSIBLE_METHODS = []
 
 class TreeNode:
     """
     Node in our story tree
     """
-    def __init__(self, state, parent_edge = None):
+    def __init__(self, state, possible_methods = False, parent_edge = None):
+        global POSSIBLE_METHODS
         self.state = state
+        if possible_methods:
+            POSSIBLE_METHODS = create_possible_methods(state)
         self.parent_edge = parent_edge
         self.edges = []
         self.height = 0

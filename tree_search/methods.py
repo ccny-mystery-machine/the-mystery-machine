@@ -10,7 +10,7 @@ from functools import partial
 from setup import ACTORS, PLACES, ITEMS, RELATIONSHIPS
 
 def rectadd(a, b):
-    ans = a+b
+    ans = a + b
     if ans > 1:
         return 1
     elif ans < -1:
@@ -113,22 +113,13 @@ def mug(actor_a_key, actor_b_key, state):
     rand_idx = randint(0, len(actor_b["items"]) - 1)
     actor_b_item = actor_b["items"].pop(rand_idx)
     actor_a["items"].append(actor_b_item)
-    if actor_a_key in actor_b["kill_desire"]:
-        actor_b["kill_desire"][actor_a_key] = rectadd( actor_b["kill_desire"][actor_a_key],  METHOD_CONSTANTS[ "MUG_KILL_DESIRE_INC" ] )
-    else:
-        actor_b["kill_desire"][actor_a_key] = METHOD_CONSTANTS[ "MUG_KILL_DESIRE_INC" ]
-   
-    if actor_a_key in actor_b["affection"]:
-        actor_b["affection"][actor_a_key][0] = METHOD_CONSTANTS[ "MUG_AFFECTION" ]
-    else:
-        actor_b["affection"][actor_a_key] = ( METHOD_CONSTANTS[ "MUG_AFFECTION" ], RELATIONSHIPS[ "STRANGER" ] )
+    
+    actor_b["kill_desire"][actor_a_key] = rectadd( actor_b["kill_desire"][actor_a_key],  METHOD_CONSTANTS[ "MUG_KILL_DESIRE_INC" ] )
+    actor_b["affection"][actor_a_key][0] = METHOD_CONSTANTS[ "MUG_AFFECTION" ]
 
     actor_b["grief"] = rectadd( actor_b["grief"], actor_b_item["value"] / 2 )
 
-    actor_b["grief"] = rectadd( actor_b["grief"], actor_b_item["value"] / 2 )
-
-    sentence = (actor_a["name"] + " mugs " + actor_b["name"] + " and stole " +
-                actor_b_item["name"] + ". ")
+    sentence = (actor_a["name"] + " mugs " + actor_b["name"] + " and stole " + actor_b_item["name"] + ". ")
     
     if (actor_a["health"] <= 0): 
         believability = METHOD_CONSTANTS[ "MUG_IF_DEAD" ]
@@ -161,25 +152,11 @@ def talk(actor_a_key, actor_b_key, state):
         believability = METHOD_CONSTANTS[ "TALK_IF_DEAD" ]
         return (sentence, believability) 
 
-    if actor_b_key in actor_a["kill_desire"]:
-        actor_a["kill_desire"][actor_b_key] = rectadd( actor_a["kill_desire"][actor_b_key], -METHOD_CONSTANTS[ "TALK_KILL_DESIRE_DEC" ] )
-    else:
-        actor_a["kill_desire"][actor_b_key] = -METHOD_CONSTANTS[ "TALK_KILL_DESIRE_DEC" ]
-
-    if actor_a_key in actor_b["kill_desire"]:
-        actor_b["kill_desire"][actor_a_key] = rectadd( actor_b["kill_desire"][actor_a_key], -METHOD_CONSTANTS[ "TALK_KILL_DESIRE_DEC" ] )
-    else:
-        actor_b["kill_desire"][actor_a_key] = -METHOD_CONSTANTS[ "TALK_KILL_DESIRE_DEC" ]
+    actor_a["kill_desire"][actor_b_key] = rectadd(actor_a["kill_desire"][actor_b_key], -METHOD_CONSTANTS[ "TALK_KILL_DESIRE_DEC" ])
+    actor_b["kill_desire"][actor_a_key] = rectadd(actor_b["kill_desire"][actor_a_key], -METHOD_CONSTANTS[ "TALK_KILL_DESIRE_DEC" ])
     
-    if actor_b_key in actor_a["affection"]:
-        actor_a["affection"][actor_b_key][0] = rectadd( actor_a["affection"][actor_b_key], -METHOD_CONSTANTS[ "TALK_AFFECTION_INC" ] )
-    else:
-        actor_a["affection"][actor_b_key] = (METHOD_CONSTANTS[ "TALK_AFFECTION_INC" ], RELATIONSHIPS[ "STRANGER" ])  
-
-    if actor_a_key in actor_b["affection"]:
-        actor_b["affection"][actor_a_key][0] = rectadd( actor_b["affection"][actor_a_key], -METHOD_CONSTANTS[ "TALK_AFFECTION_INC" ] )
-    else:
-        actor_b["affection"][actor_a_key] = (METHOD_CONSTANTS[ "TALK_AFFECTION_INC" ], RELATIONSHIPS[ "STRANGER" ])
+    actor_a["affection"][actor_b_key][0] = rectadd(actor_a["affection"][actor_b_key][0], -METHOD_CONSTANTS[ "TALK_AFFECTION_INC" ])
+    actor_b["affection"][actor_a_key][0] = rectadd(actor_b["affection"][actor_a_key][0], -METHOD_CONSTANTS[ "TALK_AFFECTION_INC" ])
     
 
     if (actor_a["place"] != actor_b["place"]):
@@ -221,7 +198,7 @@ def kill(actor_a_key, actor_b_key, state):
         return (sentence, believability)
 
     # if kill_desire exists, then we have higher believability
-    if (actor_b_key in actor_a["kill_desire"] and actor_a["kill_desire"][actor_b_key] > METHOD_CONSTANTS[ "KILL_DESIRE_THRES" ]):
+    if actor_a["kill_desire"][actor_b_key] > METHOD_CONSTANTS[ "KILL_DESIRE_THRES" ]:
         believability = METHOD_CONSTANTS[ "KILL_ANGRY_BELIEVABILITY"  ]
         return (sentence, believability)
 
@@ -286,9 +263,10 @@ def befriend(actor_a_key, actor_b_key, state):
         believability = 0
         return (sentence, believability)
     
-
-    a_b_stranger_or_enemy = actor_a["affection"][actor_b_key][1] == RELATIONSHIP[ "STRANGER" ] or actor_a["affection"][actor_b_key][1] == RELATIONSHIP[ "ENEMY" ]
-    b_a_stranger_or_enemy = actor_b["affection"][actor_a_key][1] == RELATIONSHIP[ "STRANGER" ] or actor_b["affection"][actor_a_key][1] == RELATIONSHIP[ "ENEMY" ]
+    a_b_stranger_or_enemy = (actor_a["affection"][actor_b_key][1] == RELATIONSHIP[ "STRANGER" ] or 
+                             actor_a["affection"][actor_b_key][1] == RELATIONSHIP[ "ENEMY" ])
+    b_a_stranger_or_enemy = (actor_b["affection"][actor_a_key][1] == RELATIONSHIP[ "STRANGER" ] or 
+                             actor_b["affection"][actor_a_key][1] == RELATIONSHIP[ "ENEMY" ])
 
     affection_above_max_thres = (actor_a["affection"][actor_b_key][0] > METHOD_CONSTANTS[ "BEFRIEND_MAX_THRES"] and 
                                  actor_b["affection"][actor_a_key][0] > METHOD_CONSTANTS[ "BEFRIEND_MAX_THRES"]) 
@@ -299,9 +277,7 @@ def befriend(actor_a_key, actor_b_key, state):
     rng =  METHOD_CONSTANTS[ "BEFRIEND_MAX_THRES"] - METHOD_CONSTANTS[ "BEFRIEND_MIN_THRES"]  
     scaled_affection = (actor_a["affection"][actor_b_key][0] + actor_b["affection"][actor_a_key][0]) / (2 * rng)  
 
-
     if (a_b_stranger_or_enemy and b_a_stranger_or_enemy):
-        
         if (affection_above_max_thres):
             believability = 1
             return (sentence, believability)

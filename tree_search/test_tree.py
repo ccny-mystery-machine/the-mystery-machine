@@ -3,7 +3,8 @@ Test file for the different methods related to the story tree
 """
 from copy import deepcopy
 
-from setup import State, ACTORS, PLACES, ITEMS
+from setup import ACTORS, PLACES, ITEMS
+from state import State
 from tree import TreeNode, TreeEdge, expand_edge, expand_all_edges
 
 class TestNode:

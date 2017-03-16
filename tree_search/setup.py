@@ -3,12 +3,12 @@ Setup of all global variables
 """
 
 NAME_BANK = [
-("Alice", "female"),
-("Bob", "male"),
-("Charlie", "male"),
-("Daphne", "female"),
-("Eve", "female"),
-("Fred", "male"),
+    ("Alice", "female"),
+    ("Bob", "male"),
+    ("Charlie", "male"),
+    ("Daphne", "female"),
+    ("Eve", "female"),
+    ("Fred", "male"),
 ]
 
 RELATIONSHIPS = {
@@ -104,6 +104,11 @@ OUT_PLACES = {
     }
 }
 
+PLACE_TEMPLATE = {
+    "name": None,
+    "items": [],
+}
+
 ACTOR_TEMPLATE = {
     "name": None,
     "home": None,
@@ -116,6 +121,7 @@ ACTOR_TEMPLATE = {
     "grief": None,
     "gender": None,
 }
+
 
 PLACES = {
     "ALICES_HOUSE": {
@@ -138,9 +144,15 @@ ACTORS = {
         "home": PLACES["ALICES_HOUSE"],
         "place": PLACES["ALICES_HOUSE"],
         "health": 10,
-        "items": [ITEMS["GUN"]],
-        "kill_desire": {},  
-        "affection": {}, 
+        "items": [],
+        "kill_desire": {
+            "BOB": 0,
+            "CHARLIE": 0,
+        },  
+        "affection": {
+            "BOB": [0, RELATIONSHIPS["STRANGER"]],
+            "CHARLIE": [0, RELATIONSHIPS["STRANGER"]],
+        }, 
         "attractiveness": 0.5, 
         "grief": 0,
         "gender": "female",
@@ -150,9 +162,15 @@ ACTORS = {
         "home": PLACES["BOBS_HOUSE"],
         "place": PLACES["BOBS_HOUSE"],
         "health": 10,
-        "items": [ITEMS["VASE"]],
-        "kill_desire": {},
-        "affection": {},
+        "items": [],
+        "kill_desire": {
+            "ALICE": 0,
+            "CHARLIE": 0,
+        },  
+        "affection": {
+            "ALICE": [0, RELATIONSHIPS["STRANGER"]],
+            "CHARLIE": [0, RELATIONSHIPS["STRANGER"]],
+        }, 
         "attractiveness": 0.9,
         "grief": 0,
         "gender": "male",
@@ -162,9 +180,15 @@ ACTORS = {
         "home": PLACES["CHARLIES_HOUSE"],
         "place": PLACES["CHARLIES_HOUSE"],
         "health": 10,
-        "items": [ITEMS["BASEBALL_BAT"]],
-        "kill_desire": {},
-        "affection": {},
+        "items": [],
+        "kill_desire": {
+            "ALICE": 0,
+            "BOB": 0,
+        },  
+        "affection": {
+            "ALICE": [0, RELATIONSHIPS["STRANGER"]],
+            "BOB": [0, RELATIONSHIPS["STRANGER"]],
+        }, 
         "attractiveness": 0.3,
         "grief": 0,
         "gender": "male",

@@ -179,7 +179,7 @@ def talk(actor_a_key, actor_b_key, state):
     if actor_a_key in actor_b["affection"]:
         actor_b["affection"][actor_a_key][0] = rectadd( actor_b["affection"][actor_a_key], -METHOD_CONSTANTS[ "TALK_AFFECTION_INC" ] )
     else:
-        actor_b["affection"][actor_a_key] = METHOD_CONSTANTS[ "TALK_AFFECTION_INC" ], RELATIONSHIPS[ "STRANGER" ]) 
+        actor_b["affection"][actor_a_key] = (METHOD_CONSTANTS[ "TALK_AFFECTION_INC" ], RELATIONSHIPS[ "STRANGER" ])
     
 
     if (actor_a["place"] != actor_b["place"]):
@@ -213,10 +213,11 @@ def kill(actor_a_key, actor_b_key, state):
 
     actor_b["health"] = 0
     
-    if (actor_a["place"] != actor_b["place"]):
+    if actor_a["place"] != actor_b["place"]:
         believability = METHOD_CONSTANTS[ "KILL_IF_DIFFERENT_PLACE" ] 
         return (sentence, believability)
-    if (actor_a["name"] == actor_b["name"]):
+    if actor_a["name"] == actor_b["name"]:
+        believability = 0
         return (sentence, believability)
 
     # if kill_desire exists, then we have higher believability
@@ -322,10 +323,10 @@ METHODS = {
     "BEFRIEND": befriend
 }
 
-POSSIBLE_METHODS = []
 
+def create_possible_methods(state):
     
-def create_possible_methods(state)
+    POSSIBLE_METHODS = []
 
     # MOVE - actor, place
     for key_a in state.actors:
@@ -377,4 +378,6 @@ def create_possible_methods(state)
                 POSSIBLE_METHODS.append(
                     partial(befriend, key_a, key_b)
             )
+    
+    return POSSIBLE_METHODS
 

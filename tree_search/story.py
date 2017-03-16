@@ -1,7 +1,7 @@
 from functools import partial
 from copy import deepcopy
 
-from methods import Method, METHODS, POSSIBLE_METHODS
+from methods import Method, METHODS
 
 
 def multiply_ba(newaction_b, story_b):

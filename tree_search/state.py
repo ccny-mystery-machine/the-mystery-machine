@@ -1,7 +1,7 @@
 from random import random, randint
 from copy import deepcopy
 
-from setup import OUT_PLACES, NAME_BANK, ACTOR_TEMPLATE, PLACE_TEMPLATE, ITEMS
+from setup import OUT_PLACES, NAME_BANK, ACTOR_TEMPLATE, PLACE_TEMPLATE, ITEMS, RELATIONSHIPS
 
 class State:
     """
@@ -29,8 +29,14 @@ def random_state():
         up_name = name.upper()
         up_place = up_name + "S_HOUSE"
 
+        rand_state.places[up_place] = deepcopy(PLACE_TEMPLATE)
+        place = rand_state.places[up_place]
+        place["name"] = name + "'s house"
+        place["items"] = []
+
         rand_state.actors[up_name] = deepcopy(ACTOR_TEMPLATE)
         actor = rand_state.actors[up_name]
+        places = rand_state.places
         actor["name"] = name
         actor["home"] = places[up_place]
         actor["place"] = places[up_place]
@@ -38,17 +44,13 @@ def random_state():
         actor["attractiveness"] = random() 
         actor["grief"] = 0
 
-        rand_state.places[up_place] = deepcopy(PLACE_TEMPLATE)
-        place = rand_state.places[up_place]
-        place["name"] = name + "'s house"
-        place["items"] = []
 
     for source in rand_state.actors:
         for target in rand_state.actors:
             if source == target:
                 continue
-            source["kill_desire"][target] = 0
-            source["affection"][target] = (0, RELATIONSHIPS["STRANGER"])
+            rand_state.actors[source]["kill_desire"][target] = 0
+            rand_state.actors[source]["affection"][target] = [0, RELATIONSHIPS["STRANGER"]]
                                            
     return rand_state
 

@@ -7,7 +7,7 @@ from math import log, sqrt
 from random import randint
 
 from goals import GOALS, goals_satisfied, percent_goals_satisfied 
-from tree import TreeNode, expand_edge, expand_all_edges
+from tree import TreeNode, expand_edge, expand_all_edges, expand_rand_edge
 from story import Story
 
 # memory exhaustive
@@ -71,25 +71,44 @@ def best_child(node, C):
 def uct_selection(node, C, thres):
     while node.believability > 0 and node.visits > thres:
         new_edge = expand_edge(node)
+        # print("Expanded edge?")
         if new_edge:
+            # print("Expanded edge!")
             return new_edge.next_node
         else:
+            # print("Didn't expand edge!")
             node = best_child(node, C)
     return node
 
 def rollout_policy_1(node):
+    print("Before expand")
     expand_all_edges(node)
+    print("After expand")
     node.edges = [edge for edge in node.edges if edge.method.believability > 0]
     ridx = randint(0, len(node.edges) - 1)
     node.edges = [node.edges[ridx]]
     return node.edges[0].next_node
+
+def rollout_policy_2(node):
+    while True:
+        expand_rand_edge(node)
+        if node.edges[-1].next_node.believability != 0:
+            break
+    return node.edges[-1].next_node
+
+def rollout_policy_3(node):
+    expand_rand_edge(node)
+    return node.edges[-1].next_node
 
 def rollout_story(node, max_simlength):
     root = TreeNode(node.state)
     curr_node = root
     numsims = 0
     while (numsims < max_simlength and not goals_satisfied(curr_node, GOALS)):
-        curr_node = rollout_policy_1(curr_node)    
+        curr_node = rollout_policy_3(curr_node)    
+        if curr_node.believability == 0:
+            curr_node.believability = 0.001
+            break
         #print( curr_node.believability )
         #print( str(numsims) + " " + str(max_simlength) )
         numsims += 1
@@ -112,6 +131,7 @@ def backpropogate(node, value):
     update_node_value(node, value)
 
 def most_visited_child(node): 
+    # print("Edge Length - most visited child:", len(node.edges))
     best_node = node.edges[0].next_node        
     for edge in node.edges:
         curr_node = edge.next_node
@@ -129,15 +149,14 @@ def mcts(node, max_iter, max_numsim, max_simlength, C, thres):
             print( "Simulation Number - " + str(numsim))
             chosen_node = uct_selection(node, C, thres)
             if chosen_node.believability == 0:
-                chosen_node.visits += 1
-                chosen_node.value = 0
+                chosen_node.parent_edge.prev_node.edges.pop()
             else:
-                #print("Rollout")
                 sim_value = rollout_story(chosen_node, max_simlength)
-                #print("Backprop")
+                # print("Rollout")
                 backpropogate(chosen_node, sim_value)
+                # print("Backprop")
         exp_node = most_visited_child(node) 
         delete_children(node, exp_node)
         node = exp_node
     print("\n")
-    return (node.believability, Story(node))
+    return (node, Story(node))

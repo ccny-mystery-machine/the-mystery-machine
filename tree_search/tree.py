@@ -2,6 +2,7 @@
 Classes related to the Tree representation of the story
 """
 from copy import deepcopy
+from random import randint
 
 from methods import Method, METHODS, create_possible_methods
 
@@ -11,7 +12,7 @@ class TreeNode:
     """
     Node in our story tree
     """
-    def __init__(self, state, possible_methods = False, parent_edge = None):
+    def __init__(self, state, parent_edge = None, possible_methods = False):
         global POSSIBLE_METHODS
         self.state = state
         if possible_methods:
@@ -59,6 +60,23 @@ def expand_edge(node):
         return new_edge
 
     return False
+
+def expand_rand_edge(node):
+    """
+    Expands random edge of the node
+    Returns True if successful, False if not
+    """
+    poss_meth = node.possible_methods
+    if poss_meth:
+        new_method_idx = poss_meth.pop(randint(0, len(poss_meth) - 1))
+        new_method = POSSIBLE_METHODS[new_method_idx]
+        new_edge = TreeEdge(new_method)
+        new_edge(node)
+        node.edges.append(new_edge)
+        return new_edge
+
+    return False
+
 
 
 def expand_all_edges(node):

@@ -263,10 +263,10 @@ def befriend(actor_a_key, actor_b_key, state):
         believability = 0
         return (sentence, believability)
     
-    a_b_stranger_or_enemy = (actor_a["affection"][actor_b_key][1] == RELATIONSHIP[ "STRANGER" ] or 
-                             actor_a["affection"][actor_b_key][1] == RELATIONSHIP[ "ENEMY" ])
-    b_a_stranger_or_enemy = (actor_b["affection"][actor_a_key][1] == RELATIONSHIP[ "STRANGER" ] or 
-                             actor_b["affection"][actor_a_key][1] == RELATIONSHIP[ "ENEMY" ])
+    a_b_stranger_or_enemy = (actor_a["affection"][actor_b_key][1] == RELATIONSHIPS[ "STRANGER" ] or 
+                             actor_a["affection"][actor_b_key][1] == RELATIONSHIPS[ "ENEMY" ])
+    b_a_stranger_or_enemy = (actor_b["affection"][actor_a_key][1] == RELATIONSHIPS[ "STRANGER" ] or 
+                             actor_b["affection"][actor_a_key][1] == RELATIONSHIPS[ "ENEMY" ])
 
     affection_above_max_thres = (actor_a["affection"][actor_b_key][0] > METHOD_CONSTANTS[ "BEFRIEND_MAX_THRES"] and 
                                  actor_b["affection"][actor_a_key][0] > METHOD_CONSTANTS[ "BEFRIEND_MAX_THRES"]) 

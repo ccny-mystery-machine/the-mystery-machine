@@ -251,7 +251,6 @@ class TestKill:
         """
         test_state = State(ACTORS,PLACES,ITEMS)
         sentence, believability = METHODS["KILL"]("ALICE", "BOB", test_state)
-
         assert believability == 0
 
     def test_kill_self(self):
@@ -262,3 +261,142 @@ class TestKill:
         sentence, believability = METHODS["KILL"]("ALICE", "ALICE", test_state)
 
         assert believability == 0
+
+
+class TestDropItem:
+
+    def test_drop_item_when_dead(self):
+        """
+        Tests if believability is 0 when actor is dead and drop item
+        """
+        test_state = State(ACTORS,PLACES,ITEMS)
+        test_state.actors["ALICE"]["health"] = 0
+        sentence, believability = METHODS["DROP_ITEM"]("ALICE","ALICE_HOUSE",test_state)
+        assert believability == 0
+
+    def test_drop_item_when_different_locations(self):
+        """
+        Tests if believability is 0 when actor drop item in different locations
+        """
+        test_state = State(ACTORS,PLACES,ITEMS)
+        sentence, believability = METHODS["DROP_ITEM"]("ALICE", "BOB_HOUSE", test_state)
+        assert believability == 0
+
+    def test_drop_item_on_no_items(self):
+        """
+        Tests if believability is 0 when actor has no items to drop
+        """
+        test_state = State(ACTORS,PLACES,ITEMS)
+        alice = test_state.actors["ALICE"]
+        alice["items"] = []
+        sentence, believability = METHODS["DROP_ITEM"]("ALICE", "ALICE_HOUSE", test_state)
+        assert believability == 0
+
+class TestPickUpItem:
+
+    def test_pickup_item_when_dead(self):
+        """
+        Tests if believability is 0 when actor is dead and pick up item
+        """
+        test_state = State(ACTORS,PLACES,ITEMS)
+        test_state.actors["ALICE"]["health"] = 0
+        sentence, believability = METHODS["PICKUP_ITEM"]("ALICE","ALICE_HOUSE",test_state)
+        assert believability == 0
+
+    def test_pickup_item_when_different_locations(self):
+        """
+        Tests if believability is 0 when actor pick up item in different locations
+        """
+        test_state = State(ACTORS,PLACES,ITEMS)
+        sentence, believability = METHODS["PICKUP_ITEM"]("ALICE", "LIBRARY", test_state)
+        assert believability == 0
+
+    def test_pickup_item_on_no_items(self):
+        """
+        Tests if believability is 0 when place has no items to drop
+        """
+        test_state = State(ACTORS,PLACES,ITEMS)
+        alice = test_state.actors["ALICE"]
+        test_state.actors["ALICE"]["place"] = PLACES["LIBRARY"]
+        sentence, believability = METHODS["PICKUP_ITEM"]("ALICE", "LIBRARY", test_state)
+        assert believability == 0
+
+
+class TestBeFriend:
+
+    def test_befriend_when_dead(self):
+        """
+        Tests if believability is 0 when actor is dead 
+        """
+        test_state = State(ACTORS,PLACES,ITEMS)
+        alice = test_state.actors["ALICE"]
+        bob = test_state.actors["BOB"]
+        alice["health"] = 0
+        bob["place"] = PLACES["ALICES_HOUSE"]
+        test_state.actors["BOB"]["place"] = PLACES["ALICES_HOUSE"]
+        sentence, believability = METHODS["BEFRIEND"]("ALICE", "BOB", test_state)
+        assert believability == 0
+
+    def test_befriend_from_dead(self):
+        """
+        Tests if believability is 0 when other actor is dead 
+        """
+        test_state = State(ACTORS,PLACES,ITEMS)
+        alice = test_state.actors["ALICE"]
+        bob = test_state.actors["BOB"]
+        bob["health"] = 0
+        bob["place"] = PLACES["ALICES_HOUSE"]
+        test_state.actors["BOB"]["place"] = PLACES["ALICES_HOUSE"]
+        sentence, believability = METHODS["BEFRIEND"]("ALICE", "BOB", test_state)
+        assert believability == 0
+
+    def test_befriend_when_different_locations(self):
+        """
+        Tests if believability is 0 when actor pickup item in different locations
+        """
+        test_state = State(ACTORS,PLACES,ITEMS)
+        test_state = State(ACTORS,PLACES,ITEMS)
+        alice = test_state.actors["ALICE"]
+        bob = test_state.actors["BOB"]
+        sentence, believability = METHODS["BEFRIEND"]("ALICE", "BOB", test_state)
+        assert believability == 0
+
+    def test_befirend_when_different_locations(self):
+        """
+        Tests if believability is 0 when actor be firend in different locations
+        """
+        test_state = State(ACTORS,PLACES,ITEMS)
+        test_state = State(ACTORS,PLACES,ITEMS)
+        alice = test_state.actors["ALICE"]
+        bob = test_state.actors["BOB"]
+        sentence, believability = METHODS["BEFRIEND"]("ALICE", "BOB", test_state)
+        assert believability == 0
+        
+    def test_befirend_when_they_are_friend_already(self):
+        """
+        Tests if believability is 0 when actor be firend when they are friend already
+        """
+        test_state = State(ACTORS,PLACES,ITEMS)
+        test_state = State(ACTORS,PLACES,ITEMS)
+        alice = test_state.actors["ALICE"]
+        bob = test_state.actors["BOB"]
+        alice["affection"]["BOB"][1] = RELATIONSHIPS["FRIEND"]
+        bob["affection"]["ALICE"][1] = RELATIONSHIPS["FRIEND"]
+        sentence, believability = METHODS["BEFRIEND"]("ALICE", "BOB", test_state)
+        assert believability == 0
+
+    def test_befirend_when_they_are_friend_already(self):
+        """
+        Tests if believability is 0 when actor be firend when they are friend already
+        """
+        test_state = State(ACTORS,PLACES,ITEMS)
+        test_state = State(ACTORS,PLACES,ITEMS)
+        alice = test_state.actors["ALICE"]
+        bob = test_state.actors["BOB"]
+        alice["affection"]["BOB"][1] = RELATIONSHIPS["SIGNIFICANT_OTHER"]
+        bob["affection"]["ALICE"][1] = RELATIONSHIPS["SIGNIFICANT_OTHER"]
+        sentence, believability = METHODS["BEFRIEND"]("ALICE", "BOB", test_state)
+        assert believability == 0
+
+        
+    

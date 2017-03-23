@@ -31,8 +31,19 @@ class Story:
                                              self.believability)
 
     def __str__(self):
-        story_text = ""
+        story_text = self.create_expository()
         for method in self.methods_list:
             story_text += method.sentence
             story_text += '\n'
         return story_text
+
+    def create_expository(self):
+        root_actors = self.state_list[0].actors
+        actors = [root_actors[actor]["name"] for actor in root_actors]
+        sentence = ', '.join(actors[:-1])
+        sentence += ", and {} all lived in the same neighborhood.\n".format(actors[-1])
+        sentence += "They were all at their respective houses.\n"
+        return sentence
+
+
+

@@ -5,7 +5,7 @@ Defining the different goals we are checking for
 from functools import partial
 
 def possible(node):
-    return node.believability > 0.01
+    return node.believability > 0
 
 
 def death_occurred(num_deaths, node):
@@ -30,7 +30,7 @@ def everyone_dies(node):
     return True
 
 GOALS = [
-    possible,
+    # possible,
     partial(death_occurred, 1),
     partial(death_occurred, 2),
     partial(death_occurred, 3),

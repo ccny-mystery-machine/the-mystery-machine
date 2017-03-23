@@ -7,6 +7,7 @@ from setup import ACTORS, PLACES, ITEMS
 from state import State, random_state
 from search import mcts
 from methods import create_possible_methods
+from goals import percent_goals_satisfied, GOALS
 
 
 def print_rollout():
@@ -22,7 +23,8 @@ if __name__ == "__main__":
     root_node = TreeNode(root_state, parent_edge=None, possible_methods=True)
     num_methods = len(root_node.possible_methods)
     # max_numsim > num_methods * thres
-    n, s = mcts(root_node, max_iter=12, max_numsim=10000, max_simlength=50, C=1, thres=40) 
+    n, s = mcts(root_node, max_iter=10, max_numsim=10000, max_simlength=50, C=1, thres=40) 
     print(s)
     print(n.believability)
     print(n.value)
+    print(percent_goals_satisfied(n, GOALS))

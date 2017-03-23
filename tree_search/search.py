@@ -1,7 +1,6 @@
 """
 Implementation of various search methods for story generation
 """
-
 from queue import Queue
 from math import log, sqrt
 from random import randint
@@ -80,6 +79,9 @@ def uct_selection(node, C, thres):
             node = best_child(node, C)
     return node
 
+def rollout_value(believability, percent_goals_satisfied):
+    return sqrt(believability) * percent_goals_satisfied
+
 def rollout_story(node, max_simlength):
     root = TreeNode(node.state)
     curr_node = root
@@ -92,8 +94,7 @@ def rollout_story(node, max_simlength):
             curr_node.believability = p_believability * numsims / max_simlength
             break
         numsims += 1
-    value = curr_node.believability * percent_goals_satisfied(curr_node, GOALS)
-    return value
+    return rollout_value(curr_node.believability, percent_goals_satisfied(curr_node, GOALS))
 
 def update_node_value(node, value):
     prev_value = node.value
@@ -112,7 +113,7 @@ def most_visited_child(node):
     best_node = node.edges[0].next_node        
     for edge in node.edges:
         curr_node = edge.next_node
-        if (curr_node.visits > best_node.visits):
+        if curr_node.visits > best_node.visits:
             best_node = curr_node
     return best_node
 

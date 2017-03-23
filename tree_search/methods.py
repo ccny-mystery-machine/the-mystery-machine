@@ -35,11 +35,12 @@ METHOD_CONSTANTS = {
     "TALK_KILL_DESIRE_DEC": .05,
     "TALK_AFFECTION_INC": 0.05,   
 
-    "KILL_NOT_ANGRY_BELIEVABILITY": 0.1,
+    "KILL_NOT_ANGRY_BELIEVABILITY": 0,
     "KILL_DESIRE_THRES": 0,
     "KILL_ANGRY_BELIEVABILITY": 0.9,
     "KILL_IF_DEAD": 0,
     "KILL_IF_DIFFERENT_PLACE": 0,
+    "KILL_NO_ITEMS_BELIEVABILITY": 0,
     
     "BEFRIEND_MIN_THRES": 0,
     "BEFRIEND_MAX_THRES": 0.5,
@@ -182,9 +183,18 @@ def kill(actor_a_key, actor_b_key, state):
     actor_a = state.actors[actor_a_key]
     actor_b = state.actors[actor_b_key]
 
-    sentence = actor_a["name"] + " killed " + actor_b["name"] + ". "
+    num_a_items = len(actor_a["items"])
+    if num_a_items <= 0:
+        sentence = actor_a["name"] + " killed " + actor_b["name"] + ". "
+        believability = METHOD_CONSTANTS["KILL_NO_ITEMS_BELIEVABILITY"]
+        return (sentence, believability)
     
-    if (actor_a["health"] <= 0 or actor_b["health"] <= 0):
+    rand_idx = randint(0, num_a_items - 1)
+    rand_item = actor_a["items"][rand_idx]
+
+    sentence = actor_a["name"] + " killed " + actor_b["name"] + " with " + rand_item["name"] + ". "
+    
+    if actor_a["health"] <= 0 or actor_b["health"] <= 0:
         believability = METHOD_CONSTANTS[ "KILL_IF_DEAD" ]
         return (sentence, believability)
 
@@ -199,11 +209,11 @@ def kill(actor_a_key, actor_b_key, state):
 
     # if kill_desire exists, then we have higher believability
     if actor_a["kill_desire"][actor_b_key] > METHOD_CONSTANTS[ "KILL_DESIRE_THRES" ]:
-        believability = METHOD_CONSTANTS[ "KILL_ANGRY_BELIEVABILITY"  ]
+        believability = METHOD_CONSTANTS["KILL_ANGRY_BELIEVABILITY"] * rand_item["lethality"]
         return (sentence, believability)
 
     # potential of random murder
-    believability = METHOD_CONSTANTS[ "KILL_NOT_ANGRY_BELIEVABILITY" ]
+    believability = METHOD_CONSTANTS["KILL_NOT_ANGRY_BELIEVABILITY"] * rand_item["lethality"]
     return (sentence, believability)
 
 

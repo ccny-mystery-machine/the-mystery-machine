@@ -1,7 +1,6 @@
 """
 Implementation of various search methods for story generation
 """
-
 from queue import Queue
 from math import log, sqrt
 from random import randint
@@ -80,43 +79,22 @@ def uct_selection(node, C, thres):
             node = best_child(node, C)
     return node
 
-def rollout_policy_1(node):
-    print("Before expand")
-    expand_all_edges(node)
-    print("After expand")
-    node.edges = [edge for edge in node.edges if edge.method.believability > 0]
-    ridx = randint(0, len(node.edges) - 1)
-    node.edges = [node.edges[ridx]]
-    return node.edges[0].next_node
-
-def rollout_policy_2(node):
-    while True:
-        expand_rand_edge(node)
-        if node.edges[-1].next_node.believability != 0:
-            break
-    return node.edges[-1].next_node
-
-def rollout_policy_3(node):
-    expand_rand_edge(node)
-    return node.edges[-1].next_node
+def rollout_value(believability, percent_goals_satisfied):
+    return sqrt(believability) * percent_goals_satisfied
 
 def rollout_story(node, max_simlength):
     root = TreeNode(node.state)
     curr_node = root
     numsims = 0
-    while (numsims < max_simlength and not goals_satisfied(curr_node, GOALS)):
-        curr_node = rollout_policy_3(curr_node)    
+    while numsims < max_simlength and not goals_satisfied(curr_node, GOALS):
+        expand_rand_edge(curr_node)
+        curr_node = curr_node.edges[-1].next_node
         if curr_node.believability == 0:
-            curr_node.believability = 0.001
+            p_believability = curr_node.parent_edge.prev_node.believability
+            curr_node.believability = p_believability * numsims / max_simlength
             break
-        #print( curr_node.believability )
-        #print( str(numsims) + " " + str(max_simlength) )
         numsims += 1
-    value = curr_node.believability * percent_goals_satisfied(curr_node, GOALS)
-    #print(  percent_goals_satisfied(curr_node, GOALS) )
-    #print( value )
-    #return Story(curr_node)
-    return value
+    return rollout_value(curr_node.believability, percent_goals_satisfied(curr_node, GOALS))
 
 def update_node_value(node, value):
     prev_value = node.value
@@ -135,7 +113,7 @@ def most_visited_child(node):
     best_node = node.edges[0].next_node        
     for edge in node.edges:
         curr_node = edge.next_node
-        if (curr_node.visits > best_node.visits):
+        if curr_node.visits > best_node.visits:
             best_node = curr_node
     return best_node
 
@@ -144,9 +122,10 @@ def delete_children(node, chosen):
 
 def mcts(node, max_iter, max_numsim, max_simlength, C, thres):
     for count in range(max_iter):
-        print( "Master Iteration Number - " + str(count))
+        print("Master Iteration Number - " + str(count))
         for numsim in range(max_numsim):
-            print( "Simulation Number - " + str(numsim))
+            if numsim % 1000 == 0:
+                print("Simulation Number - " + str(numsim))
             chosen_node = uct_selection(node, C, thres)
             if chosen_node.believability == 0:
                 chosen_node.parent_edge.prev_node.edges.pop()

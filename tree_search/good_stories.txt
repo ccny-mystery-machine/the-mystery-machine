@@ -31,3 +31,16 @@ Charlie stole gun from Alice.
 Charlie went to Bob's house. 
 
 0.0054
+
+4 - mcts(15, 10000, 50, 1, 40)
+
+Bob, Fred, and Charlie all lived in the same neighborhood.
+They were all at their respective houses.
+Charlie went to Fred's house.
+Fred went to store.
+Fred picked up knife from store.
+Fred picked up gun from store.
+Charlie went to beach.
+Charlie went to store.
+Charlie mugs Fred and stole knife.
+

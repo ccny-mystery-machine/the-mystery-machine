@@ -6,7 +6,8 @@ from math import log, sqrt
 from random import randint
 
 from goals import GOALS, goals_satisfied, percent_goals_satisfied 
-from tree import TreeNode, expand_edge, expand_all_edges, expand_rand_edge
+from tree import (TreeNode, expand_edge, expand_all_edges, expand_rand_edge, 
+                  expand_heuristic_edge, initialize_prob_dist, POSSIBLE_METHODS)
 from story import Story
 
 # memory exhaustive
@@ -91,10 +92,37 @@ def rollout_story(node, max_simlength):
         curr_node = curr_node.edges[-1].next_node
         if curr_node.believability == 0:
             p_believability = curr_node.parent_edge.prev_node.believability
-            curr_node.believability = p_believability * numsims / max_simlength
+            curr_node.believability = p_believability * (numsims+1) / max_simlength
             break
         numsims += 1
     return rollout_value(curr_node.believability, percent_goals_satisfied(curr_node, GOALS))
+
+def rollout_story_2(node, max_simlength):
+    root = TreeNode(node.state)
+    curr_node = root
+    numsims = 0
+    while numsims < max_simlength and not goals_satisfied(curr_node, GOALS):
+        expand_rand_edge(curr_node)
+        curr_node = curr_node.edges[-1].next_node
+        if curr_node.believability == 0:
+            curr_node = curr_node.parent_edge.prev_node
+            continue
+        numsims += 1
+    print(Story(curr_node))
+    return rollout_value(curr_node.believability, percent_goals_satisfied(curr_node, GOALS))
+
+def rollout_story_3(node, max_simlength):
+    root = TreeNode(node.state)
+    curr_node = root
+    numsims = 0
+    prob_dist = initialize_prob_dist()
+
+    while numsims < max_simlength and not goals_satisfied(curr_node, GOALS):
+        expand_heuristic_edge(curr_node, prob_dist)
+        curr_node = curr_node.edges[-1].next_node
+        numsims += 1
+    return rollout_value(curr_node.believability, percent_goals_satisfied(curr_node, GOALS))
+
 
 def update_node_value(node, value):
     prev_value = node.value
@@ -124,13 +152,13 @@ def mcts(node, max_iter, max_numsim, max_simlength, C, thres):
     for count in range(max_iter):
         print("Master Iteration Number - " + str(count))
         for numsim in range(max_numsim):
-            if numsim % 1000 == 0:
+            if numsim % 10 == 0:
                 print("Simulation Number - " + str(numsim))
             chosen_node = uct_selection(node, C, thres)
             if chosen_node.believability == 0:
                 chosen_node.parent_edge.prev_node.edges.pop()
             else:
-                sim_value = rollout_story(chosen_node, max_simlength)
+                sim_value = rollout_story_3(chosen_node, max_simlength)
                 # print("Rollout")
                 backpropogate(chosen_node, sim_value)
                 # print("Backprop")

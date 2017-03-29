@@ -23,7 +23,7 @@ if __name__ == "__main__":
     root_node = TreeNode(root_state, parent_edge=None, possible_methods=True)
     num_methods = len(root_node.possible_methods)
     # max_numsim > num_methods * thres
-    n, s = mcts(root_node, max_iter=10, max_numsim=10000, max_simlength=50, C=1, thres=40) 
+    n, s = mcts(root_node, max_iter=10, max_numsim=3000, max_simlength=20, C=1, thres=15) 
     print(s)
     print(n.believability)
     print(n.value)

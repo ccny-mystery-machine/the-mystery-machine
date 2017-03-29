@@ -21,7 +21,7 @@ def rectadd(a, b):
 METHOD_CONSTANTS = {
     "MOVE_IF_SAME_PLACE": 0,
     "MOVE_IF_DEAD": 0,
-    "MOVE_IF_DIFFERENT_PLACE": 0.7,
+    "MOVE_IF_DIFFERENT_PLACE": 0.9,
     
     "MUG_IF_DEAD": 0,
     "MUG_IF_YOURSELF": 0,
@@ -32,10 +32,17 @@ METHOD_CONSTANTS = {
     "TALK_IF_DEAD": 0,
     "TALK_IF_DIFFERENT_PLACE": 0,
     "TALK_IF_NORMAL": 0.5,
-    "TALK_KILL_DESIRE_DEC": .05,
+    "TALK_KILL_DESIRE_DEC": 0.05,
     "TALK_AFFECTION_INC": 0.05,   
 
-    "KILL_NOT_ANGRY_BELIEVABILITY": 1,
+    "ARGUE_IF_DEAD": 0,
+    "ARGUE_IF_DIFFERENT_PLACE": 0,
+    "ARGUE_IF_NORMAL": 0.5,
+    "ARGUE_KILL_DESIRE_INC": 0.05,
+    "ARGUE_AFFECTION_DEC": 0.05,   
+
+
+    "KILL_NOT_ANGRY_BELIEVABILITY": 0,
     "KILL_DESIRE_THRES": 0,
     "KILL_ANGRY_BELIEVABILITY": 1,
     "KILL_IF_DEAD": 0,
@@ -170,6 +177,41 @@ def talk(actor_a_key, actor_b_key, state):
 
     believability = METHOD_CONSTANTS[ "TALK_IF_NORMAL" ]
     return (sentence, believability)
+
+def argue(actor_a_key, actor_b_key, state):
+    """
+    description: actor_a argues with actor_b
+    precondition: actor_a and actor_b must be alive and in the same location
+    postcondition: actor_a and actor_b becomes angrier with eachother
+    """
+
+    actor_a = state.actors[actor_a_key]
+    actor_b = state.actors[actor_b_key]
+
+    sentence = actor_a["name"] + " argued with " + actor_b["name"] + ". "
+    
+    if (actor_a["health"] <= 0 or actor_b["health"] <= 0):
+        believability = METHOD_CONSTANTS[ "ARGUE_IF_DEAD" ]
+        return (sentence, believability) 
+
+    actor_a["kill_desire"][actor_b_key] = rectadd(actor_a["kill_desire"][actor_b_key], METHOD_CONSTANTS[ "ARGUE_KILL_DESIRE_INC" ])
+    actor_b["kill_desire"][actor_a_key] = rectadd(actor_b["kill_desire"][actor_a_key], METHOD_CONSTANTS[ "ARGUE_KILL_DESIRE_INC" ])
+    
+    actor_a["affection"][actor_b_key][0] = rectadd(actor_a["affection"][actor_b_key][0], -METHOD_CONSTANTS[ "ARGUE_AFFECTION_DEC" ])
+    actor_b["affection"][actor_a_key][0] = rectadd(actor_b["affection"][actor_a_key][0], -METHOD_CONSTANTS[ "ARGUE_AFFECTION_DEC" ])
+    
+
+    if (actor_a["place"] != actor_b["place"]):
+        believability = METHOD_CONSTANTS[ "ARGUE_IF_DIFFERENT_PLACE" ]
+        return (sentence, believability)           
+    if (actor_a["name"] == actor_b["name"]):
+        sentence = "Nonsense sentence. "
+        believability = 0
+        return (sentence, believability)
+
+    believability = METHOD_CONSTANTS[ "ARGUE_IF_NORMAL" ]
+    return (sentence, believability)
+
 
 
 def kill(actor_a_key, actor_b_key, state):
@@ -336,6 +378,15 @@ def create_possible_methods(state):
                 POSSIBLE_METHODS.append(
                     partial(talk, key_a, key_b)
                 )
+
+    # ARGUE - actor, actor
+    for key_a in state.actors:
+        for key_b in state.actors:
+            if key_a != key_b:
+                POSSIBLE_METHODS.append(
+                    partial(argue, key_a, key_b)
+                )
+
 
     # KILL - actor, actor
     for key_a in state.actors:

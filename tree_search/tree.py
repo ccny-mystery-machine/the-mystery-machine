@@ -2,7 +2,7 @@
 Classes related to the Tree representation of the story
 """
 from copy import deepcopy
-from random import randint
+from random import randint, random
 
 from methods import Method, METHODS, create_possible_methods
 
@@ -77,6 +77,41 @@ def expand_rand_edge(node):
 
     return False
 
+def initialize_prob_dist():
+    prob_dist = {}
+    for methods in POSSIBLE_METHODS:
+        prob_dist[methods.func.__name__] = 1
+    return prob_dist
+
+
+def expand_heuristic_edge(node, prob_dist):
+    """
+    Expands an edge based off of heuristic
+    """
+    poss_meth = node.possible_methods
+    if poss_meth:
+        while True:        
+            while True:
+                new_method_idx = poss_meth[randint(0, len(poss_meth) - 1)]
+                new_method = POSSIBLE_METHODS[new_method_idx]
+                rand_num = random()
+                prob_method = prob_dist[new_method.func.__name__]
+                if rand_num <= prob_method:
+                    break
+        
+            new_edge = TreeEdge(new_method)
+            new_edge(node)
+        
+            if new_edge.method.believability != 0:
+                break
+
+        for p in prob_dist:
+            prob_dist[p] *= 1.4
+        prob_dist[new_method.func.__name__] /= 2
+        node.edges.append(new_edge)
+        return new_edge
+
+    return False
 
 
 def expand_all_edges(node):

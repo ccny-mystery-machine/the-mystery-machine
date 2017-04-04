@@ -56,18 +56,23 @@ METHOD_CONSTANTS = {
 
 class Method:
     """
-    Actions in the story - Edges in the tree
+    Actions in the story - Acts as wrapper for method functions
     """
     def __init__(self, method):
+        # Partial Method
         self.method = method
+        # Whole Method 
         self.function = method.func
+        # Partial Arguments
         self.args = method.args
+        
         self.before_state = None
         self.after_state = None
         self.sentence = ""
         self.believability = 1
 
     def __call__(self, state):
+        # Set the before state, next state, and apply method on next state
         self.prev_state = state
         self.next_state = deepcopy(state)
         self.sentence, self.believability = self.method(self.next_state)

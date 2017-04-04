@@ -100,3 +100,30 @@ Fred argued with Charlie.
 0.0002452304380258482
 0.0
 
+7 - mcts
+12 sentences
+200 max expansions
+50 threshold
+30 sim length
+C = 1
+less places and no befriend
+
+Charlie, Eve, and Fred all lived in the same neighborhood.
+They were all at their respective houses.
+Eve went to store.
+Eve picked up knife from store.
+Eve went to Fred's house.
+Eve dropped knife at Fred's house.
+Fred argued with Eve.
+Fred picked up knife from Fred's house.
+Fred killed Eve with knife.
+Fred dropped knife at Fred's house.
+Fred picked up knife from Fred's house.
+Fred dropped knife at Fred's house.
+Fred picked up knife from Fred's house.
+Fred dropped knife at Fred's house.
+
+0.07779239999999998
+0.002396236625786514
+0.25
+

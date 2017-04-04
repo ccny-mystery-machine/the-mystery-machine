@@ -40,12 +40,16 @@ if __name__ == "__main__":
     thres : Minimum MCTS Visits for node expansion
     """
     # Perform Monte Carlo - returns final node and whole story
-    max_exp = 100
-    if max_exp < len(root_node.possible_methods):
-        raise ValueError("Max exp ({}) should be greater than num methods({})".format(max_exp, len(root_node.possible_methods)))
+    max_expansion = 200
+    if max_expansion < len(root_node.possible_methods):
+        raise ValueError("Max exp ({}) should be greater than num methods({})".format(max_expansion, len(root_node.possible_methods)))
 
-
-    n, s = mcts(root_node, max_iter=10, max_expansion=100, max_simlength=20, C=1, thres=20) 
+    max_iter = 12
+    max_simlength = 30
+    C = 1
+    thres = 50
+    print("Max iteration: {}\nMax Expansion: {}\nMax simulation length: {}\nC: {}\nThreshold: {}".format(max_iter, max_expansion, max_simlength, C, thres))
+    n, s = mcts(root_node, max_iter, max_expansion, max_simlength, C, thres) 
     
     # Print out results
     print(s)

@@ -413,6 +413,7 @@ def create_possible_methods(state):
             partial(pickup_item, key_a)
         )
 
+    """
     # BEFRIEND - actor, actor
     for key_a in state.actors:
         for key_b in state.actors:
@@ -420,6 +421,6 @@ def create_possible_methods(state):
                 POSSIBLE_METHODS.append(
                     partial(befriend, key_a, key_b)
             )
-    
+    """
     return POSSIBLE_METHODS
 

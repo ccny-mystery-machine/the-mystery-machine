@@ -70,6 +70,17 @@ ITEMS = {
 }
 
 OUT_PLACES = {
+    "PARK": {
+        "name": "park",
+        "items": [ITEMS["TREE_BRANCH"], ITEMS["BASEBALL_BAT"]],
+    },
+    "STORE": {
+        "name": "store",
+        "items": [ITEMS["GUN"], ITEMS["KNIFE"], ITEMS["PEN"], ITEMS["VASE"]],
+    },
+}
+
+"""
     "LIBRARY": {
         "name": "library",
         "items": [ITEMS["PEN"], ]
@@ -77,14 +88,6 @@ OUT_PLACES = {
     "STREET": {
         "name": "street",
         "items": [],
-    },
-    "PARK": {
-        "name": "park",
-        "items": [ITEMS["TREE_BRANCH"]],
-    },
-    "STORE": {
-        "name": "store",
-        "items": [ITEMS["GUN"], ITEMS["KNIFE"]],
     },
     "CHURCH": {
         "name": "church",
@@ -102,7 +105,7 @@ OUT_PLACES = {
         "name": "warehouse",
         "items": [ITEMS["VASE"],]
     }
-}
+"""
 
 PLACE_TEMPLATE = {
     "name": None,

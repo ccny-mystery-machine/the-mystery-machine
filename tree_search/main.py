@@ -18,8 +18,8 @@ def print_rollout():
     root_node = TreeNode(root_state, parent_edge=None, possible_methods=True)
     print( rollout_story(root_node, 10) )
 
-if __name__ == "__main__":
-    
+
+def run_once(debug):
     # Randomly assigns actors, places, and items for story
     root_state = random_state(3,3) 
     
@@ -45,10 +45,16 @@ if __name__ == "__main__":
         raise ValueError("Max exp ({}) should be greater than num methods({})".format(max_exp, len(root_node.possible_methods)))
 
 
-    n, s = mcts(root_node, max_iter=10, max_expansion=100, max_simlength=20, C=1, thres=20) 
+    n, s = mcts(root_node, max_iter=15, max_expansion=300, max_simlength=25, C=1, thres=60, debug=False) 
     
     # Print out results
-    print(s)
-    print(n.believability)
-    print(n.value)
-    print(percent_goals_satisfied(n, GOALS))
+    if debug:
+        print(s)
+        print(n.believability)
+        print(n.value)
+        print(percent_goals_satisfied(n, GOALS))
+    
+    return (n,s)
+    
+if __name__ == "__main__":
+    run_once()

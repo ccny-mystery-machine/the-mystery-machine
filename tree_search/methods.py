@@ -41,16 +41,12 @@ METHOD_CONSTANTS = {
     "ARGUE_KILL_DESIRE_INC": 0.05,
     "ARGUE_AFFECTION_DEC": 0.05,   
 
-
     "KILL_NOT_ANGRY_BELIEVABILITY": 0,
     "KILL_DESIRE_THRES": 0,
     "KILL_ANGRY_BELIEVABILITY": 1,
     "KILL_IF_DEAD": 0,
     "KILL_IF_DIFFERENT_PLACE": 0,
     "KILL_NO_ITEMS_BELIEVABILITY": 0,
-    
-    "BEFRIEND_MIN_THRES": 0,
-    "BEFRIEND_MAX_THRES": 0.5,
         
 }
 
@@ -309,43 +305,6 @@ def pickup_item(actor_a_key, state):
     return (sentence, believability)
 
 
-def befriend(actor_a_key, actor_b_key, state):
-
-    actor_a = state.actors[actor_a_key]
-    actor_b = state.actors[actor_b_key]
-
-    sentence = actor_a["name"] + " and " + actor_b["name"] +  " became friends. "  
-    
-    if (actor_a["health"] <= 0 or actor_b["health"] <= 0):
-        believability = 0
-        return (sentence, believability)
-    
-    a_b_stranger_or_enemy = (actor_a["affection"][actor_b_key][1] == RELATIONSHIPS[ "STRANGER" ] or 
-                             actor_a["affection"][actor_b_key][1] == RELATIONSHIPS[ "ENEMY" ])
-    b_a_stranger_or_enemy = (actor_b["affection"][actor_a_key][1] == RELATIONSHIPS[ "STRANGER" ] or 
-                             actor_b["affection"][actor_a_key][1] == RELATIONSHIPS[ "ENEMY" ])
-
-    affection_above_max_thres = (actor_a["affection"][actor_b_key][0] > METHOD_CONSTANTS[ "BEFRIEND_MAX_THRES"] and 
-                                 actor_b["affection"][actor_a_key][0] > METHOD_CONSTANTS[ "BEFRIEND_MAX_THRES"]) 
-
-    affection_above_min_thres = (actor_a["affection"][actor_b_key][0] > METHOD_CONSTANTS[ "BEFRIEND_MIN_THRES"] and 
-                                 actor_b["affection"][actor_a_key][0] > METHOD_CONSTANTS[ "BEFRIEND_MIN_THRES"]) 
-
-    rng =  METHOD_CONSTANTS[ "BEFRIEND_MAX_THRES"] - METHOD_CONSTANTS[ "BEFRIEND_MIN_THRES"]  
-    scaled_affection = (actor_a["affection"][actor_b_key][0] + actor_b["affection"][actor_a_key][0]) / (2 * rng)  
-
-    if (a_b_stranger_or_enemy and b_a_stranger_or_enemy):
-        if (affection_above_max_thres):
-            believability = 1
-            return (sentence, believability)
-    
-        if (affection_above_min_thres):
-            believability = scaled_affection
-            return (sentence, believability)
-
-    return (sentence, 0)
-
-
 METHODS = {
     "MOVE": move,
     "MUG": mug,
@@ -353,7 +312,6 @@ METHODS = {
     "KILL": kill,
     "DROP_ITEM": drop_item,
     "PICKUP_ITEM": pickup_item,
-    "BEFRIEND": befriend
 }
 
 
@@ -412,14 +370,6 @@ def create_possible_methods(state):
         POSSIBLE_METHODS.append(
             partial(pickup_item, key_a)
         )
-
-    # BEFRIEND - actor, actor
-    for key_a in state.actors:
-        for key_b in state.actors:
-            if key_a != key_b:
-                POSSIBLE_METHODS.append(
-                    partial(befriend, key_a, key_b)
-            )
-    
+ 
     return POSSIBLE_METHODS
 

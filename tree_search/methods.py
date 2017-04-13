@@ -40,9 +40,15 @@ METHOD_CONSTANTS = {
     "KILL_ANGRY_BELIEVABILITY": 0.9,
     "KILL_IF_DEAD": 0,
     "KILL_IF_DIFFERENT_PLACE": 0,
-    
-    "BEFRIEND_MIN_THRES": 0,
-    "BEFRIEND_MAX_THRES": 0.5,
+
+    "CALL_IF_DEAD": 0,
+    "CALL_IF_YOURSELF": 0,
+    "CALL_IF_SAME_PLACE": 0,
+    "CALL_IF_DIFFERENT_PLACE": 1,
+
+    "EVENT_BELIEVABILITY": 1,
+
+    "FIRE_BELIEVABILITY": 1,
         
 }
 
@@ -252,41 +258,88 @@ def pickup_item(actor_a_key, state):
     return (sentence, believability)
 
 
-def befriend(actor_a_key, actor_b_key, state):
+def call(actor_a_key, actor_b_key, state):
+    """
+    description: actor_a call actor_b
+    precondition: actor_a and actor_b must be alive and in the different location
+    postcondition: actor_a is angry iwith actor_b
+    """
 
     actor_a = state.actors[actor_a_key]
     actor_b = state.actors[actor_b_key]
-
-    sentence = actor_a["name"] + " and " + actor_b["name"] +  " became friends. "  
     
+    sentence1 = actor_a["name"] + " called " + actor_b["name"] + ". "
+    sentence2 = actor_b["name"] + " went to " + actor_a["place"] + ". "
+    sentence = sentence1 + sentence2
+
     if (actor_a["health"] <= 0 or actor_b["health"] <= 0):
-        believability = 0
+        believability = METHOD_CONSTANTS[ "CALL_IF_DEAD" ]
         return (sentence, believability)
     
-    a_b_stranger_or_enemy = (actor_a["affection"][actor_b_key][1] == RELATIONSHIP[ "STRANGER" ] or 
-                             actor_a["affection"][actor_b_key][1] == RELATIONSHIP[ "ENEMY" ])
-    b_a_stranger_or_enemy = (actor_b["affection"][actor_a_key][1] == RELATIONSHIP[ "STRANGER" ] or 
-                             actor_b["affection"][actor_a_key][1] == RELATIONSHIP[ "ENEMY" ])
-
-    affection_above_max_thres = (actor_a["affection"][actor_b_key][0] > METHOD_CONSTANTS[ "BEFRIEND_MAX_THRES"] and 
-                                 actor_b["affection"][actor_a_key][0] > METHOD_CONSTANTS[ "BEFRIEND_MAX_THRES"]) 
-
-    affection_above_min_thres = (actor_a["affection"][actor_b_key][0] > METHOD_CONSTANTS[ "BEFRIEND_MIN_THRES"] and 
-                                 actor_b["affection"][actor_a_key][0] > METHOD_CONSTANTS[ "BEFRIEND_MIN_THRES"]) 
-
-    rng =  METHOD_CONSTANTS[ "BEFRIEND_MAX_THRES"] - METHOD_CONSTANTS[ "BEFRIEND_MIN_THRES"]  
-    scaled_affection = (actor_a["affection"][actor_b_key][0] + actor_b["affection"][actor_a_key][0]) / (2 * rng)  
-
-    if (a_b_stranger_or_enemy and b_a_stranger_or_enemy):
-        if (affection_above_max_thres):
-            believability = 1
-            return (sentence, believability)
+    if (actor_a["name"] == actor_b["name"]): 
+        believability = METHOD_CONSTANTS[ "CALL_IF_YOURSELF" ]
+        return (sentence, believability)
     
-        if (affection_above_min_thres):
-            believability = scaled_affection
-            return (sentence, believability)
+    if (actor_a["place"] == actor_b["place"]):
+        believability = METHOD_CONSTANTS[ "CALL_IF_SAME_PLACE" ]
+        return (sentence, believability)
 
-    return (sentence, 0)
+    actor_b["place"] = actor_a["place"]
+    
+    believability = METHOD_CONSTANTS[ "CALL_IF_DIFFERENT_PLACE" ]
+    return (sentence, believability)
+
+
+def event(place_key, state):
+    """
+    description: actor_a, actor_b, actor_c went to same place
+    precondition: actor_a, actor_b and actor_c must be alive
+    postcondition:
+
+    
+    """
+    
+    place = state.places[place_key]
+
+    sentence1 = "The Event happened in " + place["name"] + "."
+    sentence2 = "Everyone in the neighborhood went to " + place["name"] + ". "
+    sentence = sentence1 + sentence2
+
+    believability = METHOD_CONSTANTS[ "EVENT_BELIEVAILITY" ]
+
+    for actor in state.actors:
+        if actor["health"] > 0:
+            actor["place"] = place
+            
+    return (sentence, believability)
+
+def fire(place_key, state):
+    """
+    description: accidental fire tied to populated location - kill everyone at location
+    precondition: 
+    postcondition: 
+    """
+
+    place = state.places[place_key]
+
+    sentence = "There was a fire in " + place["name"] + ". "
+
+    believability = METHOD_CONSTANTS[ "FIRE_BELIEVABILITY" ]
+
+    Someone_Dead = False
+    
+    for actor in state.actor:
+        if actor["place"] == place:
+            if actor["health"] > 0:
+                Someone_Dead = True
+                actor["health"] = 0
+                sentence += actor["name"] + " killed by fire."
+    if not Someone_Dead:
+        sentence += "But no one was hurt."
+    
+    
+    return (sentence, believability)
+
 
 
 METHODS = {
@@ -296,7 +349,10 @@ METHODS = {
     "KILL": kill,
     "DROP_ITEM": drop_item,
     "PICKUP_ITEM": pickup_item,
-    "BEFRIEND": befriend
+    "BEFRIEND": befriend,
+    "CALL": call,
+    "EVENT": event,
+    "FIRE": fire
 }
 
 
@@ -347,13 +403,26 @@ def create_possible_methods(state):
             partial(pickup_item, key_a)
         )
 
-    # BEFRIEND - actor, actor
+                
+    # CALL - actor, actor
     for key_a in state.actors:
         for key_b in state.actors:
             if key_a != key_b:
                 POSSIBLE_METHODS.append(
-                    partial(befriend, key_a, key_b)
+                    partial(call, key_a, key_b)
             )
     
-    return POSSIBLE_METHODS
+    # EVENT - place
+    for key_p in state.places:
+                POSSIBLE_METHODS.append(
+                    partial(event, key_p)
+            )
 
+    # FIRE - place
+    for key_p in state.places:
+        POSSIBLE_METHODS.append(
+            partial(fire, key_p)
+        )
+
+    
+    return POSSIBLE_METHODS

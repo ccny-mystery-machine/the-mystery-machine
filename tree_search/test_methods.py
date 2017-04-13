@@ -211,6 +211,7 @@ class TestKill:
         Tests if actor_b gets killed
         """
         test_state = State(ACTORS,PLACES,ITEMS)
+        test_state.actors["ALICE"]["items"].append(ITEMS["GUN"])
         test_state.actors["BOB"]["place"] = PLACES["ALICES_HOUSE"]
         METHODS["KILL"]("ALICE", "BOB", test_state)
         assert test_state.actors["BOB"]["health"] == 0
@@ -220,15 +221,17 @@ class TestKill:
         Tests kill believability when no kill_desire
         """
         test_state = State(ACTORS,PLACES,ITEMS)
+        test_state.actors["ALICE"]["items"].append(ITEMS["GUN"])
         test_state.actors["BOB"]["place"] = PLACES["ALICES_HOUSE"]
         sentence, believability = METHODS["KILL"]("ALICE", "BOB", test_state)
-        assert believability == 0.1
+        assert believability == 0.9
 
     def test_kill_believability_two(self):
         """
         Tests kill believability when angry
         """
         test_state = State(ACTORS,PLACES,ITEMS)
+        test_state.actors["ALICE"]["items"].append(ITEMS["GUN"])
         test_state.actors["ALICE"]["kill_desire"]["BOB"] = 0.1
         test_state.actors["BOB"]["place"] = PLACES["ALICES_HOUSE"]
         sentence, believability = METHODS["KILL"]("ALICE", "BOB", test_state)
@@ -239,10 +242,11 @@ class TestKill:
         Tests kill believability when negative kill desire
         """
         test_state = State(ACTORS,PLACES,ITEMS)
+        test_state.actors["ALICE"]["items"].append(ITEMS["GUN"])
         test_state.actors["ALICE"]["kill_desire"]["BOB"] = -0.1
         test_state.actors["BOB"]["place"] = PLACES["ALICES_HOUSE"]
         sentence, believability = METHODS["KILL"]("ALICE", "BOB", test_state)
-        assert believability == 0.1
+        assert believability == 0.9
 
 
     def test_kill_when_different_locations(self):
@@ -250,6 +254,7 @@ class TestKill:
         Tests if believability is 0 when actors are in different locations
         """
         test_state = State(ACTORS,PLACES,ITEMS)
+        test_state.actors["ALICE"]["items"].append(ITEMS["GUN"])
         sentence, believability = METHODS["KILL"]("ALICE", "BOB", test_state)
         assert believability == 0
 
@@ -258,6 +263,7 @@ class TestKill:
         Tests if believability is 0 when actors kill themselves
         """
         test_state = State(ACTORS,PLACES,ITEMS)
+        test_state.actors["ALICE"]["items"].append(ITEMS["GUN"])
         sentence, believability = METHODS["KILL"]("ALICE", "ALICE", test_state)
 
         assert believability == 0

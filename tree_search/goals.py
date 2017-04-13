@@ -8,15 +8,16 @@ def possible(node):
     return node.believability > 0
 
 
-def death_occured(node):
+def death_occurred(num_deaths, node):
     """
-    description: checks if death has occured in the story
+    description: checks if num_deaths deaths occurred
     returns a boolean indicating so or not
     """
+    num_dead = 0
     for _, actor in node.state.actors.items():
         if actor["health"] <= 0:
-            return True
-    return False
+            num_dead += 1
+    return num_dead >= num_deaths
 
 def everyone_dies(node):
     """
@@ -28,13 +29,11 @@ def everyone_dies(node):
             return False
     return True
 
-
-def story_length_greater_than(length, node):
-    return node.height > length
-
 GOALS = [
-    possible,
-    death_occured,
+    # possible,
+    partial(death_occurred, 1),
+    partial(death_occurred, 2),
+    partial(death_occurred, 3),
     everyone_dies
 ]
 

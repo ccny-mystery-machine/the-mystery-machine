@@ -21,7 +21,7 @@ def rectadd(a, b):
 METHOD_CONSTANTS = {
     "MOVE_IF_SAME_PLACE": 0,
     "MOVE_IF_DEAD": 0,
-    "MOVE_IF_DIFFERENT_PLACE": 1,
+    "MOVE_IF_DIFFERENT_PLACE": 0.9,
     
     "MUG_IF_DEAD": 0,
     "MUG_IF_YOURSELF": 0,
@@ -31,15 +31,22 @@ METHOD_CONSTANTS = {
 
     "TALK_IF_DEAD": 0,
     "TALK_IF_DIFFERENT_PLACE": 0,
-    "TALK_IF_NORMAL": 1,
-    "TALK_KILL_DESIRE_DEC": .05,
+    "TALK_IF_NORMAL": 0.5,
+    "TALK_KILL_DESIRE_DEC": 0.05,
     "TALK_AFFECTION_INC": 0.05,   
 
-    "KILL_NOT_ANGRY_BELIEVABILITY": 0.1,
+    "ARGUE_IF_DEAD": 0,
+    "ARGUE_IF_DIFFERENT_PLACE": 0,
+    "ARGUE_IF_NORMAL": 0.5,
+    "ARGUE_KILL_DESIRE_INC": 0.05,
+    "ARGUE_AFFECTION_DEC": 0.05,   
+
+    "KILL_NOT_ANGRY_BELIEVABILITY": 0,
     "KILL_DESIRE_THRES": 0,
-    "KILL_ANGRY_BELIEVABILITY": 0.9,
+    "KILL_ANGRY_BELIEVABILITY": 1,
     "KILL_IF_DEAD": 0,
     "KILL_IF_DIFFERENT_PLACE": 0,
+    "KILL_NO_ITEMS_BELIEVABILITY": 0,
 
     "CALL_IF_DEAD": 0,
     "CALL_IF_YOURSELF": 0,
@@ -49,23 +56,28 @@ METHOD_CONSTANTS = {
     "EVENT_BELIEVABILITY": 1,
 
     "FIRE_BELIEVABILITY": 1,
-        
+
 }
 
 class Method:
     """
-    Actions in the story - Edges in the tree
+    Actions in the story - Acts as wrapper for method functions
     """
     def __init__(self, method):
+        # Partial Method
         self.method = method
+        # Whole Method 
         self.function = method.func
+        # Partial Arguments
         self.args = method.args
+        
         self.before_state = None
         self.after_state = None
         self.sentence = ""
         self.believability = 1
 
     def __call__(self, state):
+        # Set the before state, next state, and apply method on next state
         self.prev_state = state
         self.next_state = deepcopy(state)
         self.sentence, self.believability = self.method(self.next_state)
@@ -176,6 +188,41 @@ def talk(actor_a_key, actor_b_key, state):
     believability = METHOD_CONSTANTS[ "TALK_IF_NORMAL" ]
     return (sentence, believability)
 
+def argue(actor_a_key, actor_b_key, state):
+    """
+    description: actor_a argues with actor_b
+    precondition: actor_a and actor_b must be alive and in the same location
+    postcondition: actor_a and actor_b becomes angrier with eachother
+    """
+
+    actor_a = state.actors[actor_a_key]
+    actor_b = state.actors[actor_b_key]
+
+    sentence = actor_a["name"] + " argued with " + actor_b["name"] + ". "
+    
+    if (actor_a["health"] <= 0 or actor_b["health"] <= 0):
+        believability = METHOD_CONSTANTS[ "ARGUE_IF_DEAD" ]
+        return (sentence, believability) 
+
+    actor_a["kill_desire"][actor_b_key] = rectadd(actor_a["kill_desire"][actor_b_key], METHOD_CONSTANTS[ "ARGUE_KILL_DESIRE_INC" ])
+    actor_b["kill_desire"][actor_a_key] = rectadd(actor_b["kill_desire"][actor_a_key], METHOD_CONSTANTS[ "ARGUE_KILL_DESIRE_INC" ])
+    
+    actor_a["affection"][actor_b_key][0] = rectadd(actor_a["affection"][actor_b_key][0], -METHOD_CONSTANTS[ "ARGUE_AFFECTION_DEC" ])
+    actor_b["affection"][actor_a_key][0] = rectadd(actor_b["affection"][actor_a_key][0], -METHOD_CONSTANTS[ "ARGUE_AFFECTION_DEC" ])
+    
+
+    if (actor_a["place"] != actor_b["place"]):
+        believability = METHOD_CONSTANTS[ "ARGUE_IF_DIFFERENT_PLACE" ]
+        return (sentence, believability)           
+    if (actor_a["name"] == actor_b["name"]):
+        sentence = "Nonsense sentence. "
+        believability = 0
+        return (sentence, believability)
+
+    believability = METHOD_CONSTANTS[ "ARGUE_IF_NORMAL" ]
+    return (sentence, believability)
+
+
 
 def kill(actor_a_key, actor_b_key, state):
     """
@@ -188,9 +235,18 @@ def kill(actor_a_key, actor_b_key, state):
     actor_a = state.actors[actor_a_key]
     actor_b = state.actors[actor_b_key]
 
-    sentence = actor_a["name"] + " killed " + actor_b["name"] + ". "
+    num_a_items = len(actor_a["items"])
+    if num_a_items <= 0:
+        sentence = actor_a["name"] + " killed " + actor_b["name"] + ". "
+        believability = METHOD_CONSTANTS["KILL_NO_ITEMS_BELIEVABILITY"]
+        return (sentence, believability)
     
-    if (actor_a["health"] <= 0 or actor_b["health"] <= 0):
+    rand_idx = randint(0, num_a_items - 1)
+    rand_item = actor_a["items"][rand_idx]
+
+    sentence = actor_a["name"] + " killed " + actor_b["name"] + " with " + rand_item["name"] + ". "
+    
+    if actor_a["health"] <= 0 or actor_b["health"] <= 0:
         believability = METHOD_CONSTANTS[ "KILL_IF_DEAD" ]
         return (sentence, believability)
 
@@ -205,11 +261,11 @@ def kill(actor_a_key, actor_b_key, state):
 
     # if kill_desire exists, then we have higher believability
     if actor_a["kill_desire"][actor_b_key] > METHOD_CONSTANTS[ "KILL_DESIRE_THRES" ]:
-        believability = METHOD_CONSTANTS[ "KILL_ANGRY_BELIEVABILITY"  ]
+        believability = METHOD_CONSTANTS["KILL_ANGRY_BELIEVABILITY"] * rand_item["lethality"]
         return (sentence, believability)
 
     # potential of random murder
-    believability = METHOD_CONSTANTS[ "KILL_NOT_ANGRY_BELIEVABILITY" ]
+    believability = METHOD_CONSTANTS["KILL_NOT_ANGRY_BELIEVABILITY"] * rand_item["lethality"]
     return (sentence, believability)
 
 
@@ -256,6 +312,7 @@ def pickup_item(actor_a_key, state):
     
     believability = rectadd(place_item["value"], place_item["lethality"]) 
     return (sentence, believability)
+
 
 
 def call(actor_a_key, actor_b_key, state):
@@ -341,7 +398,6 @@ def fire(place_key, state):
     return (sentence, believability)
 
 
-
 METHODS = {
     "MOVE": move,
     "MUG": mug,
@@ -349,7 +405,6 @@ METHODS = {
     "KILL": kill,
     "DROP_ITEM": drop_item,
     "PICKUP_ITEM": pickup_item,
-    "BEFRIEND": befriend,
     "CALL": call,
     "EVENT": event,
     "FIRE": fire
@@ -383,6 +438,15 @@ def create_possible_methods(state):
                     partial(talk, key_a, key_b)
                 )
 
+    # ARGUE - actor, actor
+    for key_a in state.actors:
+        for key_b in state.actors:
+            if key_a != key_b:
+                POSSIBLE_METHODS.append(
+                    partial(argue, key_a, key_b)
+                )
+
+
     # KILL - actor, actor
     for key_a in state.actors:
         for key_b in state.actors:
@@ -403,6 +467,7 @@ def create_possible_methods(state):
             partial(pickup_item, key_a)
         )
 
+
                 
     # CALL - actor, actor
     for key_a in state.actors:
@@ -417,6 +482,7 @@ def create_possible_methods(state):
                 POSSIBLE_METHODS.append(
                     partial(event, key_p)
             )
+
 
     # FIRE - place
     for key_p in state.places:

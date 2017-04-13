@@ -17,9 +17,10 @@ class TestSearch:
         Test for the select_func function
         """
         root_state = State(ACTORS, PLACES, ITEMS)
-        root_node = TreeNode(root_state)
+        root_node = TreeNode(root_state, parent_edge=None, possible_methods=True)
         root_node.visits = exp(3)
         test_edge = expand_edge(root_node)
+        print(test_edge)
         test_node = test_edge.next_node
         test_node.visits = 6
         test_node.value = 0
@@ -38,7 +39,7 @@ class TestSearch:
         Test for the best_child function
         """
         root_state = State(ACTORS, PLACES, ITEMS)
-        root_node = TreeNode(root_state)
+        root_node = TreeNode(root_state, parent_edge=None, possible_methods=True)
         root_node.visits = exp(3)
         edge1 = expand_edge(root_node)
         edge1.next_node.visits = 6
@@ -57,7 +58,7 @@ class TestSearch:
         Test UCT selection
         """
         root_state = State(ACTORS, PLACES, ITEMS)
-        root_node = TreeNode(root_state)
+        root_node = TreeNode(root_state, parent_edge=None, possible_methods=True)
         l = len(root_node.possible_methods)
         test_node = uct_selection(root_node, 1, 0)
         for r in range(l-1):
@@ -70,7 +71,7 @@ class TestSearch:
         Test Updating of Node Value
         """
         root_state = State(ACTORS, PLACES, ITEMS)
-        root_node = TreeNode(root_state)
+        root_node = TreeNode(root_state, parent_edge=None, possible_methods=True)
         root_node.value = 0
         root_node.visits = 0
         temp1 = 0
@@ -87,7 +88,7 @@ class TestSearch:
         Test Backpropogation
         """
         root_state = State(ACTORS, PLACES, ITEMS)
-        root_node = TreeNode(root_state)
+        root_node = TreeNode(root_state, parent_edge=None, possible_methods=True)
         edge1 = expand_edge(root_node)
         edge2 = expand_edge(edge1.next_node)
         edge3 = expand_edge(edge2.next_node)
@@ -110,7 +111,7 @@ class TestSearch:
         Test the Most Visited Child function
         """
         root_state = State(ACTORS, PLACES, ITEMS)
-        root_node = TreeNode(root_state)
+        root_node = TreeNode(root_state, parent_edge=None, possible_methods=True)
         edge1 = expand_edge(root_node)
         edge2 = expand_edge(root_node)
         edge3 = expand_edge(root_node)

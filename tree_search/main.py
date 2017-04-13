@@ -18,8 +18,8 @@ def print_rollout():
     root_node = TreeNode(root_state, parent_edge=None, possible_methods=True)
     print( rollout_story(root_node, 10) )
 
-if __name__ == "__main__":
-    
+
+def run_once(debug):
     # Randomly assigns actors, places, and items for story
     root_state = random_state(3,3) 
     
@@ -40,19 +40,25 @@ if __name__ == "__main__":
     thres : Minimum MCTS Visits for node expansion
     """
     # Perform Monte Carlo - returns final node and whole story
-    max_expansion = 200
+    max_expansion = 300
     if max_expansion < len(root_node.possible_methods):
         raise ValueError("Max exp ({}) should be greater than num methods({})".format(max_expansion, len(root_node.possible_methods)))
 
-    max_iter = 12
-    max_simlength = 30
+    max_iter = 15
+    max_simlength = 25
     C = 1
-    thres = 50
+    thres = 60
     print("Max iteration: {}\nMax Expansion: {}\nMax simulation length: {}\nC: {}\nThreshold: {}".format(max_iter, max_expansion, max_simlength, C, thres))
-    n, s = mcts(root_node, max_iter, max_expansion, max_simlength, C, thres) 
+    n, s = mcts(root_node, max_iter, max_expansion, max_simlength, C, thres, debug=False) 
     
     # Print out results
-    print(s)
-    print(n.believability)
-    print(n.value)
-    print(percent_goals_satisfied(n, GOALS))
+    if debug:
+        print(s)
+        print(n.believability)
+        print(n.value)
+        print(percent_goals_satisfied(n, GOALS))
+    
+    return (n,s)
+    
+if __name__ == "__main__":
+    run_once()

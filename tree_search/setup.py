@@ -21,44 +21,44 @@ RELATIONSHIPS = {
 ITEMS = {
     "GUN": {
         "name": "gun",
-        "value": 0.5,
-        "lethality": 0.9,
+        "value": 1,
+        "lethality": 1,
         "drop_believability": 0.2,
     },
     "VASE": {
         "name": "vase",
-        "value": 0.9,
+        "value": 1,
         "lethality": 0.6,
         "drop_believability": 0.5,
     },
     "BASEBALL_BAT": {
         "name": "baseball bat",
-        "value": 0.2,
-        "lethality": 0.5,
-        "drop_believability": 0.4
+        "value": 0.8,
+        "lethality": 1,
+        "drop_believability": 0.8
     },
     "TREE_BRANCH": {
         "name": "tree branch",
-        "value": 0.1,
-        "lethality": 0.5,
-        "drop_believability": 0.4
+        "value": 0.7,
+        "lethality": 0.7,
+        "drop_believability": 0.8
     },
     "KNIFE": {
         "name": "knife",
-        "value": 0.4,
-        "lethality": 0.8,
+        "value": 1,
+        "lethality": 1,
         "drop_believability": 0.7
     },
     "PEN": {
         "name": "pen",
-        "value": 0.1,
-        "lethality": 0.5,
-        "drop_believability": 0.9,
+        "value": 0.5,
+        "lethality": 0.6,
+        "drop_believability": 1,
     },
     "CANDLE": {
         "name": "candle",
-        "value": 0.6,
-        "lethality": 0.3,
+        "value": 0.8,
+        "lethality": 0.5,
         "drop_believability": 0.8
     },
     "SEASHELL": {
@@ -85,17 +85,13 @@ OUT_PLACES = {
         "name": "library",
         "items": [ITEMS["PEN"], ]
     },
-    "STREET": {
-        "name": "street",
-        "items": [],
+    "PARK": {
+        "name": "park",
+        "items": [ITEMS["TREE_BRANCH"]],
     },
-    "CHURCH": {
-        "name": "church",
-        "items": [],
-    },
-    "BEACH": {
-        "name": "beach",
-        "items": [],
+    "STORE": {
+        "name": "store",
+        "items": [ITEMS["GUN"], ITEMS["KNIFE"]],
     },
     "ALLEYWAY": {
         "name": "alleyway",

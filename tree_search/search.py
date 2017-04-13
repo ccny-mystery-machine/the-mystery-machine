@@ -133,15 +133,19 @@ def most_visited_child(node):
 def delete_children(node, chosen):
     node.edges = [chosen.parent_edge]
 
-def mcts(node, max_iter, max_expansion, max_simlength, C, thres):
+def mcts(node, max_iter, max_expansion, max_simlength, C, thres, debug):
     # Loop for every line in story 
     for count in range(max_iter):
-        print("Master Iteration Number - " + str(count))
+        
+        if debug:
+            print("Master Iteration Number - " + str(count))
         
         # Loop for every simulation constructing story tree
         for num_expansion in range(max_expansion):
-            print("Expansion Number - " + str(num_expansion))
             
+            if debug:
+                print("Expansion Number - " + str(num_expansion))
+         
             # Choose a node in the story tree
             chosen_node = selection(node, C, thres)
             # If the chosen node has a believability of 0, break it from the tree

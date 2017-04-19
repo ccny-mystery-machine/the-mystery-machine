@@ -44,16 +44,20 @@ def selection(node, C, thres):
     """
     Uses selection function to select most "promising" node on story tree
     """
+    i = 0
     # Expand edge only if these conditions are satisfied
     while node.believability > 0:
         # If successful, returns expanded edge, if not, return False
         new_edge = expand_edge(node)
         if new_edge:
             # If new edge exists, return child node
+            print("yoyo")
             return new_edge.next_node
         else:
             # If all children are expanded, return best child
+            print("Yo")
             node = best_child(node, C)
+            print(node.believability)
     return node
 
 def rollout_value(believability, percent_goals_satisfied):
@@ -98,10 +102,13 @@ def rollout_story_3(node, max_simlength):
 
     # Keep rolling out until max_simlength or goals satisfied
     while numsims < max_simlength:# and not goals_satisfied(curr_node, GOALS):
+        
         # Choose edge based on prob_dist
         expand_heuristic_edge(curr_node, prob_dist)
+        
         # Reassign current node to current node's child
         curr_node = curr_node.edges[-1].next_node
+        
         # Update the simulation depth
         numsims += 1
     return rollout_value(curr_node.believability, percent_goals_satisfied(curr_node, GOALS))

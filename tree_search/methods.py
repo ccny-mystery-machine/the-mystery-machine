@@ -21,7 +21,7 @@ def rectadd(a, b):
 METHOD_CONSTANTS = {
     "MOVE_IF_SAME_PLACE": 0,
     "MOVE_IF_DEAD": 0,
-    "MOVE_IF_DIFFERENT_PLACE": 0.9,
+    "MOVE_IF_DIFFERENT_PLACE": 1,
     
     "MUG_IF_DEAD": 0,
     "MUG_IF_YOURSELF": 0,
@@ -55,7 +55,7 @@ METHOD_CONSTANTS = {
 
     "EVENT_BELIEVABILITY": 1,
 
-    "FIRE_BELIEVABILITY": 1,
+    "FIRE_BELIEVABILITY": 0.3,
 
 }
 
@@ -326,8 +326,8 @@ def call(actor_a_key, actor_b_key, state):
     actor_b = state.actors[actor_b_key]
     
     sentence1 = actor_a["name"] + " called " + actor_b["name"] + ". "
-    sentence2 = actor_b["name"] + " went to " + actor_a["place"] + ". "
-    sentence = sentence1 + sentence2
+    sentence2 = actor_b["name"] + " went to " + actor_a["place"]["name"] + ". "
+    sentence = sentence1 + "\n" + sentence2
 
     if (actor_a["health"] <= 0 or actor_b["health"] <= 0):
         believability = METHOD_CONSTANTS[ "CALL_IF_DEAD" ]
@@ -351,24 +351,24 @@ def event(place_key, state):
     """
     description: actor_a, actor_b, actor_c went to same place
     precondition: actor_a, actor_b and actor_c must be alive
-    postcondition:
-
-    
+    postcondition:    
     """
     
     place = state.places[place_key]
 
     sentence1 = "The Event happened in " + place["name"] + "."
-    sentence2 = "Everyone in the neighborhood went to " + place["name"] + ". "
+    sentence2 = "\nEveryone in the neighborhood went to " + place["name"] + ". "
     sentence = sentence1 + sentence2
 
-    believability = METHOD_CONSTANTS[ "EVENT_BELIEVAILITY" ]
+    believability = METHOD_CONSTANTS[ "EVENT_BELIEVABILITY" ]
 
-    for actor in state.actors:
+    for actor_key in state.actors:
+        actor = state.actors[actor_key]
         if actor["health"] > 0:
             actor["place"] = place
             
     return (sentence, believability)
+
 
 def fire(place_key, state):
     """
@@ -379,20 +379,21 @@ def fire(place_key, state):
 
     place = state.places[place_key]
 
-    sentence = "There was a fire in " + place["name"] + ". "
+    sentence = "There was a fire in " + place["name"] + "."
 
     believability = METHOD_CONSTANTS[ "FIRE_BELIEVABILITY" ]
 
     Someone_Dead = False
     
-    for actor in state.actor:
+    for actor_key in state.actors:
+        actor = state.actors[actor_key]
         if actor["place"] == place:
             if actor["health"] > 0:
                 Someone_Dead = True
                 actor["health"] = 0
-                sentence += actor["name"] + " killed by fire."
+                sentence += "\n" + actor["name"] + " killed by fire. "
     if not Someone_Dead:
-        sentence += "But no one was hurt."
+        sentence += "\nBut no one was hurt."
     
     
     return (sentence, believability)
@@ -477,10 +478,10 @@ def create_possible_methods(state):
     
     # EVENT - place
     for key_p in state.places:
-                POSSIBLE_METHODS.append(
-                    partial(event, key_p)
+        POSSIBLE_METHODS.append(
+                partial(event, key_p)
             )
-
+        
 
     # FIRE - place
     for key_p in state.places:

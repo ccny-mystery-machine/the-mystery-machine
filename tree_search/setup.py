@@ -70,38 +70,27 @@ ITEMS = {
 }
 
 OUT_PLACES = {
-    "PARK": {
-        "name": "park",
-        "items": [ITEMS["TREE_BRANCH"], ITEMS["BASEBALL_BAT"]],
-    },
-    "STORE": {
-        "name": "store",
-        "items": [ITEMS["GUN"], ITEMS["KNIFE"], ITEMS["PEN"], ITEMS["VASE"]],
-    },
-}
-
-"""
     "LIBRARY": {
         "name": "library",
-        "items": [ITEMS["PEN"], ]
+        "items": [ITEMS["PEN"],],
     },
     "PARK": {
         "name": "park",
-        "items": [ITEMS["TREE_BRANCH"]],
+        "items": [ITEMS["TREE_BRANCH"],],
     },
     "STORE": {
         "name": "store",
-        "items": [ITEMS["GUN"], ITEMS["KNIFE"]],
+        "items": [ITEMS["GUN"], ITEMS["KNIFE"],],
     },
     "ALLEYWAY": {
         "name": "alleyway",
-        "items": [ITEMS["BASEBALL_BAT"]], 
+        "items": [ITEMS["BASEBALL_BAT"],], 
     },
     "WAREHOUSE": {
         "name": "warehouse",
         "items": [ITEMS["VASE"],]
-    }
-"""
+    },
+}
 
 PLACE_TEMPLATE = {
     "name": None,
@@ -122,7 +111,7 @@ ACTOR_TEMPLATE = {
 }
 
 
-PLACES = {
+ACTOR_PLACES = {
     "ALICES_HOUSE": {
             "name": "Alice's house",
             "items": [],
@@ -137,12 +126,14 @@ PLACES = {
         },
 }
 
+PLACES = { **ACTOR_PLACES, **OUT_PLACES }
+
 ACTORS = {
     "ALICE": {
         "name": "Alice",
         "home": PLACES["ALICES_HOUSE"],
         "place": PLACES["ALICES_HOUSE"],
-        "health": 10,
+        "health": 1,
         "items": [],
         "kill_desire": {
             "BOB": 0,
@@ -160,7 +151,7 @@ ACTORS = {
         "name": "Bob",
         "home": PLACES["BOBS_HOUSE"],
         "place": PLACES["BOBS_HOUSE"],
-        "health": 10,
+        "health": 1,
         "items": [],
         "kill_desire": {
             "ALICE": 0,
@@ -178,7 +169,7 @@ ACTORS = {
         "name": "Charlie",
         "home": PLACES["CHARLIES_HOUSE"],
         "place": PLACES["CHARLIES_HOUSE"],
-        "health": 10,
+        "health": 1,
         "items": [],
         "kill_desire": {
             "ALICE": 0,

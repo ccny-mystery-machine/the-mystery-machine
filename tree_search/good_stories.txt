@@ -44,3 +44,86 @@ Charlie went to beach.
 Charlie went to store.
 Charlie mugs Fred and stole knife.
 
+5 - mcts
+15 sentences
+200 max expansions
+30 threshold
+30 sim length
+C = 1
+
+Daphne, Alice, and Bob all lived in the same neighborhood.
+They were all at their respective houses.
+Bob went to church.
+Bob went to Daphne's house.
+Bob argued with Daphne.
+Daphne argued with Bob.
+Bob went to alleyway.
+Bob went to Bob's house.
+Bob went to library.
+Bob went to Daphne's house.
+Bob argued with Daphne.
+Bob went to alleyway.
+Bob picked up baseball bat from alleyway.
+Bob went to warehouse.
+Bob picked up vase from warehouse.
+Bob went to Bob's house.
+Bob went to warehouse.
+
+0.03050936350875001
+0.00033238517497572844
+0.0
+
+6 - mcts
+15 sentences
+200 max expansions
+30 threshold
+30 sim length
+C = 1
+less places and no befriend
+
+Charlie, Eve, and Fred all lived in the same neighborhood.
+They were all at their respective houses.
+Fred went to Charlie's house.
+Fred argued with Charlie.
+Fred argued with Charlie.
+Fred argued with Charlie.
+Fred argued with Charlie.
+Fred argued with Charlie.
+Fred argued with Charlie.
+Fred argued with Charlie.
+Fred argued with Charlie.
+Fred argued with Charlie.
+Fred argued with Charlie.
+Fred argued with Charlie.
+
+0.000439453125
+0.0002452304380258482
+0.0
+
+7 - mcts
+12 sentences
+200 max expansions
+50 threshold
+30 sim length
+C = 1
+less places and no befriend
+
+Charlie, Eve, and Fred all lived in the same neighborhood.
+They were all at their respective houses.
+Eve went to store.
+Eve picked up knife from store.
+Eve went to Fred's house.
+Eve dropped knife at Fred's house.
+Fred argued with Eve.
+Fred picked up knife from Fred's house.
+Fred killed Eve with knife.
+Fred dropped knife at Fred's house.
+Fred picked up knife from Fred's house.
+Fred dropped knife at Fred's house.
+Fred picked up knife from Fred's house.
+Fred dropped knife at Fred's house.
+
+0.07779239999999998
+0.002396236625786514
+0.25
+

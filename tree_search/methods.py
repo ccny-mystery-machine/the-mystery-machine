@@ -467,8 +467,6 @@ def create_possible_methods(state):
         POSSIBLE_METHODS.append(
             partial(pickup_item, key_a)
         )
-
-
                 
     # CALL - actor, actor
     for key_a in state.actors:

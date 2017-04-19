@@ -6,15 +6,15 @@ from math import exp
 from setup import ACTORS, PLACES, ITEMS
 from state import State
 from tree import TreeNode, TreeEdge, expand_edge
-from search import select_func, best_child, uct_selection, update_node_value, backpropogate, most_visited_child
+from search import uct_func, best_child, selection, rollout_story_3, update_node_value, backpropogate, most_visited_child
 
 class TestSearch:
     """
     Test class for the function in search.py
     """
-    def test_select_func_1(self):
+    def test_uct_func_1(self):
         """
-        Test for the select_func function
+        Test for the uct_func function
         """
         root_state = State(ACTORS, PLACES, ITEMS)
         root_node = TreeNode(root_state, parent_edge=None, possible_methods=True)
@@ -26,13 +26,13 @@ class TestSearch:
         test_node.value = 0
         
         for C in range(0, 10):
-            assert select_func(test_node, C) == C
+            assert uct_func(test_node, C) == C
 
         test_node.visits = 0
-        assert select_func(test_node, 1) == float("inf")
+        assert uct_func(test_node, 1) == float("inf")
         
         root_node.visits = 0
-        assert select_func(test_node, 1) == 0
+        assert uct_func(test_node, 1) == 0
 
     def test_best_child_1(self):
         """
@@ -53,18 +53,23 @@ class TestSearch:
 
         assert best_child(root_node, 1) == edge2.next_node
 
-    def test_uct_selection(self):
+    def test_selection(self):
         """
-        Test UCT selection
+        Test UCT selection in a weird way
         """
         root_state = State(ACTORS, PLACES, ITEMS)
         root_node = TreeNode(root_state, parent_edge=None, possible_methods=True)
         l = len(root_node.possible_methods)
-        test_node = uct_selection(root_node, 1, 0)
-        for r in range(l-1):
-            uct_selection(root_node, 1, 0)
-        
-        assert uct_selection(root_node, 1, 0) == test_node
+        test_node = [] 
+        test_node.append( selection(node=root_node, C=1, thres=0) )
+        test_node[0].value = 1
+        test_node[0].believability = 0
+        for r in range(1, l):
+            test_node.append( selection(root_node, 1, 0) )
+            test_node[r].value = 0
+            test_node[r].believability = 1
+            
+        assert test_node[0] == selection(root_node, 1, 0) 
 
     def test_update_node_value(self):
         """

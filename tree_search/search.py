@@ -44,20 +44,16 @@ def selection(node, C, thres):
     """
     Uses selection function to select most "promising" node on story tree
     """
-    i = 0
     # Expand edge only if these conditions are satisfied
     while node.believability > 0:
         # If successful, returns expanded edge, if not, return False
         new_edge = expand_edge(node)
         if new_edge:
             # If new edge exists, return child node
-            print("yoyo")
             return new_edge.next_node
         else:
             # If all children are expanded, return best child
-            print("Yo")
             node = best_child(node, C)
-            print(node.believability)
     return node
 
 def rollout_value(believability, percent_goals_satisfied):
@@ -157,6 +153,11 @@ def mcts(node, max_iter, max_expansion, max_simlength, C, thres, debug):
             chosen_node = selection(node, C, thres)
             # If the chosen node has a believability of 0, break it from the tree
             if chosen_node.believability == 0:
+                chosen_node.parent_edge.prev_node.edges.pop()
+            elif count > 0 and chosen_node.parent_edge.method.method == node.parent_edge.method.method:
+                chosen_node.parent_edge.prev_node.edges.pop()
+            elif count > 1 and (chosen_node.parent_edge.method.method == 
+                                node.parent_edge.prev_node.parent_edge.method.method):   
                 chosen_node.parent_edge.prev_node.edges.pop()
             else:
                 # Simuluate if thres number of times

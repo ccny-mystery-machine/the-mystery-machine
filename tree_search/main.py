@@ -49,7 +49,7 @@ def run_once(debug):
     C = 1
     thres = 60
     print("Max iteration: {}\nMax Expansion: {}\nMax simulation length: {}\nC: {}\nThreshold: {}".format(max_iter, max_expansion, max_simlength, C, thres))
-    n, s = mcts(root_node, max_iter, max_expansion, max_simlength, C, thres, debug=False) 
+    n, s = mcts(root_node, max_iter, max_expansion, max_simlength, C, thres, debug=True) 
     
     # Print out results
     if debug:
@@ -61,4 +61,4 @@ def run_once(debug):
     return (n,s)
     
 if __name__ == "__main__":
-    run_once()
+    run_once(True)

@@ -165,11 +165,17 @@ def mcts(node, max_iter, max_expansion, max_simlength, C, thres, debug):
             # If the chosen node has a believability of 0, break it from the tree
             if chosen_node.believability == 0:
                 chosen_node.parent_edge.prev_node.edges.pop()
+                if debug:
+                    print("Pruned unbelievable node")
             elif count > 0 and chosen_node.parent_edge.method.method == node.parent_edge.method.method:
                 chosen_node.parent_edge.prev_node.edges.pop()
+                if debug:
+                    print("Pruned repeat-1 node")
             elif count > 1 and (chosen_node.parent_edge.method.method == 
                                 node.parent_edge.prev_node.parent_edge.method.method):   
                 chosen_node.parent_edge.prev_node.edges.pop()
+                if debug:
+                    print("Pruned repeat-2 node")
             else:
                 # Simuluate if thres number of times
                 for _ in range(thres):
@@ -177,6 +183,8 @@ def mcts(node, max_iter, max_expansion, max_simlength, C, thres, debug):
                     backpropogate(chosen_node, sim_value)
         # Choose most visited node
         exp_node = most_visited_child(node) 
+        if debug:
+            print(exp_node.parent_edge.method.sentence)
         # Remove all other edges from the tree - focus on most visited node subtree
         delete_children(node, exp_node)
         # Switch root to exp_node

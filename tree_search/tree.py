@@ -58,11 +58,13 @@ class TreeEdge:
         self.prev_node = node
         self.next_node = TreeNode(self.method.next_state, self)
 
-        # Cummulative Update of Believability
-        self.next_node.believability = (self.prev_node.believability *
-                                        self.method.believability)
         # Increase Height
         self.next_node.height = self.prev_node.height + 1
+
+        # Cummulative Update of Believability
+        self.next_node.believability = (self.prev_node.believability * 
+                                        self.prev_node.height +
+                                        self.method.believability) / self.next_node.height
 
 
 def expand_edge(node):

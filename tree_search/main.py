@@ -19,7 +19,7 @@ def print_rollout():
     print( rollout_story(root_node, 10) )
 
 
-def run_once(debug):
+def run_once(debug=True):
     # Randomly assigns actors, places, and items for story
     root_state = random_state(3,3) 
     
@@ -40,16 +40,16 @@ def run_once(debug):
     thres : Minimum MCTS Visits for node expansion
     """
     # Perform Monte Carlo - returns final node and whole story
-    max_expansion = 300
+    max_expansion = 200
     if max_expansion < len(root_node.possible_methods):
         raise ValueError("Max exp ({}) should be greater than num methods({})".format(max_expansion, len(root_node.possible_methods)))
 
     max_iter = 15
-    max_simlength = 25
+    max_simlength = 15
     C = 1
-    thres = 60
+    thres = 20
     print("Max iteration: {}\nMax Expansion: {}\nMax simulation length: {}\nC: {}\nThreshold: {}".format(max_iter, max_expansion, max_simlength, C, thres))
-    n, s = mcts(root_node, max_iter, max_expansion, max_simlength, C, thres, debug=False) 
+    n, s = mcts(root_node, max_iter, max_expansion, max_simlength, C, thres, debug=True) 
     
     # Print out results
     if debug:

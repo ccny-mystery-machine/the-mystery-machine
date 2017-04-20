@@ -7,7 +7,7 @@ from tree import POSSIBLE_METHODS, TreeNode
 from search import *
 
 def rollout_test(num):
-    root_state = random_state()
+    root_state = random_state(3,3)
     root_node = TreeNode(root_state, parent_edge=None, possible_methods=True)
     return rollout_story_3(root_node, num)
 

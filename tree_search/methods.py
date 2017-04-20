@@ -53,9 +53,9 @@ METHOD_CONSTANTS = {
     "CALL_IF_SAME_PLACE": 0,
     "CALL_IF_DIFFERENT_PLACE": 1,
 
-    "EVENT_BELIEVABILITY": 1,
+    "EVENT_BELIEVABILITY": 0.8,
 
-    "FIRE_BELIEVABILITY": 0.3,
+    "FIRE_BELIEVABILITY": 0.1,
 
 }
 
@@ -310,7 +310,7 @@ def pickup_item(actor_a_key, state):
         believability = 0
         return (sentence, believability)
     
-    believability = rectadd(place_item["value"], place_item["lethality"]) 
+    believability = rectadd(place_item["value"], place_item["lethality"])
     return (sentence, believability)
 
 

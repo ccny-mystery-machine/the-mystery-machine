@@ -44,20 +44,16 @@ def selection(node, C, thres):
     """
     Uses selection function to select most "promising" node on story tree
     """
-    i = 0
     # Expand edge only if these conditions are satisfied
     while node.believability > 0:
         # If successful, returns expanded edge, if not, return False
         new_edge = expand_edge(node)
         if new_edge:
             # If new edge exists, return child node
-            print("yoyo")
             return new_edge.next_node
         else:
             # If all children are expanded, return best child
-            print("Yo")
             node = best_child(node, C)
-            print(node.believability)
     return node
 
 def rollout_value(believability, percent_goals_satisfied):
@@ -135,6 +131,17 @@ def most_visited_child(node):
         if curr_node.visits > best_node.visits:
             best_node = curr_node
     # Return most visited child
+    return best_node
+
+def most_valuable_child(node): 
+    # Start with first node
+    best_node = node.edges[0].next_node
+    # Compare value among all children
+    for edge in node.edges:
+        curr_node = edge.next_node
+        if curr_node.value > best_node.value:
+            best_node = curr_node
+    # Return most valuable child
     return best_node
 
 def delete_children(node, chosen):

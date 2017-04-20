@@ -127,3 +127,40 @@ Fred dropped knife at Fred's house.
 0.002396236625786514
 0.25
 
+Charlie, Eve, and Daphne all lived in the same neighborhood.
+They were all at their respective houses.
+There was a fire in Eve's house.
+Eve killed by fire.
+There was a fire in Daphne's house.
+Daphne killed by fire.
+There was a fire in Charlie's house.
+Charlie killed by fire.
+There was a fire in Daphne's house.
+But no one was hurt.
+There was a fire in Daphne's house.
+But no one was hurt.
+There was a fire in Daphne's house.
+But no one was hurt.
+There was a fire in Daphne's house.
+But no one was hurt.
+There was a fire in Daphne's house.
+But no one was hurt.
+There was a fire in Daphne's house.
+But no one was hurt.
+There was a fire in Daphne's house.
+But no one was hurt.
+There was a fire in Daphne's house.
+But no one was hurt.
+There was a fire in Daphne's house.
+But no one was hurt.
+There was a fire in Daphne's house.
+But no one was hurt.
+There was a fire in Daphne's house.
+But no one was hurt.
+There was a fire in Daphne's house.
+But no one was hurt.
+
+1.4348906999999993e-08
+1.0
+1.0
+

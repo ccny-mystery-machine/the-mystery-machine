@@ -133,6 +133,17 @@ def most_visited_child(node):
     # Return most visited child
     return best_node
 
+def most_valuable_child(node): 
+    # Start with first node
+    best_node = node.edges[0].next_node
+    # Compare value among all children
+    for edge in node.edges:
+        curr_node = edge.next_node
+        if curr_node.value > best_node.value:
+            best_node = curr_node
+    # Return most valuable child
+    return best_node
+
 def delete_children(node, chosen):
     node.edges = [chosen.parent_edge]
 

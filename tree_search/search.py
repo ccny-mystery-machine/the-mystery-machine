@@ -165,6 +165,11 @@ def mcts(node, max_iter, max_expansion, max_simlength, C, thres, debug):
             # If the chosen node has a believability of 0, break it from the tree
             if chosen_node.believability == 0:
                 chosen_node.parent_edge.prev_node.edges.pop()
+            elif count > 0 and chosen_node.parent_edge.method.method == node.parent_edge.method.method:
+                chosen_node.parent_edge.prev_node.edges.pop()
+            elif count > 1 and (chosen_node.parent_edge.method.method == 
+                                node.parent_edge.prev_node.parent_edge.method.method):   
+                chosen_node.parent_edge.prev_node.edges.pop()
             else:
                 # Simuluate if thres number of times
                 for _ in range(thres):

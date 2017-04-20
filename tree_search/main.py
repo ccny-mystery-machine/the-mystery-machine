@@ -61,4 +61,4 @@ def run_once(debug=True):
     return (n,s)
     
 if __name__ == "__main__":
-    run_once()
+    run_once(True)

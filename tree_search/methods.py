@@ -53,9 +53,7 @@ METHOD_CONSTANTS = {
     "CALL_IF_SAME_PLACE": 0,
     "CALL_IF_DIFFERENT_PLACE": 1,
 
-    "EVENT_BELIEVABILITY": 0.8,
-
-    "FIRE_BELIEVABILITY": 0.1,
+    "EVENT_BELIEVABILITY": 0.6,
 
 }
 
@@ -370,33 +368,7 @@ def event(place_key, state):
     return (sentence, believability)
 
 
-def fire(place_key, state):
-    """
-    description: accidental fire tied to populated location - kill everyone at location
-    precondition: 
-    postcondition: 
-    """
 
-    place = state.places[place_key]
-
-    sentence = "There was a fire in " + place["name"] + "."
-
-    believability = METHOD_CONSTANTS[ "FIRE_BELIEVABILITY" ]
-
-    Someone_Dead = False
-    
-    for actor_key in state.actors:
-        actor = state.actors[actor_key]
-        if actor["place"] == place:
-            if actor["health"] > 0:
-                Someone_Dead = True
-                actor["health"] = 0
-                sentence += "\n" + actor["name"] + " killed by fire. "
-    if not Someone_Dead:
-        sentence += "\nBut no one was hurt."
-    
-    
-    return (sentence, believability)
 
 
 METHODS = {
@@ -408,7 +380,6 @@ METHODS = {
     "PICKUP_ITEM": pickup_item,
     "CALL": call,
     "EVENT": event,
-    "FIRE": fire
 }
 
 
@@ -483,11 +454,6 @@ def create_possible_methods(state):
             )
         
 
-    # FIRE - place
-    for key_p in state.places:
-        POSSIBLE_METHODS.append(
-            partial(fire, key_p)
-        )
 
     
     return POSSIBLE_METHODS

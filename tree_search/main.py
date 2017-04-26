@@ -21,7 +21,7 @@ def print_rollout():
 
 def run_once(debug=True):
     # Randomly assigns actors, places, and items for story
-    root_state = random_state(3,3) 
+    root_state = random_state(4,4) 
     
     # Initialize Root Node - Possible Methods boolean MUST BE TRUE 
     root_node = TreeNode(root_state, parent_edge=None, possible_methods=True)

@@ -164,3 +164,27 @@ But no one was hurt.
 1.0
 1.0
 
+Issue with averaging and not pruning 0 believability
+Eve, Daphne, and Fred all lived in the same neighborhood.
+They were all at their respective houses.
+The Event happened in Fred's house.
+Everyone in the neighborhood went to Fred's house. 
+Eve argued with Daphne. 
+Eve argued with Fred. 
+Fred went to Eve's house. 
+The Event happened in Daphne's house.
+Everyone in the neighborhood went to Daphne's house. 
+The Event happened in alleyway.
+Everyone in the neighborhood went to alleyway. 
+Fred picked up baseball bat from alleyway. 
+Fred killed Daphne with baseball bat. 
+Fred killed Eve with baseball bat. 
+Daphne called Fred. 
+Fred went to alleyway. 
+Fred dropped baseball bat at alleyway. 
+Eve killed Fred. 
+The Event happened in Fred's house.
+Everyone in the neighborhood went to Fred's house. 
+Nonsense sentence. 
+Daphne argued with Fred. 
+

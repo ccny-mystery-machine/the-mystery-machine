@@ -449,8 +449,9 @@ def create_possible_methods(state):
     
     # EVENT - place
     for key_p in state.places:
-        POSSIBLE_METHODS.append(
-                partial(event, key_p)
+        if "HOUSE" not in key_p:
+            POSSIBLE_METHODS.append(
+                    partial(event, key_p)
             )
         
 

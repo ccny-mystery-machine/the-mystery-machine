@@ -167,15 +167,19 @@ def mcts(node, max_iter, max_expansion, max_simlength, C, thres, debug):
                 chosen_node.parent_edge.prev_node.edges.pop()
                 if debug:
                     print("Pruned unbelievable node")
-            elif count > 0 and chosen_node.parent_edge.method.method == node.parent_edge.method.method:
-                chosen_node.parent_edge.prev_node.edges.pop()
-                if debug:
-                    print("Pruned repeat-1 node")
-            elif count > 1 and (chosen_node.parent_edge.method.method == 
-                                node.parent_edge.prev_node.parent_edge.method.method):   
-                chosen_node.parent_edge.prev_node.edges.pop()
-                if debug:
-                    print("Pruned repeat-2 node")
+            elif chosen_node.height > 0:
+                parent_node = chosen_node.parent_edge.prev_node
+                if chosen_node.parent_edge.method.method == parent_node.parent_edge.method.method:
+                    parent_node.edges.pop()
+                    if debug:
+                        print("Pruned repeat-1 node")
+            elif chosen_node.height > 1:
+                grandparent_node = parent_node.parent_edge.prev_node
+                if (chosen_node.parent_edge.method.method == 
+                                grandparent_node.parent_edge.method.method):
+                    grandparent_node.edges.pop()
+                    if debug:
+                        print("Pruned repeat-2 node")
             else:
                 # Simuluate if thres number of times
                 for _ in range(thres):

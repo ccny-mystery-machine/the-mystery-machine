@@ -167,24 +167,27 @@ def mcts(node, max_iter, max_expansion, max_simlength, C, thres, debug):
                 chosen_node.parent_edge.prev_node.edges.pop()
                 if debug:
                     print("Pruned unbelievable node")
+                continue
             elif chosen_node.height > 1:
                 parent_node = chosen_node.parent_edge.prev_node
                 if chosen_node.parent_edge.method.method == parent_node.parent_edge.method.method:
                     parent_node.edges.pop()
                     if debug:
                         print("Pruned repeat-1 node")
-            elif chosen_node.height > 2:
-                grandparent_node = parent_node.parent_edge.prev_node
-                if (chosen_node.parent_edge.method.method == 
+                    continue
+                if chosen_node.height > 2:
+                    parent_node = chosen_node.parent_edge.prev_node
+                    grandparent_node = parent_node.parent_edge.prev_node
+                    if (chosen_node.parent_edge.method.method == 
                                 grandparent_node.parent_edge.method.method):
-                    grandparent_node.edges.pop()
-                    if debug:
-                        print("Pruned repeat-2 node")
-            else:
+                        grandparent_node.edges.pop()
+                        if debug:
+                            print("Pruned repeat-2 node")
+                        continue
                 # Simuluate if thres number of times
-                for _ in range(thres):
-                    sim_value = rollout_story_3(chosen_node, max_simlength)
-                    backpropogate(chosen_node, sim_value)
+            for _ in range(thres):
+                sim_value = rollout_story_3(chosen_node, max_simlength)
+                backpropogate(chosen_node, sim_value)
         # Choose most visited node
         exp_node = most_visited_child(node) 
         if debug:

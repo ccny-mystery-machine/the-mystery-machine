@@ -163,7 +163,7 @@ def mcts(node, max_iter, max_expansion, max_simlength, C, thres, debug):
             # Choose a node in the story tree
             chosen_node = selection(node, C, thres)
             # If the chosen node has a believability of 0, break it from the tree
-            if chosen_node.believability == 0:
+            if chosen_node.parent_edge.method.believability == 0:
                 chosen_node.parent_edge.prev_node.edges.pop()
                 if debug:
                     print("Pruned unbelievable node")

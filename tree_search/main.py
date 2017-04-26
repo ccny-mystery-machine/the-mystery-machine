@@ -40,12 +40,12 @@ def run_once(debug=True):
     thres : Minimum MCTS Visits for node expansion
     """
     # Perform Monte Carlo - returns final node and whole story
-    max_expansion = 200
+    max_expansion = 250
     if max_expansion < len(root_node.possible_methods):
         raise ValueError("Max exp ({}) should be greater than num methods({})".format(max_expansion, len(root_node.possible_methods)))
 
-    max_iter = 15
-    max_simlength = 15
+    max_iter = 12
+    max_simlength = 20
     C = 1
     thres = 20
     print("Max iteration: {}\nMax Expansion: {}\nMax simulation length: {}\nC: {}\nThreshold: {}".format(max_iter, max_expansion, max_simlength, C, thres))

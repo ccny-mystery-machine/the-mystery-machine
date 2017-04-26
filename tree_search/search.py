@@ -184,7 +184,12 @@ def mcts(node, max_iter, max_expansion, max_simlength, C, thres, debug):
                         if debug:
                             print("Pruned repeat-2 node")
                         continue
-                # Simuluate if thres number of times
+            if chosen_node.believability < 0.6:
+                chosen_node.parent_edge.prev_node.edges.pop()
+                if debug:
+                    print("Pruned unlikely node")
+                continue
+            # Simuluate if thres number of times
             for _ in range(thres):
                 sim_value = rollout_story_3(chosen_node, max_simlength)
                 backpropogate(chosen_node, sim_value)

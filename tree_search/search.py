@@ -180,7 +180,7 @@ def mcts(node, max_iter, max_expansion, max_simlength, C, thres, debug):
                     grandparent_node = parent_node.parent_edge.prev_node
                     if (chosen_node.parent_edge.method.method == 
                                 grandparent_node.parent_edge.method.method):
-                        grandparent_node.edges.pop()
+                        parent_node.edges.pop()
                         if debug:
                             print("Pruned repeat-2 node")
                         continue

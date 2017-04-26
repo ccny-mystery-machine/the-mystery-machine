@@ -44,7 +44,7 @@ def run_once(debug=True):
     if max_expansion < len(root_node.possible_methods):
         raise ValueError("Max exp ({}) should be greater than num methods({})".format(max_expansion, len(root_node.possible_methods)))
 
-    max_iter = 12
+    max_iter = 15
     max_simlength = 20
     C = 1
     thres = 20

@@ -57,7 +57,7 @@ def selection(node, C, thres):
     return node
 
 def rollout_value(believability, percent_goals_satisfied):
-    return sqrt(believability) * percent_goals_satisfied
+    return believability * percent_goals_satisfied
 
 def rollout_story(node, max_simlength):
     root = TreeNode(node.state)
@@ -184,7 +184,7 @@ def mcts(node, max_iter, max_expansion, max_simlength, C, thres, debug):
                         if debug:
                             print("Pruned repeat-2 node")
                         continue
-            if chosen_node.believability < 0.6:
+            if chosen_node.believability < 0.65:
                 chosen_node.parent_edge.prev_node.edges.pop()
                 if debug:
                     print("Pruned unlikely node")

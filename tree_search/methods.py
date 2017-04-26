@@ -21,7 +21,7 @@ def rectadd(a, b):
 METHOD_CONSTANTS = {
     "MOVE_IF_SAME_PLACE": 0,
     "MOVE_IF_DEAD": 0,
-    "MOVE_IF_DIFFERENT_PLACE": 1,
+    "MOVE_IF_DIFFERENT_PLACE": 0.7,
     
     "MUG_IF_DEAD": 0,
     "MUG_IF_YOURSELF": 0,
@@ -51,9 +51,9 @@ METHOD_CONSTANTS = {
     "CALL_IF_DEAD": 0,
     "CALL_IF_YOURSELF": 0,
     "CALL_IF_SAME_PLACE": 0,
-    "CALL_IF_DIFFERENT_PLACE": 0.9,
+    "CALL_IF_DIFFERENT_PLACE": 0.4,
 
-    "EVENT_BELIEVABILITY": 0.001,
+    "EVENT_BELIEVABILITY": 0.1,
 
 }
 
@@ -390,8 +390,9 @@ def create_possible_methods(state):
     # MOVE - actor, place
     for key_a in state.actors:
         for key_p in state.places:
-            POSSIBLE_METHODS.append(
-                partial(move, key_a, key_p)
+            if "HOUSE" not in key_p:
+                POSSIBLE_METHODS.append(
+                    partial(move, key_a, key_p)
             )
 
     # MUG - actor, actor
@@ -449,9 +450,8 @@ def create_possible_methods(state):
     
     # EVENT - place
     for key_p in state.places:
-        if "HOUSE" not in key_p:
-            POSSIBLE_METHODS.append(
-                    partial(event, key_p)
+        POSSIBLE_METHODS.append(
+            partial(event, key_p)
             )
         
 

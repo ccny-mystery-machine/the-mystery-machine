@@ -51,7 +51,7 @@ ITEMS = {
     },
     "PEN": {
         "name": "pen",
-        "value": 0.1,
+        "value":0.1 ,
         "lethality": 0.4,
         "drop_believability": 0.9,
     },

@@ -51,9 +51,9 @@ METHOD_CONSTANTS = {
     "CALL_IF_DEAD": 0,
     "CALL_IF_YOURSELF": 0,
     "CALL_IF_SAME_PLACE": 0,
-    "CALL_IF_DIFFERENT_PLACE": 1,
+    "CALL_IF_DIFFERENT_PLACE": 0.9,
 
-    "EVENT_BELIEVABILITY": 0.1,
+    "EVENT_BELIEVABILITY": 0.001,
 
 }
 
@@ -148,7 +148,7 @@ def mug(actor_a_key, actor_b_key, state):
         return (sentence, believability)
    
     
-    believability = actor_b_item["value"]
+    believability = rectadd(actor_b_item["value"],actor_b_item["lethality"])
     return (sentence, believability)
 
 

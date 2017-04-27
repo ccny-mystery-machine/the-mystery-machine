@@ -47,7 +47,7 @@ def run_once(debug=True):
     max_iter = 15
     max_simlength = 20
     C = 1
-    thres = 20
+    thres = 40
     print("Max iteration: {}\nMax Expansion: {}\nMax simulation length: {}\nC: {}\nThreshold: {}".format(max_iter, max_expansion, max_simlength, C, thres))
     n, s = mcts(root_node, max_iter, max_expansion, max_simlength, C, thres, debug=True) 
     

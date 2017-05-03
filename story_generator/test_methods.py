@@ -27,7 +27,7 @@ class TestMove:
         test_state = State(ACTORS,PLACES,ITEMS)
         sent, bel = METHODS["MOVE"]("ALICE", "BOBS_HOUSE",test_state)
 
-        assert bel == 1
+        assert bel == 0.7
       
         
     def test_move_to_same_place(self):
@@ -310,7 +310,7 @@ class TestPickUpItem:
         alice = test_state.actors["ALICE"]
         test_state.actors["ALICE"]["place"] = PLACES["LIBRARY"]
         sentence, believability = METHODS["PICKUP_ITEM"]("ALICE",test_state)
-        assert believability == 1
+        assert believability == 0.5
 
 
     def test_pickup_item_when_dead(self):
@@ -352,7 +352,7 @@ class TestCall:
         alice = test_state.actors["ALICE"]
         bob = test_state.actors["BOB"]
         sentence, believability = METHODS["CALL"]("ALICE", "BOB", test_state)
-        assert believability == 1
+        assert believability == 0.4
 
     def test_call_when_same_locations(self):
         """
@@ -385,7 +385,7 @@ class TestEvent:
         """
         test_state = State(ACTORS,PLACES,ITEMS)
         sentence, believability = METHODS["EVENT"]("BOBS_HOUSE",test_state)
-        assert believability == 1
+        assert believability == 0.1
     
     def test_event_works(self):
         """
@@ -401,43 +401,3 @@ class TestEvent:
                 bob["place"] == lib and 
                 charlie["place"] == lib)
 
-
-class TestFire:
-
-    def test_fire(self):
-        """
-        Tests if believability is 1 when fire was happened
-        """
-        test_state = State(ACTORS,PLACES,ITEMS)
-        alice = test_state.actors["ALICE"]
-        bob = test_state.actors["BOB"]
-        sentence, believability = METHODS["FIRE"]("BOBS_HOUSE",test_state)
-        assert believability == 0.3
-
-    def test_fire_no_one_in_that_place(self):
-        """
-        Tests if believability is 1 when fire was happened but no one hurt
-        """
-        test_state = State(ACTORS,PLACES,ITEMS)
-        alice = test_state.actors["ALICE"]
-        bob = test_state.actors["BOB"]
-        charlie = test_state.actors["CHARLIE"]
-        print(alice["health"])
-        print(bob["health"])
-        #sentence, believability = METHODS["FIRE"]("WAREHOUSE",test_state)
-        assert (alice["health"] == 1 and
-                bob["health"] == 1)
-
-
-    def test_fire_people_in_that_place(self):
-        """
-        Tests if believability is 1 when fire was happened but everyone hurt
-        """
-        test_state = State(ACTORS,PLACES,ITEMS)
-        alice = test_state.actors["ALICE"]
-        bob = test_state.actors["BOB"]
-        bob["place"] = PLACES["ALICES_HOUSE"]
-        sentence, believability = METHODS["FIRE"]("ALICES_HOUSE",test_state)
-        assert (alice["health"] == 0 and
-                bob["health"] == 0)
- 

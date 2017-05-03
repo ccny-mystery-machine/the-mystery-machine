@@ -12,7 +12,7 @@ from state import random_state
 
 def state_index_number(state):
     actor_list = list(state.actors)
-    actor_list.sort()
+    actor_list.sort(reverse=True)
     index = 0
     
     for idx, actor_key in enumerate(actor_list):
@@ -35,11 +35,4 @@ def state_index_number(state):
         idx_part = (idx_part << 1) | has_item
         index |= (idx_part << 4*idx)  
     
-    return index 
-    
-# Randomly assigns actors, places, and items for story
-root_state = random_state(4,4) 
-
-print(state_index_number(root_state))
-
-
+    return index  

@@ -11,13 +11,6 @@ NAME_BANK = [
     ("Fred", "male"),
 ]
 
-RELATIONSHIPS = {
-    "ENEMY": "enemy",
-    "STRANGER": "stranger",
-    "FRIENDS": "friends",
-    "SIGNIFICANT_OTHER": "significant other",
-}
-
 ITEMS = {
     "GUN": {
         "name": "gun",
@@ -104,9 +97,6 @@ ACTOR_TEMPLATE = {
     "health": None,
     "items": [], # Array of items
     "kill_desire": {},  # dictionary of other actors to their kill_desire value
-    "affection": {}, # dictionary of other actors to affection value, and relationship value
-    "attractiveness": None, # 
-    "grief": None,
     "gender": None,
 }
 
@@ -124,6 +114,10 @@ ACTOR_PLACES = {
             "name": "Charlie's house",
             "items": [],
         },
+    "DAPHNES_HOUSE": { 
+            "name": "Daphne's house",
+            "items": [],
+        },
 }
 
 PLACES = { **ACTOR_PLACES, **OUT_PLACES }
@@ -138,13 +132,8 @@ ACTORS = {
         "kill_desire": {
             "BOB": 0,
             "CHARLIE": 0,
+            "DAPHNE": 0,
         },  
-        "affection": {
-            "BOB": [0, RELATIONSHIPS["STRANGER"]],
-            "CHARLIE": [0, RELATIONSHIPS["STRANGER"]],
-        }, 
-        "attractiveness": 0.5, 
-        "grief": 0,
         "gender": "female",
     },
     "BOB": {
@@ -156,13 +145,8 @@ ACTORS = {
         "kill_desire": {
             "ALICE": 0,
             "CHARLIE": 0,
+            "DAPHNE": 0,
         },  
-        "affection": {
-            "ALICE": [0, RELATIONSHIPS["STRANGER"]],
-            "CHARLIE": [0, RELATIONSHIPS["STRANGER"]],
-        }, 
-        "attractiveness": 0.9,
-        "grief": 0,
         "gender": "male",
     },
     "CHARLIE": {
@@ -174,14 +158,21 @@ ACTORS = {
         "kill_desire": {
             "ALICE": 0,
             "BOB": 0,
+            "DAPHNE": 0,
         },  
-        "affection": {
-            "ALICE": [0, RELATIONSHIPS["STRANGER"]],
-            "BOB": [0, RELATIONSHIPS["STRANGER"]],
-        }, 
-        "attractiveness": 0.3,
-        "grief": 0,
         "gender": "male",
-
+    },
+    "DAPHNE": {
+        "name": "Daphne",
+        "home": PLACES["DAPHNES_HOUSE"],
+        "place": PLACES["DAPHNES_HOUSE"],
+        "health": 1,
+        "items": [],
+        "kill_desire": {
+            "ALICE": 0,
+            "BOB": 0,
+            "CHARLIE": 0,
+        },  
+        "gender": "female",
     },
 }

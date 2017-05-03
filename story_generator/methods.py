@@ -7,7 +7,7 @@ from random import randint
 from copy import deepcopy
 from functools import partial
 
-from setup import ACTORS, PLACES, ITEMS, RELATIONSHIPS
+from setup import ACTORS, PLACES, ITEMS
 
 def rectadd(a, b):
     ans = a + b
@@ -131,9 +131,6 @@ def mug(actor_a_key, actor_b_key, state):
     actor_a["items"].append(actor_b_item)
     
     actor_b["kill_desire"][actor_a_key] = rectadd( actor_b["kill_desire"][actor_a_key],  METHOD_CONSTANTS[ "MUG_KILL_DESIRE_INC" ] )
-    actor_b["affection"][actor_a_key][0] = METHOD_CONSTANTS[ "MUG_AFFECTION" ]
-
-    actor_b["grief"] = rectadd( actor_b["grief"], actor_b_item["value"] / 2 )
 
     sentence = (actor_a["name"] + " mugs " + actor_b["name"] + " and stole " + actor_b_item["name"] + ". ")
     
@@ -170,10 +167,6 @@ def talk(actor_a_key, actor_b_key, state):
 
     actor_a["kill_desire"][actor_b_key] = rectadd(actor_a["kill_desire"][actor_b_key], -METHOD_CONSTANTS[ "TALK_KILL_DESIRE_DEC" ])
     actor_b["kill_desire"][actor_a_key] = rectadd(actor_b["kill_desire"][actor_a_key], -METHOD_CONSTANTS[ "TALK_KILL_DESIRE_DEC" ])
-    
-    actor_a["affection"][actor_b_key][0] = rectadd(actor_a["affection"][actor_b_key][0], -METHOD_CONSTANTS[ "TALK_AFFECTION_INC" ])
-    actor_b["affection"][actor_a_key][0] = rectadd(actor_b["affection"][actor_a_key][0], -METHOD_CONSTANTS[ "TALK_AFFECTION_INC" ])
-    
 
     if (actor_a["place"] != actor_b["place"]):
         believability = METHOD_CONSTANTS[ "TALK_IF_DIFFERENT_PLACE" ]
@@ -204,10 +197,6 @@ def argue(actor_a_key, actor_b_key, state):
 
     actor_a["kill_desire"][actor_b_key] = rectadd(actor_a["kill_desire"][actor_b_key], METHOD_CONSTANTS[ "ARGUE_KILL_DESIRE_INC" ])
     actor_b["kill_desire"][actor_a_key] = rectadd(actor_b["kill_desire"][actor_a_key], METHOD_CONSTANTS[ "ARGUE_KILL_DESIRE_INC" ])
-    
-    actor_a["affection"][actor_b_key][0] = rectadd(actor_a["affection"][actor_b_key][0], -METHOD_CONSTANTS[ "ARGUE_AFFECTION_DEC" ])
-    actor_b["affection"][actor_a_key][0] = rectadd(actor_b["affection"][actor_a_key][0], -METHOD_CONSTANTS[ "ARGUE_AFFECTION_DEC" ])
-    
 
     if (actor_a["place"] != actor_b["place"]):
         believability = METHOD_CONSTANTS[ "ARGUE_IF_DIFFERENT_PLACE" ]
@@ -368,9 +357,6 @@ def event(place_key, state):
     return (sentence, believability)
 
 
-
-
-
 METHODS = {
     "MOVE": move,
     "MUG": mug,
@@ -453,8 +439,5 @@ def create_possible_methods(state):
         POSSIBLE_METHODS.append(
             partial(event, key_p)
             )
-        
-
-
     
     return POSSIBLE_METHODS

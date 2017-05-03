@@ -1,7 +1,7 @@
 from random import random, randint
 from copy import deepcopy
 
-from setup import OUT_PLACES, NAME_BANK, ACTOR_TEMPLATE, PLACE_TEMPLATE, ITEMS, RELATIONSHIPS
+from setup import OUT_PLACES, NAME_BANK, ACTOR_TEMPLATE, PLACE_TEMPLATE, ITEMS
 
 class State:
     """
@@ -56,8 +56,6 @@ def random_state(min_num_char, max_num_char):
         actor["home"] = places[up_place]
         actor["place"] = places[up_place]
         actor["health"] = 1
-        actor["attractiveness"] = random() 
-        actor["grief"] = 0
 
 
     # Once actors are added, initialize kill_desire and affection
@@ -67,7 +65,6 @@ def random_state(min_num_char, max_num_char):
             if source == target:
                 continue
             rand_state.actors[source]["kill_desire"][target] = 0
-            rand_state.actors[source]["affection"][target] = [0, RELATIONSHIPS["STRANGER"]]
                                            
     return rand_state
 

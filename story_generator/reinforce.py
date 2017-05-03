@@ -7,8 +7,11 @@
 # 2 - Has item or not
 
 # 93 - number of actions/methods
-from state import random_state
-
+from setup import ACTORS, PLACES, ITEMS
+from state import State
+from tree import TreeNode, expand_rand_edge, expand_q_edge, choose_q_edge
+import pickle
+import os
 
 def state_index_number(state):
     actor_list = list(state.actors)
@@ -35,4 +38,42 @@ def state_index_number(state):
         idx_part = (idx_part << 1) | has_item
         index |= (idx_part << 4*idx)  
     
-    return index  
+    return index
+
+def qlearn(resume=True):
+    root_state = State(ACTORS, PLACES, ITEMS)
+    root_node = TreeNode(state=root_state, parent_edge=None, possible_methods=True)
+    if resume:
+        with open("tree.pickle", "rb") as treefile:
+            root_node = pickle.load(treefile)
+    current_node = root_node
+    depth = 0
+    counter = 0
+    while True:
+        if depth >= 15:
+            depth = 0
+            current_node = root_node
+            counter += 1
+            if counter % 10 == 0:
+                print("Counter - " + str(counter) + " - Dumping To File")
+                with open("tree.pickle", "wb") as treefile:
+                    pickle.dump(root_node, treefile, protocol=pickle.HIGHEST_PROTOCOL)         
+            continue
+        if not current_node.edges:
+            expand_all_believable_edges(current_node) 
+        edge = choose_q_edge()    
+                
+        depth += 1
+        current_node = edge.next_node
+
+
+
+
+if __name__ == "__main__":
+    qlearn(False)
+
+    
+
+
+    
+       

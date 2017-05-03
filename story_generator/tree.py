@@ -50,6 +50,7 @@ class TreeEdge:
         self.method = Method(method)
         self.prev_node = None
         self.next_node = None
+        self.qval = 1
 
     def __call__(self, node):
         # Connect the method to the state
@@ -57,7 +58,7 @@ class TreeEdge:
         # Connect the edge to the node
         self.prev_node = node
         self.next_node = TreeNode(self.method.next_state, self)
-
+        
         # Increase Height
         self.next_node.height = self.prev_node.height + 1
 
@@ -167,3 +168,38 @@ def expand_all_edges(node):
         return True
 
     return False
+
+def expand_all_believable_edge(node, epsilon, debug):
+    if len(node.possible_methods) <= 0:
+        return False
+    for _ in range(len(node.possible_methods)):
+        edge = expand_edge(node)
+        if edge.method.believability == 0:
+            node.edges.pop()
+            if debug:
+                print("Pruned unbelievable node")
+        elif node.height > 1:
+            if edge.method.method == node.parent_edge.method.method:
+                node.edges.pop()
+                if debug:
+                    print("Pruned repeat-1 node")
+                continue
+            if node.height > 2:
+                parent_node = node.parent_edge.prev_node
+                if (edge.method.method == 
+                        parent_node.parent_edge.method.method):
+                    node.edges.pop()
+                    if debug:
+                        print("Pruned repeat-2 node")
+    return True
+
+def choose_q_edge(node, epsilon):
+    if random() < epsilon:
+        return node.edges[ randint(0, len(node.edges) - 1) ]
+    chosen_edge = node.edges[0]
+    for edge in node.edges:
+        if edge.qval > chosen_edge.qval:
+            chosen_edge = edge
+    return chosen_edge
+
+def choose_q_edge 

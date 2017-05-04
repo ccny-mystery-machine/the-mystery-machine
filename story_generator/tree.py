@@ -169,7 +169,7 @@ def expand_all_edges(node):
 
     return False
 
-def expand_all_believable_edge(node, epsilon, debug):
+def expand_all_believable_edges(node, debug):
     if len(node.possible_methods) <= 0:
         return False
     for _ in range(len(node.possible_methods)):
@@ -178,6 +178,10 @@ def expand_all_believable_edge(node, epsilon, debug):
             node.edges.pop()
             if debug:
                 print("Pruned unbelievable node")
+        elif edge.next_node.believability < 0.65:
+            node.edges.pop()
+            if debug:
+                print("Pruned unlikely node")
         elif node.height > 1:
             if edge.method.method == node.parent_edge.method.method:
                 node.edges.pop()
@@ -202,4 +206,3 @@ def choose_q_edge(node, epsilon):
             chosen_edge = edge
     return chosen_edge
 
-def choose_q_edge 

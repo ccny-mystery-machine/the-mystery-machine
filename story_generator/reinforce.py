@@ -9,7 +9,7 @@
 # 93 - number of actions/methods
 from setup import ACTORS, PLACES, ITEMS
 from state import State
-from tree import TreeNode, expand_rand_edge, expand_q_edge, choose_q_edge
+from tree import TreeNode, expand_rand_edge, expand_all_believable_edges, choose_q_edge
 import pickle
 import os
 
@@ -60,9 +60,8 @@ def qlearn(resume=True):
                     pickle.dump(root_node, treefile, protocol=pickle.HIGHEST_PROTOCOL)         
             continue
         if not current_node.edges:
-            expand_all_believable_edges(current_node) 
-        edge = choose_q_edge()    
-                
+            expand_all_believable_edges(node=current_node, debug=False) 
+        edge = choose_q_edge(node=current_node, epsilon=0.2)             
         depth += 1
         current_node = edge.next_node
 
@@ -70,7 +69,7 @@ def qlearn(resume=True):
 
 
 if __name__ == "__main__":
-    qlearn(False)
+    qlearn(True)
 
     
 

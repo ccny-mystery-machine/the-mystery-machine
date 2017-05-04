@@ -50,7 +50,7 @@ class TreeEdge:
         self.method = Method(method)
         self.prev_node = None
         self.next_node = None
-        self.qval = 1
+        self.qval = 0.1
 
     def __call__(self, node):
         # Connect the method to the state
@@ -200,9 +200,12 @@ def expand_all_believable_edges(node, debug):
 def choose_q_edge(node, epsilon):
     if random() < epsilon:
         return node.edges[ randint(0, len(node.edges) - 1) ]
+    return choose_max_q_edge(node)
+
+
+def choose_max_q_edge(node):
     chosen_edge = node.edges[0]
     for edge in node.edges:
         if edge.qval > chosen_edge.qval:
             chosen_edge = edge
     return chosen_edge
-

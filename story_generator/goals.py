@@ -34,7 +34,6 @@ GOALS = [
     partial(death_occurred, 1),
     partial(death_occurred, 2),
     partial(death_occurred, 3),
-    everyone_dies
 ]
 
 

@@ -28,6 +28,7 @@ def run_once(debug=True):
 
     # Total methods in story
     num_methods = len(root_node.possible_methods)
+    print(num_methods)
     
     """
     The following 

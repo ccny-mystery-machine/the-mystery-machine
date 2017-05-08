@@ -176,25 +176,27 @@ def expand_all_believable_edges(node, debug):
         edge = expand_edge(node)
         if edge.method.believability == 0:
             node.edges.pop()
-            if debug:
-                print("Pruned unbelievable node")
+#            if debug:
+#                print("Pruned unbelievable node")
         elif edge.next_node.believability < 0.65:
             node.edges.pop()
-            if debug:
-                print("Pruned unlikely node")
+#            if debug:
+#                print("Pruned unlikely node")
         elif node.height > 1:
             if edge.method.method == node.parent_edge.method.method:
                 node.edges.pop()
-                if debug:
-                    print("Pruned repeat-1 node")
+#                if debug:
+#                    print("Pruned repeat-1 node")
                 continue
             if node.height > 2:
                 parent_node = node.parent_edge.prev_node
                 if (edge.method.method == 
                         parent_node.parent_edge.method.method):
                     node.edges.pop()
-                    if debug:
-                        print("Pruned repeat-2 node")
+#                    if debug:
+#                        print("Pruned repeat-2 node")
+        elif debug:
+            print('\t' + edge.method.sentence)
     return True
 
 def choose_q_edge(node, epsilon):
@@ -209,3 +211,4 @@ def choose_max_q_edge(node):
         if edge.qval > chosen_edge.qval:
             chosen_edge = edge
     return chosen_edge
+

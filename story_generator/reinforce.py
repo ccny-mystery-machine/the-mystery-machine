@@ -41,6 +41,42 @@ def state_index_number(state):
     
     return index
 
+# Conditions to check
+# Number of alive actors - 3 bits
+# Number of places with at least two actors - 2 bits
+# Number of angry actors - 3 bit
+# Number of actors with items - 3 bits
+def state_index_number_2(state):
+    actor_list = list(state.actors)
+
+    num_alive = 0
+    num_sharing_place = 0
+    num_angry = 0
+    num_actor_with_items = 0
+    
+    for idx, actor_key in enumerate(actor_list):
+        actor = state.actors[actor_key]
+        if actor["health"] > 0:
+            num_alive += 1
+        place = actor["place"]
+        for other_actor_key,other_actor in state.actors.items():
+            if actor_key != other_actor_key:
+                if other_actor["place"] == place:
+                    num_sharing_place += 1
+                if actor["kill_desire"][other_actor_key] > 0:
+                    num_angry += 1
+        if len(actor["items"]) > 0:
+            num_actor_with_items += 1
+        
+    num_sharing_place >>= 1
+    index = 0
+    index = (num_alive << 2) | num_sharing_place
+    index = (index << 3) | num_angry
+    index = (index << 3) | num_actor_with_items
+    
+    return index
+
+
 def qlearn(resume=True):
     root_state = State(ACTORS, PLACES, ITEMS)
     root_node = TreeNode(state=root_state, parent_edge=None, possible_methods=True)
@@ -52,22 +88,25 @@ def qlearn(resume=True):
     depth = 0
     counter = 0
     while True:
-        if depth >= 15:
+        if depth >= 5:
             depth = 0
             current_node = root_node
+            print(current_node.state.actors["DAPHNE"]["place"])
             counter += 1
+            print()
             if counter % 100 == 0:
                 print("Counter - " + str(counter) + " - Dumping To File")
                 with open("tree.pickle", "wb") as treefile:
                     pickle.dump(root_node, treefile, protocol=pickle.HIGHEST_PROTOCOL)         
             continue
         if not current_node.edges:
-            expand_all_believable_edges(node=current_node, debug=False) 
+            expand_all_believable_edges(node=current_node, debug=True) 
         next_edge = choose_q_edge(node=current_node, epsilon=0.2)             
         best_edge = choose_max_q_edge(node=current_node)             
         if edge != None:
             reward = percent_goals_satisfied(current_node, GOALS)
             edge.qval = edge.qval  + 0.1*(reward + 0.9*(best_edge.qval) - edge.qval)
+            print("{} {} {}".format(edge.method.sentence, reward, edge.qval))
         edge = next_edge
         depth += 1
         current_node = edge.next_node
@@ -97,6 +136,6 @@ def update_table_with_node(node, table):
         table[index] = max_q 
 
 if __name__ == "__main__":
-    #qlearn(True)
-    make_table()
+    qlearn(False)
+    # make_table()
 

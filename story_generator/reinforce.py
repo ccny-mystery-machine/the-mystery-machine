@@ -90,7 +90,7 @@ def qlearn(resume=True):
     counter = 0
     while True:
         if depth >= 5:
-            depth = 0
+            depth = 0 
             current_node = root_node
             print(current_node.state.actors["DAPHNE"]["place"])
             counter += 1
@@ -129,15 +129,17 @@ def qlearn2(resume=True):
         if depth >= 15:
             depth = 0
             counter += 1
+            current_node = root_node         
+            edge = None
             #print()
             if counter % 100 == 0:
                 print("Counter - " + str(counter) + " - Dumping To File")
                 with open("table2.pickle", "wb") as table2file:
                     pickle.dump(table2, table2file, protocol=pickle.HIGHEST_PROTOCOL)
-            root_state = State(ACTORS, PLACES, ITEMS)
-            root_node = TreeNode(state=root_state, parent_edge=None, possible_methods=True)
-            current_node = root_node         
-            edge = None
+            if counter % 2000 == 0:
+                print("Tree destroyed")
+                root_state = State(ACTORS, PLACES, ITEMS)
+                root_node = TreeNode(state=root_state, parent_edge=None, possible_methods=True)
             continue
         if not current_node.edges:
             expand_all_believable_edges(node=current_node, debug=True) 

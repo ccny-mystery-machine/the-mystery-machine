@@ -128,16 +128,16 @@ def qlearn2(resume=True):
     while True:
         if depth >= 15:
             depth = 0
-            current_node = root_node
             counter += 1
+            print()
             if counter % 100 == 0:
                 print("Counter - " + str(counter) + " - Dumping To File")
                 with open("table2.pickle", "wb") as table2file:
                     pickle.dump(table2, table2file, protocol=pickle.HIGHEST_PROTOCOL)
-            if counter % 1000 == 0:
-                print("Tree Destroyed")
-                root_node = TreeNode(state=root_state, parent_edge=None, possible_methods=True)
-                current_node = root_node         
+            root_state = State(ACTORS, PLACES, ITEMS)
+            root_node = TreeNode(state=root_state, parent_edge=None, possible_methods=True)
+            current_node = root_node         
+            edge = None
             continue
         if not current_node.edges:
             expand_all_believable_edges(node=current_node, debug=True) 
@@ -157,7 +157,7 @@ def qlearn2(resume=True):
             bestqval = table2[idxc][find_edge_index(best_edge)]
             qval = table2[idx][find_edge_index(edge)]
             table2[idx][find_edge_index(edge)] = qval  + 0.1*(reward + 0.9*(bestqval) - qval)
-            # print("{} {} {}".format(edge.method.sentence, reward, edge.qval))
+            print("{} {} {}".format(edge.method.sentence, reward, edge.qval))
         edge = next_edge
         depth += 1
         current_node = edge.next_node

@@ -38,6 +38,7 @@ class TestNode:
         expand_all_edges(node)
         assert len(node.edges) == num_total_actions
 
+
 class TestEdge:
     """
     Test class for the edge class

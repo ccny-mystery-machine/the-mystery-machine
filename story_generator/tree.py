@@ -7,6 +7,7 @@ from random import randint, random
 from methods import Method, METHODS, create_possible_methods
 
 POSSIBLE_METHODS = []
+METHOD_TO_INDEX = {}
 
 class TreeNode:
     """
@@ -16,11 +17,14 @@ class TreeNode:
         
         # Allow global variable to be modified within function         
         global POSSIBLE_METHODS
+        global METHOD_TO_INDEX
  
         if possible_methods:
             # Create all partial methods and store them globally
             POSSIBLE_METHODS = create_possible_methods(state)
-        
+            for i,val in enumerate(POSSIBLE_METHODS):
+                METHOD_TO_INDEX[val] = i
+ 
         """Tree fields"""
         self.state = state
         # Tree edge that points to the self node and the parent node
@@ -195,8 +199,8 @@ def expand_all_believable_edges(node, debug):
                     node.edges.pop()
 #                    if debug:
 #                        print("Pruned repeat-2 node")
-        elif debug:
-            print('\t' + edge.method.sentence)
+#        elif debug:
+#            print('\t' + edge.method.sentence)
     return True
 
 def choose_q_edge(node, epsilon):
@@ -212,3 +216,5 @@ def choose_max_q_edge(node):
             chosen_edge = edge
     return chosen_edge
 
+def find_edge_index(edge):
+    return METHOD_TO_INDEX[edge.method.method]

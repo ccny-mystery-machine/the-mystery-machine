@@ -9,7 +9,8 @@
 # 93 - number of actions/methods
 from setup import ACTORS, PLACES, ITEMS
 from state import State
-from tree import TreeNode, expand_rand_edge, expand_all_believable_edges, choose_q_edge, choose_max_q_edge
+from tree import (TreeNode, expand_rand_edge, expand_all_believable_edges, 
+                    choose_q_edge, choose_max_q_edge, find_edge_index)
 from goals import percent_goals_satisfied, GOALS
 import pickle
 import os
@@ -111,6 +112,56 @@ def qlearn(resume=True):
         depth += 1
         current_node = edge.next_node
 
+def qlearn2(resume=True):
+    root_state = State(ACTORS, PLACES, ITEMS)
+    root_node = TreeNode(state=root_state, parent_edge=None, possible_methods=True)
+    from tree import POSSIBLE_METHODS 
+    num_methods = len(POSSIBLE_METHODS)
+    table2 = {}
+    if resume:
+        with open("table2.pickle", "rb") as table2file:
+            table2 = pickle.load(table2file)
+    current_node = root_node
+    edge = None
+    depth = 0
+    counter = 0
+    while True:
+        if depth >= 15:
+            depth = 0
+            current_node = root_node
+            counter += 1
+            if counter % 100 == 0:
+                print("Counter - " + str(counter) + " - Dumping To File")
+                with open("table2.pickle", "wb") as table2file:
+                    pickle.dump(table2, table2file, protocol=pickle.HIGHEST_PROTOCOL)
+            if counter % 1000 == 0:
+                print("Tree Destroyed")
+                root_node = TreeNode(state=root_state, parent_edge=None, possible_methods=True)
+                current_node = root_node         
+            continue
+        if not current_node.edges:
+            expand_all_believable_edges(node=current_node, debug=True) 
+        next_edge = choose_q_edge(node=current_node, epsilon=0.2)             
+        best_edge = choose_max_q_edge(node=current_node)             
+        if edge != None:
+            reward = percent_goals_satisfied(current_node, GOALS)
+            idx = state_index_number_2(edge.prev_node.state)
+            if idx not in table2:
+                table2[idx] = [0.1] * num_methods
+            idxc = state_index_number_2(current_node.state)
+            if idxc not in table2:
+                table2[idxc] = [0.1] * num_methods
+            #print(idxc)
+            #print(idx)
+            #print(len(POSSIBLE_METHODS))
+            bestqval = table2[idxc][find_edge_index(best_edge)]
+            qval = table2[idx][find_edge_index(edge)]
+            table2[idx][find_edge_index(edge)] = qval  + 0.1*(reward + 0.9*(bestqval) - qval)
+            # print("{} {} {}".format(edge.method.sentence, reward, edge.qval))
+        edge = next_edge
+        depth += 1
+        current_node = edge.next_node
+
 def make_table():
     with open("tree.pickle", "rb") as treefile:
         root_node = pickle.load(treefile) 
@@ -136,6 +187,5 @@ def update_table_with_node(node, table):
         table[index] = max_q 
 
 if __name__ == "__main__":
-    qlearn(False)
-    # make_table()
+    qlearn2(False)
 

@@ -210,11 +210,16 @@ def choose_q_edge(node, epsilon):
 
 
 def choose_max_q_edge(node):
+    epsilon = 1e-5
     chosen_edge = node.edges[0]
+    candidates = [chosen_edge]
     for edge in node.edges:
-        if edge.qval > chosen_edge.qval:
+        if edge.qval > chosen_edge.qval + epsilon:
             chosen_edge = edge
-    return chosen_edge
+            candidates = [chosen_edge]
+        elif abs(edge.qval - chosen_edge.qval) < epsilon:
+            candidates.append(edge) 
+    return candidates[randint(0, len(candidates) - 1)]
 
 def find_edge_index(edge):
     return METHOD_TO_INDEX[edge.method.method]

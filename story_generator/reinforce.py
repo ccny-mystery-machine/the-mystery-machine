@@ -118,6 +118,7 @@ def qlearn2(resume=True):
     from tree import POSSIBLE_METHODS 
     num_methods = len(POSSIBLE_METHODS)
     table2 = {}
+    eps = 1
     if resume:
         with open("table2.pickle", "rb") as table2file:
             table2 = pickle.load(table2file)
@@ -126,12 +127,12 @@ def qlearn2(resume=True):
     depth = 0
     counter = 0
     while True:
-        if depth >= 15:
+        if depth >= 20:
             depth = 0
             counter += 1
             current_node = root_node         
             edge = None
-            #print()
+            print()
             if counter % 100 == 0:
                 print("Counter - " + str(counter) + " - Dumping To File")
                 with open("table2.pickle", "wb") as table2file:
@@ -140,10 +141,12 @@ def qlearn2(resume=True):
                 print("Tree destroyed")
                 root_state = State(ACTORS, PLACES, ITEMS)
                 root_node = TreeNode(state=root_state, parent_edge=None, possible_methods=True)
+                if eps > 0.2:
+                    eps *= 0.97
             continue
         if not current_node.edges:
             expand_all_believable_edges(node=current_node, debug=True) 
-        next_edge = choose_q_edge(node=current_node, epsilon=0.2)             
+        next_edge = choose_q_edge(node=current_node, epsilon=eps)             
         best_edge = choose_max_q_edge(node=current_node)             
         if edge != None:
             reward = percent_goals_satisfied(current_node, GOALS)
@@ -159,7 +162,7 @@ def qlearn2(resume=True):
             bestqval = table2[idxc][find_edge_index(best_edge)]
             qval = table2[idx][find_edge_index(edge)]
             table2[idx][find_edge_index(edge)] = qval  + 0.1*(reward + 0.9*(bestqval) - qval)
-            #print("{} {} {}".format(edge.method.sentence, reward, edge.qval))
+            print("{} {} {}".format(edge.method.sentence, reward, edge.qval))
         edge = next_edge
         depth += 1
         current_node = edge.next_node
@@ -189,5 +192,5 @@ def update_table_with_node(node, table):
         table[index] = max_q 
 
 if __name__ == "__main__":
-    qlearn2(True)
+    qlearn2(False)
 

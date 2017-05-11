@@ -50,7 +50,7 @@ def run_once(debug=True):
     C = 1
     thres = 40
     print("Max iteration: {}\nMax Expansion: {}\nMax simulation length: {}\nC: {}\nThreshold: {}".format(max_iter, max_expansion, max_simlength, C, thres))
-    n, s = mcts(root_node, max_iter, max_expansion, max_simlength, C, thres, mixlambda = 0, debug=True) 
+    n, s = mcts(root_node, max_iter, max_expansion, max_simlength, C, thres, mixlambda = 0.7, debug=True) 
     
     # Print out results
     if debug:

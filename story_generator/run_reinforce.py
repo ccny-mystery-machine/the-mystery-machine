@@ -4,6 +4,7 @@ from tree import TreeNode, expand_index_edge
 from random import random, randint
 from reinforce import state_index_number_2
 from story import Story
+from copy import deepcopy
 import pickle
 import math
 
@@ -27,11 +28,17 @@ def run_reinforce(depth = 15):
     root_state = State(ACTORS, PLACES, ITEMS)
     root_node = TreeNode(root_state, parent_edge = None, possible_methods = True)
     current_node = root_node
+    
     for _ in range(depth):
-        qvals = table2[state_index_number_2(current_node.state)]
+        qvals = deepcopy(table2[state_index_number_2(current_node.state)])
         pidx = prob_index(softmax(qvals))
         edge = expand_index_edge(current_node, pidx)
+        while edge.method.believability == 0:
+            qvals.pop(pidx)
+            pidx = prob_index(softmax(qvals))
+            edge = expand_index_edge(current_node, pidx)
         current_node = edge.next_node
+            
     return Story(current_node)
 
 

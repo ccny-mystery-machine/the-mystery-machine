@@ -4,6 +4,7 @@ Implementation of various search methods for story generation
 from queue import Queue
 from math import log, sqrt
 from random import randint
+import pickle
 
 from goals import GOALS, goals_satisfied, percent_goals_satisfied 
 from tree import (TreeNode, expand_edge, expand_all_edges, expand_rand_edge, 
@@ -158,7 +159,7 @@ def q_value_for_node(node, table2):
 
 def mcts(node, max_iter, max_expansion, max_simlength, C, thres, mixlambda, debug):
     
-    with open("table2.py", "rb") as table2file:
+    with open("table2.pickle", "rb") as table2file:
         table2 = pickle.load(table2file)
 
     # Loop for every line in story 
@@ -205,7 +206,7 @@ def mcts(node, max_iter, max_expansion, max_simlength, C, thres, mixlambda, debu
             # Simuluate if thres number of times
             for _ in range(thres):
                 rollout_value = rollout_story_3(chosen_node, max_simlength)
-                q_value = q_value_for_node(chosen_node)
+                q_value = q_value_for_node(chosen_node,table2)
                 backprop_value = mixlambda*rollout_value + (1 - mixlambda)*q_value 
                 backpropogate(chosen_node, backprop_value)
         # Choose most visited node

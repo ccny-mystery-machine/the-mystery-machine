@@ -1,0 +1,21 @@
+Charlie, Daphne, Eve, and Fred all lived in the same neighborhood.
+They were all at their respective houses.
+Fred went to alleyway. 
+Fred picked up baseball bat from alleyway. 
+Fred called Eve. 
+Eve went to alleyway. 
+Fred argued with Eve. 
+Eve mugs Fred and stole baseball bat. 
+Daphne called Fred. 
+Fred went to Daphne's house. 
+Eve went to store. 
+Eve picked up knife from store. 
+Fred went to store. 
+The Event happened in Fred's house.
+Everyone in the neighborhood went to Fred's house. 
+Eve killed Fred with baseball bat. 
+Eve dropped knife at Fred's house. 
+Eve picked up knife from Fred's house. 
+Eve talked with Daphne. 
+Eve dropped baseball bat at Fred's house. 
+

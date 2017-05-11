@@ -95,6 +95,29 @@ def expand_edge(node):
     # If no explorable methods, return False
     return False
 
+def expand_index_edge(node, idx):
+    """
+    Expands another edge of the node - in reverse order
+    Returns True if successful, False if not
+    """
+    # Check if there are still methods to explore
+    if node.possible_methods:
+        # Choose last explorable method
+        new_method_idx = node.possible_methods.pop(idx)
+        new_method = POSSIBLE_METHODS[new_method_idx]
+        
+        # Construct a tree edge from method
+        new_edge = TreeEdge(new_method)
+        # Connect edge to node
+        new_edge(node)
+        node.edges.append(new_edge)
+        
+        # Return edge
+        return new_edge
+
+    # If no explorable methods, return False
+    return False
+
 def expand_rand_edge(node):
     """
     Expands random edge of the node

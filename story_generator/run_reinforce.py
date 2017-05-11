@@ -3,6 +3,7 @@ from state import State
 from tree import TreeNode, expand_index_edge
 from random import random, randint
 from reinforce import state_index_number_2
+from story import Story
 import pickle
 import math
 
@@ -21,7 +22,7 @@ def prob_index(prob_arr):
     return False
 
 def run_reinforce(depth = 15):
-    with open("table2.pickle") as table2file:
+    with open("table2.pickle","rb") as table2file:
         table2 = pickle.load(table2file)
     root_state = State(ACTORS, PLACES, ITEMS)
     root_node = TreeNode(root_state, parent_edge = None, possible_methods = True)

@@ -9,6 +9,7 @@ from goals import GOALS, goals_satisfied, percent_goals_satisfied
 from tree import (TreeNode, expand_edge, expand_all_edges, expand_rand_edge, 
                   expand_heuristic_edge, initialize_prob_dist, POSSIBLE_METHODS)
 from story import Story
+from reinforce import state_index_number_2
 
 def uct_func(node, C):
     parent = node.parent_edge.prev_node
@@ -147,7 +148,19 @@ def most_valuable_child(node):
 def delete_children(node, chosen):
     node.edges = [chosen.parent_edge]
 
-def mcts(node, max_iter, max_expansion, max_simlength, C, thres, debug):
+def q_value_for_node(node, table2):
+    state_index_num = state_index_number_2(node.state)
+    ans = table2[state_index_num][0]
+    for _, val in enumerate(table2[state_index_num]):
+        if val > ans:
+            ans = val
+    return ans
+
+def mcts(node, max_iter, max_expansion, max_simlength, C, thres, mixlambda, debug):
+    
+    with open("table2.py", "rb") as table2file:
+        table2 = pickle.load(table2file)
+
     # Loop for every line in story 
     for count in range(max_iter):
         
@@ -191,8 +204,10 @@ def mcts(node, max_iter, max_expansion, max_simlength, C, thres, debug):
                 continue
             # Simuluate if thres number of times
             for _ in range(thres):
-                sim_value = rollout_story_3(chosen_node, max_simlength)
-                backpropogate(chosen_node, sim_value)
+                rollout_value = rollout_story_3(chosen_node, max_simlength)
+                q_value = q_value_for_node(chosen_node)
+                backprop_value = mixlambda*rollout_value + (1 - mixlambda)*q_value 
+                backpropogate(chosen_node, backprop_value)
         # Choose most visited node
         exp_node = most_visited_child(node) 
         if debug:

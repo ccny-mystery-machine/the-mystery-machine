@@ -132,7 +132,7 @@ def qlearn2(resume=True):
             counter += 1
             current_node = root_node         
             edge = None
-            print()
+            #print()
             if counter % 100 == 0:
                 print("Counter - " + str(counter) + " - Dumping To File")
                 with open("table2.pickle", "wb") as table2file:
@@ -162,7 +162,7 @@ def qlearn2(resume=True):
             bestqval = table2[idxc][find_edge_index(best_edge)]
             qval = table2[idx][find_edge_index(edge)]
             table2[idx][find_edge_index(edge)] = qval  + 0.1*(reward + 0.9*(bestqval) - qval)
-            print("{} {} {}".format(edge.method.sentence, reward, edge.qval))
+            #print("{} {} {}".format(edge.method.sentence, reward, edge.qval))
         edge = next_edge
         depth += 1
         current_node = edge.next_node

@@ -192,5 +192,5 @@ def update_table_with_node(node, table):
         table[index] = max_q 
 
 if __name__ == "__main__":
-    qlearn2(False)
+    qlearn2(True)
 

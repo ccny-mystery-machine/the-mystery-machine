@@ -118,7 +118,7 @@ def qlearn2(resume=True):
     from tree import POSSIBLE_METHODS 
     num_methods = len(POSSIBLE_METHODS)
     table2 = {}
-    eps = 1
+    eps = 0.2
     if resume:
         with open("table2.pickle", "rb") as table2file:
             table2 = pickle.load(table2file)

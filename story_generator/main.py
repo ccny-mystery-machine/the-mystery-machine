@@ -6,6 +6,7 @@ from tree import TreeNode, TreeEdge, expand_edge
 from setup import ACTORS, PLACES, ITEMS
 from state import State, random_state
 from search import mcts
+from story import Story
 from methods import create_possible_methods
 from goals import percent_goals_satisfied, GOALS
 
@@ -28,7 +29,6 @@ def run_once(debug=True):
 
     # Total methods in story
     num_methods = len(root_node.possible_methods)
-    print(num_methods)
     
     """
     The following 
@@ -49,15 +49,17 @@ def run_once(debug=True):
     max_simlength = 20
     C = 1
     thres = 40
-    print("Max iteration: {}\nMax Expansion: {}\nMax simulation length: {}\nC: {}\nThreshold: {}".format(max_iter, max_expansion, max_simlength, C, thres))
-    n, s = mcts(root_node, max_iter, max_expansion, max_simlength, C, thres, mixlambda = 0.7, debug=True) 
+    s = Story(root_node)
+    print(s.create_expository())
+    #print("Max iteration: {}\nMax Expansion: {}\nMax simulation length: {}\nC: {}\nThreshold: {}".format(max_iter, max_expansion, max_simlength, C, thres))
+    n, s = mcts(root_node, max_iter, max_expansion, max_simlength, C, thres, mixlambda = 0.9, debug=False) 
     
     # Print out results
-    if debug:
-        print(s)
-        print(n.believability)
-        print(n.value)
-        print(percent_goals_satisfied(n, GOALS))
+    #if debug:
+    #    print(s)
+    #    print(n.believability)
+    #    print(n.value)
+    #    print(percent_goals_satisfied(n, GOALS))
     
     return (n,s)
     

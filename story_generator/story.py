@@ -21,7 +21,7 @@ class Story:
             self.methods_list.append(curr_edge.method)
             curr_edge = curr_edge.prev_node.parent_edge
         self.methods_list.reverse()
-        self.state_list = []
+        self.state_list = [final_node.state]
         if len(self.methods_list) > 0:
             self.state_list.append(self.methods_list[0].prev_state)
         self.believability = 1

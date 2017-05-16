@@ -16,7 +16,7 @@ def table2_test():
     with open("table2.pickle", "rb") as table2file:
         table2 = pickle.load(table2file)
     root_state = State(ACTORS, PLACES, ITEMS)
-    print(table2)
+    print(table2[state_index_number_2(root_state)])
 
 if __name__ == "__main__":
     table2_test()

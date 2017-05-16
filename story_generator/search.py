@@ -151,6 +151,8 @@ def delete_children(node, chosen):
 
 def q_value_for_node(node, table2):
     state_index_num = state_index_number_2(node.state)
+    if state_index_num not in table2:
+        return 0.1
     ans = table2[state_index_num][0]
     for _, val in enumerate(table2[state_index_num]):
         if val > ans:
@@ -204,15 +206,21 @@ def mcts(node, max_iter, max_expansion, max_simlength, C, thres, mixlambda, debu
                     print("Pruned unlikely node")
                 continue
             # Simuluate if thres number of times
+            rollout_value = 0
             for _ in range(thres):
-                rollout_value = rollout_story_3(chosen_node, max_simlength)
+                if mixlambda > 0:
+                    rollout_value += rollout_story_3(chosen_node, max_simlength)
+            rollout_value /= thres
+            q_value = 0
+            if mixlambda < 1:
                 q_value = q_value_for_node(chosen_node,table2)
-                backprop_value = mixlambda*rollout_value + (1 - mixlambda)*q_value 
-                backpropogate(chosen_node, backprop_value)
-        # Choose most visited node
+            backprop_value = mixlambda*rollout_value + (1 - mixlambda)*q_value 
+            #print("RO: {}, Q: {}, M: {}".format(rollout_value, q_value, backprop_value))
+            backpropogate(chosen_node, backprop_value)
+ 
+           # Choose most visited node
         exp_node = most_visited_child(node) 
-        if debug:
-            print(exp_node.parent_edge.method.sentence)
+        print(exp_node.parent_edge.method.sentence)
         # Remove all other edges from the tree - focus on most visited node subtree
         delete_children(node, exp_node)
         # Switch root to exp_node

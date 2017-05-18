@@ -49,10 +49,11 @@ def run_once(debug=True):
     max_simlength = 20
     C = 1
     thres = 40
+    minlambda = 0.95
     s = Story(root_node)
     print(s.create_expository())
     #print("Max iteration: {}\nMax Expansion: {}\nMax simulation length: {}\nC: {}\nThreshold: {}".format(max_iter, max_expansion, max_simlength, C, thres))
-    n, s = mcts(root_node, max_iter, max_expansion, max_simlength, C, thres, mixlambda = 0.95, debug=False) 
+    n, s = mcts(root_node, max_iter, max_expansion, max_simlength, C, thres, mixlambda, debug=False) 
     
     # Print out results
     #if debug:
